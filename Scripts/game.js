@@ -5,12 +5,12 @@ class Game {
         this.width = window.innerWidth * 2;
         this.height = window.innerHeight * 2;
 
-        this.escala = 0.5;
+        this.escala = 0.7;
 
         this.nightmares = [];
         this.keysPressed = {};
         let promise = this.app.init({ width: this.width, height: this.height });
-    
+
 
         promise.then(e => {
             this.startGame()
@@ -40,10 +40,10 @@ class Game {
 
     listeners() {
         window.onkeydown = (e) => {
-            if(e.key == "Escape"){
+            if (e.key == "Escape") {
                 this.pause();
-            }else{
-                if(e.key != "Escape"){
+            } else {
+                if (e.key != "Escape") {
                     this.keysPressed[e.key] = true;
                 }
             }
@@ -62,14 +62,16 @@ class Game {
     }
 
     gameLoop(time) {
-        this.frameCounter++;
-        this.handleMovement()
-        this.player.update();
-        this.player.render();
-        this.moveCamera();
-        for (let nightmare of this.nightmares) {
-            nightmare.update();
-            nightmare.render();
+        if (this.player.listo) {
+            this.frameCounter++;
+            this.handleMovement()
+            this.player.update();
+            this.player.render();
+            this.moveCamera();
+            for (let nightmare of this.nightmares) {
+                nightmare.update();
+                nightmare.render();
+            }
         }
     }
 
@@ -91,37 +93,91 @@ class Game {
         this.contenedorPrincipal.scale.set(this.escala);
     }
 
-    buildGameOverMenu(){
-        this.sketcher.clear();
-        this.sketcher.beginFill("0x000000", 0.5);
-        this.sketcher.drawRect(0, 0, this.width, this.height);
-        this.sketcher.endFill();
+    buildGameOverMenu() {
+        this.gameOverMenu = new PIXI.Graphics();
+        this.gameOverMenu.clear();
+        this.gameOverMenu.beginFill("0x000000", 0.5);
+        this.gameOverMenu.drawRect(0, 0, this.width, this.height);
+        this.gameOverMenu.endFill();
 
-        const gameOverText = new PIXI.Text( {text: "Game Over", style: {
-            fontFamily: "Arial",
-            fontSize: 64,
-            fill: "#0720fa",
-            align: "center"
-        }});
+        const gameOverText = new PIXI.Text({
+            text: "Game Over", style: {
+                fontFamily: "Arial",
+                fontSize: 64,
+                fill: "#0720fa",
+                align: "center"
+            }
+        });
         gameOverText.anchor.set(0.5);
-        gameOverText.position.set(this.contenedorPrincipal.width *1.25, this.contenedorPrincipal.height /2);
-        this.app.stage.addChild(gameOverText);
+        gameOverText.position.set(this.contenedorPrincipal.width * 1.25, this.contenedorPrincipal.height / 2);
+
+
+
+        // Estilo para el botón de reinicio
+        const restartStyle = new PIXI.TextStyle({
+            fontSize: 28,
+            fill: "#00ff00" // Color verde para "Restart"
+        });
+
+        const restartText = new PIXI.Text("Restart", restartStyle);
+        restartText.anchor.set(0.5);
+        restartText.x = this.width / 2;
+        restartText.y = this.height / 2 + 60;
+
+        // Hacer que el botón de "Restart" sea interactivo
+        restartText.interactive = true;
+        restartText.buttonMode = true;
+        restartText.on('pointerdown', () => this.restartGame());
+
+        // Agregar los textos después del fondo, al mismo contenedor
+        this.gameOverMenu.addChild(gameOverText);
+        this.gameOverMenu.addChild(restartText);
+
+        // Finalmente, agregar el menú al stage
+        this.app.stage.addChild(this.gameOverMenu);
     }
 
-    showGameOverMenu(){
+    showGameOverMenu() {
         this.buildGameOverMenu();
     }
 
-    gameOver(){
+    gameOver() {
         this.app.ticker.stop();
         this.showGameOverMenu();
     }
 
-    pause(){
-        if(!this.isPaused){
+    restartGame() {
+        this.isGameOver = false;
+        this.frameCounter = 0;
+        this.player.de;  // Reinicia la vida del jugador o cualquier otro parámetro
+        this.removePlayer();
+        this.removeNightmares();
+        this.app.stage.removeChild(this.gameOverMenu);  // Remueve el menú
+        this.app.ticker.stop();
+        // Remover todos los listeners para evitar que el loop se duplique
+        this.app.ticker.removeAllListeners();
+        this.startGame();
+    }
+
+    removePlayer() {
+        this.contenedorPrincipal.removeChild(this.player);
+        this.player.sprite.stop()
+        this.player.destroy({ children: true, texture: true, baseTexture: true });
+    }
+
+    removeNightmares() {
+        for (let nightmare in this.nightmares) {
+            this.contenedorPrincipal.removeChild(nightmare);
+            //nightmare.sprite.stop()
+            nightmare.destroy({ children: true, texture: true, baseTexture: true });
+        }
+        this.nightmares.clear();
+    }
+    pause() {
+        if (!this.isPaused) {
             this.app.ticker.stop();
             this.isPaused = true;
-        }else{
+        } else {
             this.app.ticker.start();
             this.isPaused = false;
         }
