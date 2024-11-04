@@ -21,7 +21,7 @@ class Nightmare extends Entity{
 
         this.chaseFactor = 1;
 
-        this.makeGraf()
+        this.makeGraf();
     }
 
     update(){
@@ -153,9 +153,9 @@ class Nightmare extends Entity{
     }
 
     makeGraf() {
-        this.grafico = new PIXI.Graphics()
+        this.sprite = new PIXI.Graphics()
             .rect(0, 0, this.width, this.height)
             .fill('blue');
-        this.container.addChild(this.grafico);
+        this.container.addChild(this.sprite);
     }
 }

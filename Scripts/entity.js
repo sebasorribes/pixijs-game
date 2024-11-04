@@ -4,7 +4,7 @@ class Entity {
         this.y = y;
         
         this.container = new PIXI.Container();
-        this.container.name = "contenedorPrincipal"
+        this.container.name = "MainContainer"
         this.innerContainer = new PIXI.Container();
         this.innerContainer.name = "innerContainer"
         this.container.addChild(this.innerContainer);
@@ -17,7 +17,7 @@ class Entity {
     }
 
     update() {
-        //if (!this.listo) return
+        if (!this.listo) return
 
         this.acc = limitMagnitude(this.acc, this.accMax);
         this.speed.x += this.acc.x;
@@ -53,7 +53,6 @@ class Entity {
 
 
     changeZOrder() {
-        this.grafico.zIndex = this.y
+        this.container.zIndex = this.y
     }
-
 }
