@@ -4,6 +4,7 @@ class Game {
         this.frameCounter = 0;
         this.width = window.innerWidth * 2;
         this.height = window.innerHeight * 2;
+        //this.background = this.preload()
 
         this.escala = 0.7;
 
@@ -11,17 +12,38 @@ class Game {
         this.keysPressed = {};
         let promise = this.app.init({ width: this.width, height: this.height });
 
-
+        this.app.stage.sortableChildren = true;
         promise.then(e => {
             this.startGame()
         })
     }
 
+    preload(){
+        PIXI.Assets.load('sprites/background/fondo.png').then((texture) => {
+            // Create a sprite from the loaded texture
+            const background = new PIXI.Sprite(texture);
+            background.zIndex = -1;
+        
+            // Set the position and size of the background
+            background.anchor.set(0.5, 0.5);
+            background.width = this.width * 2;
+            background.height = this.height * 2;
+            background.x = this.width / 2;
+            background.y = this.height / 2;
+
+            
+            // Add the background to the stage
+            this.contenedorPrincipal.addChild(background);
+        })
+    }
+    
     startGame() {
+        
         this.contenedorPrincipal = new PIXI.Container();
         this.contenedorPrincipal.name = "contenedorPrincipal";
+        
         this.app.stage.addChild(this.contenedorPrincipal);
-
+        this.preload();
         this.sketcher = new PIXI.Graphics();
         this.app.stage.addChild(this.sketcher);
 
