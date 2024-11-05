@@ -162,14 +162,14 @@ class Game {
     removePlayer() {
         this.contenedorPrincipal.removeChild(this.player);
         this.player.sprite.stop()
-        this.player.destroy({ children: true, texture: true, baseTexture: true });
+        this.player.destroy();
     }
 
     removeNightmares() {
         for (let nightmare in this.nightmares) {
             this.contenedorPrincipal.removeChild(nightmare);
             //nightmare.sprite.stop()
-            nightmare.destroy({ children: true, texture: true, baseTexture: true });
+            nightmare.destroy();
         }
         this.nightmares.clear();
     }

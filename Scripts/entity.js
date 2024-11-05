@@ -55,4 +55,13 @@ class Entity {
     changeZOrder() {
         this.container.zIndex = this.y
     }
+
+    destroy() {
+        if (this.sprite) {
+            this.sprite.destroy(); // Destruir el sprite animado
+        }
+        if (this.container) {
+            this.container.destroy({ children: true }); // Destruir el contenedor y sus hijos
+        }
+    }
 }
