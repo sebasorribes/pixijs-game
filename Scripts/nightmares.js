@@ -1,4 +1,4 @@
-class Nightmare extends Entity{
+class Nightmare extends Entity {
     constructor(x, y, game) {
         super(x, y, game);
 
@@ -9,8 +9,7 @@ class Nightmare extends Entity{
         this.life = 200;
         this.speedMax = 10;
         this.accMax = 2;
-        
-        
+
         this.listo = true;
 
         this.vision = 100;
@@ -22,17 +21,37 @@ class Nightmare extends Entity{
 
         this.chaseFactor = 1;
 
-        this.makeGraf();
+        this.animatedSprite();
     }
 
-    
+    async animatedSprite() {
+        let json = await PIXI.Assets.load('./Sprites/perros/texture.json')
+        this.sprite = new PIXI.AnimatedSprite(json.animations["run"])
+        this.sprite.animationSpeed = 0.1
+        this.sprite.loop = true
+        this.sprite.play()
+        this.container.addChild(this.sprite)
+
+        this.sprite.anchor.set(0.5, 1);
+        this.sprite.currentFrame = Math.floor(Math.random() * 8)
+
+        this.listo = true
+    }
+
+    cambiarVelocidadDeReproduccionDelSpriteAnimado() {
+        this.sprite.animationSpeed = Math.abs(this.velocidadX) * 0.1
+    }
+
+
     update(){
+
         this.nightmaresNear = this.findNightmaresNear();
 
         this.cohesion(this.nightmaresNear);
         this.separation(this.nightmaresNear);
         this.alignment(this.nightmaresNear);
         this.Chase();
+
         super.update();
     }
 
@@ -157,30 +176,36 @@ class Nightmare extends Entity{
             force.y * this.alignFactor
         );
     }
-    
+
     Chase() {
         if (!game.player) return;
 
         let vectorToTarget = { x: game.player.x - this.x, y: game.player.y - this.y };
 
-        //NORMALIZAR UN VECTOR ES LLEVAR SU DISTANCIA A 1 (LA DISTANCIA ES LA HIPOTENUSA DEL TRIANGULO RECTANGULO Q SE GENERA ENTRE 0,0 Y EL PUNTO x,y DEL VECTOR)
+        // Normalizar el vector
         let normalizedVector = normalizeVector(vectorToTarget);
-        //ESTA ES EL VECTOR DE VELOCIDAD AL CUAL QUEREMOS IR PARA LLEGAR AL OBJETIVO
+
+        // El vector de velocidad para llegar al objetivo
         let normalizedWishSpeed = {
             x: normalizedVector.x * this.chaseFactor,
             y: normalizedVector.y * this.chaseFactor,
         };
 
-
         this.applyForce(normalizedWishSpeed.x, normalizedWishSpeed.y);
+
+        // Ahora, determinar hacia dónde está mirando el Nightmare:
+        // Si el vector de velocidad en X es positivo, el Nightmare va a la derecha, si es negativo, va a la izquierda
+        if (normalizedWishSpeed.x > 0) {
+            // El Nightmare se mueve hacia la derecha, asegurémonos de que mira a la derecha
+            this.sprite.scale.x = -1;
+        } else if (normalizedWishSpeed.x < 0) {
+            // El Nightmare se mueve hacia la izquierda, asegurémonos de que mira a la izquierda
+            this.sprite.scale.x = 1;
+        }
     }
 
-    makeGraf() {
-        this.sprite = new PIXI.Graphics()
-            .rect(0, 0, this.width, this.height)
-            .fill('blue');
-        this.container.addChild(this.sprite);
-    }
+
+
 
     takeDamage(damage){
         this.life -= damage
@@ -190,3 +215,4 @@ class Nightmare extends Entity{
         }
     }
 }
+
