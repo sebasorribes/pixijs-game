@@ -6,7 +6,7 @@ class Game {
         this.height = window.innerHeight * 2;
         //this.background = this.preload()
 
-        this.escala = 0.7;
+        this.escala = 1;
 
         this.nightmares = [];
         this.keysPressed = {};

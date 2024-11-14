@@ -51,23 +51,33 @@ class MainCharacter extends Entity {
 
     manejarDireccionDelSprite() {
         let newDirection = this.currentDirection;
-
-        if (this.speed.y > 0) newDirection = "front";
-        else if (this.speed.y < 0) newDirection = "back";
-        else if (this.speed.x > 0) newDirection = "right";
-        else if (this.speed.x < 0) newDirection = "left";
-
-        // Cambia la animación solo si la dirección es diferente
+    
+        // Calcular la magnitud absoluta del movimiento en X y Y
+        const absSpeedX = Math.abs(this.speed.x);
+        const absSpeedY = Math.abs(this.speed.y);
+    
+        // Si el movimiento horizontal es mayor al vertical
+        if (absSpeedX > absSpeedY) {
+            if (this.speed.x > 0) newDirection = "right";  // Movimiento hacia la derecha
+            else if (this.speed.x < 0) newDirection = "left";  // Movimiento hacia la izquierda
+        } else {
+            // Si el movimiento vertical es mayor
+            if (this.speed.y > 0) newDirection = "front";  // Movimiento hacia abajo
+            else if (this.speed.y < 0) newDirection = "back";  // Movimiento hacia arriba
+        }
+    
+        // Cambiar la animación solo si la dirección es diferente
         if (newDirection !== this.currentDirection) {
             this.sprite.textures = this.animations[newDirection];
             this.sprite.play();
             this.currentDirection = newDirection;
         }
-
-        // Ajusta la dirección de escala para que el personaje mire hacia la izquierda/derecha
-        if (this.currentDirection === "walkRight") this.sprite.scale.x = 1;
-        else if (this.currentDirection === "walkLeft") this.sprite.scale.x = -1;
+    
+        // Ajustar la dirección de escala para que el personaje mire hacia la izquierda/derecha
+        if (newDirection === "right") this.sprite.scale.x = -1;
+        else if (newDirection === "left") this.sprite.scale.x = 1;
     }
+    
 
     moveLeft() {
         this.applyForce(-this.walkAcc, 0);
