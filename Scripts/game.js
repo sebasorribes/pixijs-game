@@ -2,15 +2,16 @@ class Game {
     constructor() {
         this.app = new PIXI.Application();
         this.frameCounter = 0;
-        this.width = window.innerWidth * 2;
-        this.height = window.innerHeight * 2;
+        this.cellSize = 1; //VER
+        this.width = window.innerWidth*2;
+        this.height = window.innerHeight*2;
         //this.background = this.preload()
 
-        this.escala = 0.7;
+        this.scale = 0.7;
 
         this.nightmares = [];
         this.keysPressed = {};
-        let promise = this.app.init({ width: this.width, height: this.height });
+        let promise = this.app.init({ width: this.width, height: this.height});
 
         this.app.stage.sortableChildren = true;
         promise.then(e => {
@@ -22,36 +23,37 @@ class Game {
         PIXI.Assets.load('sprites/background/fondo.png').then((texture) => {
             // Create a sprite from the loaded texture
             const background = new PIXI.Sprite(texture);
-            background.zIndex = -1;
+            background.zIndex = -999999999999;
         
             // Set the position and size of the background
             background.anchor.set(0.5, 0.5);
-            background.width = this.width * 2;
-            background.height = this.height * 2;
-            background.x = this.width / 2;
-            background.y = this.height / 2;
+            background.width = this.width*2;
+            background.height = this.height*2;
+            background.x = this.width;
+            background.y = this.height;
 
             
             // Add the background to the stage
-            this.contenedorPrincipal.addChild(background);
+            this.mainContainer.addChild(background);
         })
     }
     
     startGame() {
         
-        this.contenedorPrincipal = new PIXI.Container();
-        this.contenedorPrincipal.name = "contenedorPrincipal";
+        this.mainContainer = new PIXI.Container();
+        this.mainContainer.name = "mainContainer";
         
-        this.app.stage.addChild(this.contenedorPrincipal);
+        this.app.stage.addChild(this.mainContainer);
         this.preload();
         this.sketcher = new PIXI.Graphics();
-        this.app.stage.addChild(this.sketcher);
+        this.mainContainer.addChild(this.sketcher);
 
         this.isPaused = false;
 
         document.body.appendChild(this.app.canvas);
         window.__PIXI_APP__ = this.app;
         this.listeners();
+        this.grid = new Grid(this, this.tamanoCelda);
         this.placePlayer();
         this.placeNightmares(50);
         this.app.ticker.add((e) => {
@@ -109,10 +111,10 @@ class Game {
     }
 
     moveCamera() {
-        this.contenedorPrincipal.pivot.x = this.player.x - (window.innerWidth / 2.4) / this.escala;
-        this.contenedorPrincipal.pivot.y = this.player.y - (window.innerHeight / 2.4) / this.escala;
+        this.mainContainer.pivot.x = this.player.x - (window.innerWidth / 2.4) / this.scale;
+        this.mainContainer.pivot.y = this.player.y - (window.innerHeight / 2.4) / this.scale;
 
-        this.contenedorPrincipal.scale.set(this.escala);
+        this.mainContainer.scale.set(this.scale);
     }
 
     buildGameOverMenu() {
@@ -131,7 +133,7 @@ class Game {
             }
         });
         gameOverText.anchor.set(0.5);
-        gameOverText.position.set(this.contenedorPrincipal.width * 1.25, this.contenedorPrincipal.height / 2);
+        gameOverText.position.set(this.mainContainer.width * 1.25, this.mainContainer.height / 2);
 
 
 
@@ -141,15 +143,10 @@ class Game {
             fill: "#00ff00" // Color verde para "Restart"
         });
 
-        const restartText = new PIXI.Text("Restart", restartStyle);
+        const restartText = new PIXI.Text(`F5 para reiniciar`, restartStyle);
         restartText.anchor.set(0.5);
         restartText.x = this.width / 2;
         restartText.y = this.height / 2 + 60;
-
-        // Hacer que el botón de "Restart" sea interactivo
-        restartText.interactive = true;
-        restartText.buttonMode = true;
-        restartText.on('pointerdown', () => this.restartGame());
 
         // Agregar los textos después del fondo, al mismo contenedor
         this.gameOverMenu.addChild(gameOverText);
@@ -168,32 +165,19 @@ class Game {
         this.showGameOverMenu();
     }
 
-    restartGame() {
-        this.isGameOver = false;
-        this.frameCounter = 0;
-        this.player.de;  // Reinicia la vida del jugador o cualquier otro parámetro
-        this.removePlayer();
-        this.removeNightmares();
-        this.app.stage.removeChild(this.gameOverMenu);  // Remueve el menú
-        this.app.ticker.stop();
-        // Remover todos los listeners para evitar que el loop se duplique
-        this.app.ticker.removeAllListeners();
-        this.startGame();
-    }
-
     removePlayer() {
-        this.contenedorPrincipal.removeChild(this.player);
+        this.mainContainer.removeChild(this.player);
         this.player.sprite.stop()
-        this.player.destroy();
+        this.player.destruction();
     }
 
     removeNightmares() {
-        for (let nightmare in this.nightmares) {
-            this.contenedorPrincipal.removeChild(nightmare);
+        for (let nightmare of this.nightmares) {
+            this.mainContainer.removeChild(nightmare);
             //nightmare.sprite.stop()
-            nightmare.destroy();
+            nightmare.destruction();
         }
-        this.nightmares.clear();
+        this.nightmares = [];
     }
     pause() {
         if (!this.isPaused) {
