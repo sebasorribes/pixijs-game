@@ -40,7 +40,7 @@ class MainCharacter extends Entity {
         this.listo = true
     }
 
-    cambiarVelocidadDeReproduccionDelSpriteAnimado() {
+    changePlaySpeedOfAnimatedSprite() {
         try {
             this.sprite.animationSpeed = Math.sqrt(this.speed.x ** 2 + this.speed.y ** 2) * 0.1;
             
@@ -49,7 +49,7 @@ class MainCharacter extends Entity {
         }
     }
 
-    manejarDireccionDelSprite() {
+    handleSpriteDirection() {
         let newDirection = this.currentDirection;
     
         // Calcular la magnitud absoluta del movimiento en X y Y
@@ -103,8 +103,8 @@ class MainCharacter extends Entity {
     update() {
         this.damaged();
         super.update();
-        this.manejarDireccionDelSprite();
-        this.cambiarVelocidadDeReproduccionDelSpriteAnimado();
+        this.handleSpriteDirection();
+        this.changePlaySpeedOfAnimatedSprite();
         this.godTime -= 1;
     }
 
@@ -121,7 +121,6 @@ class MainCharacter extends Entity {
                 if (! this.godMode) {
                     this.life -= 25;
                     this.changeStateGodMode();
-                    console.log(this.life);
                     if (this.life <= 0) {
                         this.gameOver();
                     }
@@ -143,6 +142,8 @@ class MainCharacter extends Entity {
     gameOver() {
         this.game.gameOver();
     }
+
+    
 }
 
 

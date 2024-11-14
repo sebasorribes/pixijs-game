@@ -6,6 +6,7 @@ class Nightmare extends Entity {
         this.width = 20;
         this.height = 10;
 
+        this.life = 200;
         this.speedMax = 10;
         this.accMax = 2;
 
@@ -41,7 +42,9 @@ class Nightmare extends Entity {
         this.sprite.animationSpeed = Math.abs(this.velocidadX) * 0.1
     }
 
-    update() {
+
+    update(){
+
         this.nightmaresNear = this.findNightmaresNear();
 
         this.cohesion(this.nightmaresNear);
@@ -51,6 +54,27 @@ class Nightmare extends Entity {
 
         super.update();
     }
+
+    findNearNightmaresUsingGrid() {
+        let ret = [];
+        if (this.cell) {
+          // let entidadesCerca = this.celda.obtenerEntidadesAcaYEnLasCeldasVecinas();
+    
+          for (let i = 0; i < this.entidadesCerca.length; i++) {
+            let dep = this.entidadesCerca[i];
+            if (dep.tipo == "depredador" && dep != this) {
+              let dist = this.juego.calcularDistancia(dep, this);
+              if (dist < this.vision) {
+                ret.push({ presa: dep, dist: dist });
+              }
+            }
+          }
+        } else {
+          return [];
+        }
+    
+        return ret;
+      }
 
     findNightmaresNear() {
         let nightmaresNear = [];
@@ -179,4 +203,16 @@ class Nightmare extends Entity {
             this.sprite.scale.x = 1;
         }
     }
+
+
+
+
+    takeDamage(damage){
+        this.life -= damage
+
+        if (this.life <= 0) {
+            this.changeToDream();
+        }
+    }
 }
+
