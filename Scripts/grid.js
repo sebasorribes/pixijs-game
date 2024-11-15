@@ -3,7 +3,7 @@ class Grid {
       this.cellSize = cellSize;
       this.game = game;
   
-      this.extraCells = 50;
+      this.extraCells = 50; //VER
   
       this.numberCellsWidth =
         Math.floor(this.game.width / this.cellSize) + 1;
@@ -44,12 +44,12 @@ class Grid {
   
         //si la entidad ya estaba en una celda, la sacamos de esa celda
         if (entity.cell) entity.cell.delete(entity);
-  
+        entity.nearEntities = [];
         //buscamos la celda en la q esta ahora esta entidad
         let cell = this.cells[gridX][gridY];
         //y le asignamos a la entidad esta celda en su propiedad homonima
         entity.cell = cell;
-  
+        entity.nearEntities = cell.getEntitiesHereAndCellsNear();
         cell.add(entity);
       } catch (e) {
         console.log(e);
