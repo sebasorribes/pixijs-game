@@ -2,13 +2,14 @@ class Game {
     constructor() {
         this.app = new PIXI.Application();
         this.frameCounter = 0;
-        this.cellSize = 1; //VER
-        this.width = window.innerWidth*2;
-        this.height = window.innerHeight*2;
+        this.cellSize = 180; //VER
+        this.width = window.innerWidth;
+        this.height = window.innerHeight;
+        this.backgroundSize = {x: this.cellSize * 18, y: this.cellSize* 12}
         //this.background = this.preload()
 
  
-        this.escala = 1;
+        this.scale = 1;
 
 
         this.nightmares = [];
@@ -28,11 +29,11 @@ class Game {
             background.zIndex = -999999999999;
         
             // Set the position and size of the background
-            background.anchor.set(0.5, 0.5);
-            background.width = this.width*2;
-            background.height = this.height*2;
-            background.x = this.width;
-            background.y = this.height;
+            background.anchor.set(0, 0);
+            background.width = this.backgroundSize.x;
+            background.height = this.backgroundSize.y;
+            background.x = 0;
+            background.y = 0;
 
             
             // Add the background to the stage
@@ -55,9 +56,9 @@ class Game {
         document.body.appendChild(this.app.canvas);
         window.__PIXI_APP__ = this.app;
         this.listeners();
-        this.grid = new Grid(this, this.tamanoCelda);
+        this.grid = new Grid(this, this.cellSize);
         this.placePlayer();
-        this.placeNightmares(50);
+        this.placeNightmares(200);
         this.app.ticker.add((e) => {
             this.gameLoop(e);
         });
@@ -88,7 +89,7 @@ class Game {
     }
 
     gameLoop(time) {
-        if (this.player.listo) {
+        if (this.player.ready) {
             this.frameCounter++;
             this.handleMovement()
             this.player.update();
@@ -102,12 +103,12 @@ class Game {
     }
 
     placePlayer() {
-        this.player = new MainCharacter(this.width / 2, this.height / 2, this);
+        this.player = new MainCharacter(this.backgroundSize.x/2, this.backgroundSize.y/2, this);
     }
 
     placeNightmares(numerNightmares = 10) {
         for (let i = 0; i <= numerNightmares; i++) {
-            let nightMare = new Nightmare(Math.random() * this.width, Math.random() * this.height, this);
+            let nightMare = new Nightmare(Math.random() * this.backgroundSize.x, Math.random() * this.backgroundSize.y, this);
             this.nightmares.push(nightMare);
         }
     }
