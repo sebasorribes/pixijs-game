@@ -1,20 +1,19 @@
 class Game {
     constructor() {
         this.app = new PIXI.Application();
-        this.frameCounter = 0;
         this.cellSize = 180; //VER
         this.width = window.innerWidth;
         this.height = window.innerHeight;
-        this.backgroundSize = {x: this.cellSize * 18, y: this.cellSize* 12}
+        this.backgroundSize = { x: this.cellSize * 18, y: this.cellSize * 12 }
         //this.background = this.preload()
 
- 
+
         this.scale = 1;
 
 
         this.nightmares = [];
         this.keysPressed = {};
-        let promise = this.app.init({ width: this.width, height: this.height});
+        let promise = this.app.init({ width: this.width, height: this.height });
 
         this.app.stage.sortableChildren = true;
         promise.then(e => {
@@ -22,12 +21,12 @@ class Game {
         })
     }
 
-    preload(){
+    preload() {
         PIXI.Assets.load('sprites/background/fondo.png').then((texture) => {
             // Create a sprite from the loaded texture
             const background = new PIXI.Sprite(texture);
             background.zIndex = -999999999999;
-        
+
             // Set the position and size of the background
             background.anchor.set(0, 0);
             background.width = this.backgroundSize.x;
@@ -35,23 +34,25 @@ class Game {
             background.x = 0;
             background.y = 0;
 
-            
+
             // Add the background to the stage
             this.mainContainer.addChild(background);
         })
     }
-    
+
     startGame() {
-        
+
         this.mainContainer = new PIXI.Container();
         this.mainContainer.name = "mainContainer";
-        
+
         this.app.stage.addChild(this.mainContainer);
         this.preload();
         this.sketcher = new PIXI.Graphics();
         this.mainContainer.addChild(this.sketcher);
 
+        this.frameCounter = 0;
         this.isPaused = false;
+        this.isGameOver = false;
 
         document.body.appendChild(this.app.canvas);
         window.__PIXI_APP__ = this.app;
@@ -88,22 +89,34 @@ class Game {
         if (this.keysPressed["d"]) this.player.moveRight();
     }
 
-    gameLoop(time) {
+    gameLoop() {
         if (this.player.ready) {
             this.frameCounter++;
-            this.handleMovement()
-            this.player.update();
-            this.player.render();
+            this.handleMovement();
+            this.playerLoop(this.frameCounter);
+            this.nightmaresLoop();
             this.moveCamera();
-            for (let nightmare of this.nightmares) {
-                nightmare.update();
-                nightmare.render();
-            }
+
+        }
+    }
+
+    playerLoop(frameCounter) {
+        if (!this.isGameOver) {
+            this.player.changeStateGodMode(frameCounter);
+        }
+        this.player.update();
+        this.player.render();
+    }
+
+    nightmaresLoop() {
+        for (let nightmare of this.nightmares) {
+            nightmare.update();
+            nightmare.render();
         }
     }
 
     placePlayer() {
-        this.player = new MainCharacter(this.backgroundSize.x/2, this.backgroundSize.y/2, this);
+        this.player = new MainCharacter(this.backgroundSize.x / 2, this.backgroundSize.y / 2, this);
     }
 
     placeNightmares(numerNightmares = 10) {
@@ -165,6 +178,7 @@ class Game {
 
     gameOver() {
         this.app.ticker.stop();
+        this.isGameOver = true;
         this.showGameOverMenu();
     }
 
