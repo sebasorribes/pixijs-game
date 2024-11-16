@@ -18,6 +18,9 @@ class Entity {
         this.vision = 100;
         this.ready = false;
 
+        this.godMode = false;
+        this.lastFrameGodMode=0;
+
         this.speed = { x: 0, y: 0 };
         this.acc = { x: 0, y: 0 };
     }

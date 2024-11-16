@@ -11,7 +11,7 @@ class MainCharacter extends Entity {
         this.walkAcc = 1;
 
         this.life = 500;
-        this.godMode = false;
+        
 
         this.currentDirection = "front";
 
@@ -118,14 +118,11 @@ class MainCharacter extends Entity {
                     enemy
                 ) || distance(this, enemy) <= 1
             ) {
-                console.log(this.x)
-                console.log(this.y)
-                //console.log(this.nightmaresNear)
                 console.log(this.life)
 
                 if (!this.godMode) {
                     this.life -= 25;
-                    this.changeStateGodMode();
+                    this.godMode = true;
                     if (this.life <= 0) {
                         this.gameOver();
                     }
@@ -135,13 +132,11 @@ class MainCharacter extends Entity {
         }
     }
 
-    changeStateGodMode() {
-        this.godMode = true;
-
-        // Desactivar God Mode después de medio segundo
-        setTimeout(() => {
+    changeStateGodMode(actualFrame) {
+        if((actualFrame - this.lastFrameGodMode) % 25 == 0) {
             this.godMode = false;
-        }, 500);
+            this.lastFrameGodMode = actualFrame;
+        }
     }
 
     gameOver() {
