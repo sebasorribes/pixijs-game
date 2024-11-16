@@ -1,9 +1,20 @@
 class Attack {
-    constructor(x, y, game) {
-        this.x = x;
-        this.y = y;
-        this.game = game;
+    constructor(player, initialExecutionFrame = 0) {
+        this.id = generateRandomID();
+        this.x = player.x;
+        this.y = player.y;
+        this.character = player;
+        this.game = player.game;
         this.active = true;
+        if (player.currentDirection == "right" || player.currentDirection == "left") {
+            this.width = 20;
+            this.height = 100;
+
+        } else {
+            this.width = 100;
+            this.height = 20;
+        }
+
 
         this.container = new PIXI.Container();
         this.container.name = "mainContainer"
@@ -11,105 +22,68 @@ class Attack {
         this.innerContainer.name = "innerContainer"
         this.container.addChild(this.innerContainer);
 
+        this.lastFrameExecuted = initialExecutionFrame;
 
-        this.lastExecutionTime = 0; // Última vez que se ejecutó
-
-        this.game.mainContainer.addChild(this.container);
     }
+
+    //todos lo ataques se ejecutan, movimiento y posicion de los ataques.
 
     // Método básico de ejecución
-    execute() {
+    execute(actualFrame) {
         if (!this.active) return;
 
-        const currentTime = Date.now();
-        if (currentTime - this.lastExecutionTime >= this.interval) {
+        if ((actualFrame - this.lastFrameExecuted) % this.framesAttackCooldown == 0) {
             this.performAttack();
-            this.lastExecutionTime = currentTime; // Actualiza el tiempo de la última ejecución
+            this.lastFrameExecuted = actualFrame;
         }
-    }
-
-    // Método para verificar colisiones (en este ejemplo, solo verifica si el ataque toca enemigos)
-    checkCollision(enemies) {
-        if (!this.active) return;
-        enemies.forEach(enemy => {
-            //falta el heigth y width
-            if (
-                isOverlap( 
-                    { ...this, y: this.y, x: this.x },
-                    enemy
-                )
-            ) {
-                this.hit(enemy);
-            }
-        });
-    }
-
-    // Método para el impacto
-    hit(enemy) {
-        enemy.takeDamage(this.damage);
-    }
-
-    // Método para determinar si hay colisión (a implementar en cada tipo de ataque)
-    isColliding(enemy) {
-        // Implementar lógica específica de colisión en cada subclase
-        return false;
     }
 
     // Método para destruir el ataque
     destroy() {
+        if (!this.active) return;
         this.active = false;
+        this.game.mainContainer.removeChild(this.container); // Eliminar del contenedor principal
         console.log("Ataque destruido");
     }
 }
 
 class BasicSlashAttack extends Attack {
-    constructor(x, y, damage, game, direction) {
-        super(x, y, damage, game);
-        this.direction = direction; // Dirección del corte
-        this.speed = 10; // Velocidad del corte
+    constructor(player, initialExecutionFrame, actualLevel) {
+        super(player, initialExecutionFrame);
+        this.damage = 25 * actualLevel;
+        this.type = "basic";
 
-        this.interval = 5; // Tiempo entre ataques
+        this.makeSprite();
+        this.position(this.character.currentDirection);
+        this.game.mainContainer.addChild(this.container);
+        this.render();
     }
 
-
-    performAttack() {
-        this.x += this.speed * this.direction;
-        this.checkCollision(this.game.enemies);
-    }
-
-    update() {
-
-    }
-
-    isColliding(enemy) {
-        // Lógica de colisión sencilla
-        return Math.abs(this.x - enemy.x) < 10 && Math.abs(this.y - enemy.y) < 10;
-    }
-
-}
-
-class BasicSlashAttack extends Attack {
-    constructor(x, y, damage, game, direction) {
-        super(x, y, damage, game);
-        this.direction = direction;
-        this.speed = 10;
-    }
-
-    makeGraf() {
-        this.grafico = new PIXI.Graphics()
+    makeSprite() {
+        // Crear el sprite del ataque (puedes usar una textura)
+        this.graf = new PIXI.Graphics()
             .rect(0, 0, this.width, this.height)
-            .fill(0xffd700);
-        this.container.addChild(this.grafico);
+            .fill(0xff0000);
+        this.container.addChild(this.graf);
     }
 
-    execute() {
-        if (!this.active) return;
-        this.x += this.speed * this.direction;
-        this.checkCollision(this.game.enemies);
-        this.destroy(); // Desactivar después de un solo uso
+    position(playerDirection) {
+        if (playerDirection == "right" || playerDirection == "left") {
+            // Posicionar el ataque frente al personaje
+            this.x = this.character.x + (playerDirection == "right" ? 100 : -200); // Ajusta según la dirección
+            this.y = this.character.y - 50;
+
+        } else {
+            // Posicionar el ataque frente al personaje
+            this.x = this.character.x - 50;
+            this.y = this.character.y + (playerDirection == "front" ? 100 : -200); // Ajusta según la dirección
+        }
     }
 
-    isColliding(enemy) {
-        return Math.abs(this.x - enemy.x) < 10 && Math.abs(this.y - enemy.y) < 10;
+    render() {
+        this.container.x = this.x
+        this.container.y = this.y
     }
+
+
 }

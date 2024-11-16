@@ -11,6 +11,7 @@ class Game {
         this.scale = 1;
 
 
+        this.attacks = []
         this.nightmares = [];
         this.keysPressed = {};
         let promise = this.app.init({ width: this.width, height: this.height });
@@ -94,9 +95,28 @@ class Game {
             this.frameCounter++;
             this.handleMovement();
             this.playerLoop(this.frameCounter);
-            this.nightmaresLoop();
+            this.nightmaresLoop(this.frameCounter);
             this.moveCamera();
+            this.makeAttacks(this.frameCounter);
+        }
+    }
 
+    makeAttacks(actualFrames) {
+        this.makeBasic(actualFrames);
+
+    }
+
+    makeBasic(actualFrames) {
+        if (actualFrames % 60 == 0) {
+            let attack = new BasicSlashAttack(this.player, actualFrames);
+            this.attacks.push(attack);
+        }
+
+        for (let attack of this.attacks) {
+            if ((actualFrames+1 - attack.lastFrameExecuted) % 5 == 0 && attack.type == "basic") {
+                attack.destroy();
+                this.attacks = this.attacks.filter((k) => k.id != attack.id);
+            }
         }
     }
 
@@ -104,13 +124,16 @@ class Game {
         if (!this.isGameOver) {
             this.player.changeStateGodMode(frameCounter);
         }
-        this.player.update();
+        this.player.update(frameCounter);
         this.player.render();
     }
 
-    nightmaresLoop() {
+    nightmaresLoop(frameCounter) {
         for (let nightmare of this.nightmares) {
-            nightmare.update();
+            if (!this.isGameOver) {
+                nightmare.changeStateGodMode(frameCounter);
+            }
+            nightmare.update(frameCounter,this.attacks);
             nightmare.render();
         }
     }
@@ -149,7 +172,8 @@ class Game {
             }
         });
         gameOverText.anchor.set(0.5);
-        gameOverText.position.set(this.mainContainer.width * 1.25, this.mainContainer.height / 2);
+        gameOverText.x = this.width / 2;
+        gameOverText.y = this.height / 2 + 120;
 
 
 
@@ -170,6 +194,15 @@ class Game {
 
         // Finalmente, agregar el menú al stage
         this.app.stage.addChild(this.gameOverMenu);
+    }
+
+    buildlevelUpMenu(){
+        this.levelUpMenu = new PIXI.Graphics();
+        this.levelUpMenu.clear();
+        this.levelUpMenu.beginFill("0x000000", 0.5);
+        this.levelUpMenu.drawRect(0, 0, this.width, this.height);
+        this.levelUpMenu.endFill()
+
     }
 
     showGameOverMenu() {

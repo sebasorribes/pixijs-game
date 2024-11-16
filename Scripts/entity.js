@@ -44,6 +44,12 @@ class Entity {
 
     }
 
+    changeStateGodMode(actualFrame) {
+        if (this.godMode && (actualFrame - this.lastFrameGodMode) % this.godModeTime == 0) {
+            this.godMode = false;
+        }
+    }
+
     update() {
         if (!this.ready) return
 
