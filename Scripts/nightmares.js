@@ -19,6 +19,9 @@ class Nightmare extends Entity {
 
         this.chaseFactor = 55;
 
+        this.godMoeTime = 10;
+        this.isNightmare = true;
+
         this.animatedSprite();
     }
 
@@ -41,13 +44,16 @@ class Nightmare extends Entity {
     }
 
 
-    update(){
+    update(actualFrame,attacks){
 
         super.update();
+        if(!this.isNightmare) return;
+        
         this.cohesion(this.nightmaresNear);
         this.separation(this.nightmaresNear);
         this.alignment(this.nightmaresNear);
         this.Chase();
+        this.takeDamage(actualFrame,attacks)
 
     }
 
@@ -182,12 +188,40 @@ class Nightmare extends Entity {
         }
     }
 
-    takeDamage(damage){
-        this.life -= damage
+    takeDamage(actualFrame,attacks){
+        if(attacks.length == 0) return;
+        for (let i = 0; i < attacks.length; i++) {
+            let attack = attacks[i];
+            if (
+                isOverlap(
+                    { ...this, y: this.y, x: this.x },
+                    attack
+                ) || distance(this, attack) <= 1
+            ) {
+                console.log(this.life)
 
-        if (this.life <= 0) {
-            this.changeToDream();
+                this.life -= attack.damage;
+                    this.godMode = true;
+                    this.lastFrameGodMode = actualFrame;
+                    if (this.life <= 0) {
+                        this.life = 0
+                        this.changeToDream();
+                    }
+                
+            }
+
         }
     }
+
+    changeToDream(){
+        this.isNightmare = false;
+        this.container.removeChild(this.sprite)
+        this.sprite = new PIXI.Graphics()
+            .rect(0,0,20,20)
+            .fill(0xFFFFFF);
+        this.container.addChild(this.sprite);
+    }
+
+    
 }
 

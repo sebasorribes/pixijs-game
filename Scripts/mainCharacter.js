@@ -11,7 +11,11 @@ class MainCharacter extends Entity {
         this.walkAcc = 1;
 
         this.life = 500;
-        
+        this.godModeTime = 25;
+
+        this.actualExp = 0;
+        this.actualLevel = 1; 
+
 
         this.currentDirection = "front";
 
@@ -99,17 +103,19 @@ class MainCharacter extends Entity {
         this.container.addChild(this.grafico);
     }
 
-    update() {
+    update(actualFrames) {
+        if(!this.ready) return;
         super.update();
-        //console.log(this.nearEntities)
-        //console.log(this.nightmaresNear)
-        this.damaged();
+        this.damaged(actualFrames);
         this.handleSpriteDirection();
         this.changePlaySpeedOfAnimatedSprite();
-        this.godTime -= 1;
+
     }
 
-    damaged() {
+    
+
+
+    damaged(actualFrame) {
         for (let i = 0; i < this.nightmaresNear.length; i++) {
             let enemy = this.nightmaresNear[i].nightmare;
             if (
@@ -118,25 +124,36 @@ class MainCharacter extends Entity {
                     enemy
                 ) || distance(this, enemy) <= 1
             ) {
-                console.log(this.life)
-
-                if (!this.godMode) {
-                    this.life -= 25;
-                    this.godMode = true;
-                    if (this.life <= 0) {
-                        this.gameOver();
+                if(enemy.isNightmare){
+                    if (!this.godMode) {
+                        this.life -= 25;
+                        this.godMode = true;
+                        this.lastFrameGodMode = actualFrame;
+                        if (this.life <= 0) {
+                            this.gameOver();
+                        }
                     }
+                }else{
+                    enemy.destroy();
+                    this.gainExp();
                 }
             }
 
         }
     }
 
-    changeStateGodMode(actualFrame) {
-        if((actualFrame - this.lastFrameGodMode) % 25 == 0) {
-            this.godMode = false;
-            this.lastFrameGodMode = actualFrame;
+    gainExp(){
+        this.actualExp += 100;
+        if(this.actualExp >= 500*this.actualLevel){
+            this.actualExp = 0;
+            this.levelUp;
         }
+
+    }
+    
+    levelUp(){
+        this.actualLevel++;
+        this.game.buildlevelUpMenu();
     }
 
     gameOver() {
