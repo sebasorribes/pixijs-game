@@ -115,7 +115,6 @@ class Game {
         for (let attack of this.attacks) {
             if ((actualFrames + 1 - attack.lastFrameExecuted) % 5 == 0 && attack.type == "basic") {
                 attack.destroy();
-                this.attacks = this.attacks.filter((k) => k.id != attack.id);
             }
         }
     }
