@@ -51,13 +51,18 @@ class Nightmare extends Entity {
         if(!this.isActive) return
         super.update();
         if(!this.isNightmare) return;
-        
+    }   
+
+    update(){
+        super.update();
+        this.nightmaresNear = this.findNightmaresNear();
+
+
         this.cohesion(this.nightmaresNear);
         this.separation(this.nightmaresNear);
         this.alignment(this.nightmaresNear);
         this.Chase();
         this.takeDamage(actualFrame,attacks)
-
     }
 
 

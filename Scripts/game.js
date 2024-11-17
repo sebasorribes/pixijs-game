@@ -8,11 +8,19 @@ class Game {
         this.backgroundSize = { x: this.cellSize * 18, y: this.cellSize * 12 }
         //this.background = this.preload()
 
-        this.scale = 1;
 
+ 
+        this.scale = 1;
+      
 
         this.attacks = []
         this.skills = { basic: 1, attack1: 0, attack2: 0, attack3: 0 }
+
+ 
+        this.scale = 1;
+
+       
+
         this.nightmares = [];
         this.keysPressed = {};
         let promise = this.app.init({ width: this.width, height: this.height });
@@ -26,9 +34,11 @@ class Game {
         })
     }
 
-    
+
+
     
     preload(){
+
         PIXI.Assets.load('sprites/background/fondo.png').then((texture) => {
             // Create a sprite from the loaded texture
             const background = new PIXI.Sprite(texture);
