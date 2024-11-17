@@ -2,7 +2,7 @@ class MainCharacter extends Entity {
     constructor(x, y, game) {
         super(x, y, game);
         this.width = 30;
-        this.height = 30;
+        this.height = 48;
 
         this.id = "player";
         this.speedMax = 10;
@@ -11,10 +11,11 @@ class MainCharacter extends Entity {
         this.walkAcc = 1;
 
         this.life = 500;
-        this.godModeTime = 25;
+        this.godModeTime = 2500000;
 
         this.actualExp = 0;
-        this.actualLevel = 1; 
+        this.actualLevel = 1;
+        this.lastExpFrame = 0;
 
 
         this.currentDirection = "front";
@@ -104,7 +105,7 @@ class MainCharacter extends Entity {
     }
 
     update(actualFrames) {
-        if(!this.ready) return;
+        if (!this.ready) return;
         super.update();
         this.damaged(actualFrames);
         this.handleSpriteDirection();
@@ -112,7 +113,7 @@ class MainCharacter extends Entity {
 
     }
 
-    
+
 
 
     damaged(actualFrame) {
@@ -124,7 +125,7 @@ class MainCharacter extends Entity {
                     enemy
                 ) || distance(this, enemy) <= 1
             ) {
-                if(enemy.isNightmare){
+                if (enemy.isNightmare) {
                     if (!this.godMode) {
                         this.life -= 25;
                         this.godMode = true;
@@ -133,27 +134,43 @@ class MainCharacter extends Entity {
                             this.gameOver();
                         }
                     }
-                }else{
-                    enemy.destroy();
-                    this.gainExp();
+                } else {
+
+                    if (!enemy.gainExp) {
+                        enemy.destroy(this);
+                        this.gainExp(actualFrame);
+                    }
+
                 }
             }
 
         }
     }
 
-    gainExp(){
-        this.actualExp += 100;
-        if(this.actualExp >= 500*this.actualLevel){
+    gainExp(actualFrame) {
+        // console.log(actualFrame)
+        // console.log(this.lastExpFrame)
+        this.lastExpFrame = actualFrame;
+        this.actualExp += 200;
+        if (this.actualExp >= 500 * this.actualLevel) {
             this.actualExp = 0;
-            this.levelUp;
+            this.levelUp();
         }
 
     }
-    
-    levelUp(){
+
+    levelUp() {
         this.actualLevel++;
-        this.game.buildlevelUpMenu();
+        if (this.game.skills.basic < 3 ||
+            this.game.skills.attack1 < 3 ||
+            this.game.skills.attack2 < 3 ||
+            this.game.skills.attack3 < 3
+        ) {
+            this.game.buildlevelUpMenu();
+        } else {
+            this.life += 20;
+        }
+
     }
 
     gameOver() {
