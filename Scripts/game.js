@@ -19,9 +19,9 @@ class Game {
         this.nightmares = [];
         this.keysPressed = {};
         let promise = this.app.init({ width: this.width, height: this.height });
-
-        
-
+        this.points = 0;
+        this.nightmareLife = 200;
+        this.restantNightmare = 0;
 
         this.app.stage.sortableChildren = true;
         promise.then(e => {
@@ -71,7 +71,7 @@ class Game {
         this.listeners();
         this.grid = new Grid(this, this.cellSize);
         this.placePlayer();
-        this.placeNightmares(200);
+        this.placeNightmares(70);
         this.app.ticker.add((e) => {
             this.gameLoop(e);
         });
@@ -152,12 +152,7 @@ class Game {
         this.player = new MainCharacter(this.backgroundSize.x / 2, this.backgroundSize.y / 2, this);
     }
 
-    placeNightmares(numerNightmares = 10) {
-        for (let i = 0; i <= numerNightmares; i++) {
-            let nightMare = new Nightmare(Math.random() * this.backgroundSize.x, Math.random() * this.backgroundSize.y, this);
-            this.nightmares.push(nightMare);
-        }
-    }
+    
 
     moveCamera() {
         this.mainContainer.pivot.x = this.player.x - (window.innerWidth / 2.4) / this.scale;
@@ -434,7 +429,21 @@ class Game {
         this.nightmares = [];
     }
 
- 
+    placeNightmares(numerNightmares = 10) {
+        for (let i = 0; i <= numerNightmares; i++) {
+            let nightMare = new Nightmare(Math.random() * this.backgroundSize.x, Math.random() * this.backgroundSize.y, this,this.nightmareLife);
+            this.nightmares.push(nightMare);
+        }
+        this.nightmareLife *= 1.2;
+        this.restantNightmare += numerNightmares;
+    }
+
+    checkWave(){
+        
+        if(this.nightmares.length <= 0){
+            this.placeNightmares(70);
+        }
+    }
 
     pause() {
         if (!this.isPaused) {
