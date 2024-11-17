@@ -1,8 +1,8 @@
 class MainCharacter extends Entity {
     constructor(x, y, game) {
         super(x, y, game);
-        this.width = 30;
-        this.height = 48;
+        this.width = 64;
+        this.height = 64;
 
         this.id = "player";
         this.speedMax = 10;
@@ -38,7 +38,8 @@ class MainCharacter extends Entity {
         this.sprite.play()
         this.container.addChild(this.sprite)
 
-        this.sprite.anchor.set(0.5, 1);
+        
+        this.sprite.anchor.set(0.5, 0.2);
         this.sprite.currentFrame = Math.floor(Math.random() * 8)
 
         this.ready = true
