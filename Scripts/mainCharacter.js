@@ -111,6 +111,8 @@ class MainCharacter extends Entity {
         this.handleSpriteDirection();
         this.changePlaySpeedOfAnimatedSprite();
 
+        this.rocksNear = this.findNearRocksUsingGrid();
+        this.encounterRocks();
     }
 
 
@@ -177,6 +179,7 @@ class MainCharacter extends Entity {
         this.game.gameOver();
     }
 
+    
 
 }
 

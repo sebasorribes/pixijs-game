@@ -16,6 +16,11 @@ class Game {
         this.attacks = []
         this.skills = { basic: 1, attack1: 0, attack2: 0, attack3: 0 }
 
+ 
+        this.scale = 1;
+
+       
+
         this.nightmares = [];
         this.keysPressed = {};
         let promise = this.app.init({ width: this.width, height: this.height });
@@ -29,10 +34,10 @@ class Game {
         })
     }
 
-    
-    
 
-    preload() {
+
+    
+    preload(){
 
         PIXI.Assets.load('sprites/background/fondo.png').then((texture) => {
             // Create a sprite from the loaded texture
@@ -49,7 +54,12 @@ class Game {
 
             // Add the background to the stage
             this.mainContainer.addChild(background);
+
+            
+
         })
+
+        
     }
 
     startGame() {
@@ -70,6 +80,7 @@ class Game {
         window.__PIXI_APP__ = this.app;
         this.listeners();
         this.grid = new Grid(this, this.cellSize);
+        this.rockManager = new RockManager(this, this.grid, this.cellSize, 10); // Borrar a la bosta si no funciona
         this.placePlayer();
         this.placeNightmares(70);
         this.app.ticker.add((e) => {
