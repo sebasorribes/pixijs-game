@@ -45,7 +45,6 @@ class Nightmare extends Entity {
         this.sprite.animationSpeed = Math.abs(this.velocidadX) * 0.1
     }
 
-
     update(actualFrame) {
         if (!this.isActive) return
         super.update();
@@ -57,6 +56,7 @@ class Nightmare extends Entity {
         this.Chase();
         this.nearAttacks = this.findNearAttacksUsingGrid();
         this.takeDamage(actualFrame, this.nearAttacks)
+
 
     }
 
