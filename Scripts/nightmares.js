@@ -1,12 +1,12 @@
 class Nightmare extends Entity {
-    constructor(x, y, game) {
+    constructor(x, y, game,life) {
         super(x, y, game);
 
         this.id = "Nightmare" + generateRandomID()
         this.width = 20;
         this.height = 10;
 
-        this.life = 200;
+        this.life =life;
         this.speedMax = 10;
         this.accMax = 2;
 
@@ -225,6 +225,10 @@ class Nightmare extends Entity {
                 this.lastFrameGodMode = actualFrame;
                 if (this.life <= 0) {
                     this.life = 0
+                    this.game.points += 20;
+                    this.game.restantNightmare--;
+                    console.log(this.game.restantNightmare)
+                    this.game.checkWave();
                     this.changeToDream();
                 }
 
