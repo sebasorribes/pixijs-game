@@ -67,8 +67,6 @@ class Entity {
         this.y += this.speed.y;
         this.checkLimitScreen();
 
-        //this.refreshPositionOnGrid();
-
         this.friction()
         this.refreshPositionOnGrid();
         this.nightmaresNear = this.findNearNightmaresUsingGrid();
@@ -122,7 +120,7 @@ class Entity {
 
             for (let i = 0; i < this.nearEntities.length; i++) {
                 let dep = this.nearEntities[i];
-                if (dep.id != "player" && dep != this) {
+                if (dep.id != "player" && (dep.id.substring(0,6) != "Attack") && dep != this) {
                     let dist = calcDistance(dep, this);
                     if (dist < this.vision) {
                         ret.push({ nightmare: dep, dist: dist });

@@ -2,7 +2,7 @@ class Nightmare extends Entity {
     constructor(x, y, game) {
         super(x, y, game);
 
-        this.id = generateRandomID()
+        this.id = "Nightmare" + generateRandomID()
         this.width = 20;
         this.height = 10;
 
@@ -10,7 +10,7 @@ class Nightmare extends Entity {
         this.speedMax = 10;
         this.accMax = 2;
 
-        
+
         this.factorGroup = 1;
         this.separationFactor = 84;
         this.limitToBeClose = 35;
@@ -21,7 +21,7 @@ class Nightmare extends Entity {
 
         this.godMoeTime = 10;
         this.isNightmare = true;
-        this.expGain =false; 
+        this.expGain = false;
         this.isActive = true;
 
         this.animatedSprite();
@@ -46,7 +46,6 @@ class Nightmare extends Entity {
     }
 
 
-
     update(actualFrame) {
         if (!this.isActive) return
         super.update();
@@ -58,6 +57,7 @@ class Nightmare extends Entity {
         this.Chase();
         this.nearAttacks = this.findNearAttacksUsingGrid();
         this.takeDamage(actualFrame, this.nearAttacks)
+
 
     }
 
@@ -168,11 +168,11 @@ class Nightmare extends Entity {
 
         let vectorToTarget = { x: game.player.x - this.x, y: game.player.y - this.y };
 
-        if(distance(this,this.game.player) > 500) return;
+        if (distance(this, this.game.player) > 500) return;
         // Normalizar el vector
         let normalizedVector = normalizeVector(vectorToTarget);
 
-        
+
         // El vector de velocidad para llegar al objetivo
         let normalizedWishSpeed = {
             x: normalizedVector.x * this.chaseFactor,
@@ -192,8 +192,25 @@ class Nightmare extends Entity {
         }
     }
 
-    takeDamage(actualFrame,attacks){
-        if(attacks.length == 0) return;
+    findNearAttacksUsingGrid() {
+        let ret = [];
+        if (this.cell) {
+            //let nearEntities = this.cell.getEntitiesHereAndCellsNear();
+
+            for (let i = 0; i < this.nearEntities.length; i++) {
+                let dep = this.nearEntities[i];
+                if (dep.id != "player" && dep.id.substring(0,9) != "Nightmare" && dep != this) {
+                    ret.push(dep);
+                }
+            }
+        } else {
+            return [];
+        }
+        return ret;
+    }
+
+    takeDamage(actualFrame, attacks) {
+        if (attacks.length == 0) return;
         for (let i = 0; i < attacks.length; i++) {
             let attack = attacks[i];
             if (
@@ -204,28 +221,28 @@ class Nightmare extends Entity {
             ) {
 
                 this.life -= attack.damage;
-                    this.godMode = true;
-                    this.lastFrameGodMode = actualFrame;
-                    if (this.life <= 0) {
-                        this.life = 0
-                        this.changeToDream();
-                    }
-                
+                this.godMode = true;
+                this.lastFrameGodMode = actualFrame;
+                if (this.life <= 0) {
+                    this.life = 0
+                    this.changeToDream();
+                }
+
             }
 
         }
     }
 
-    changeToDream(){
+    changeToDream() {
         this.isNightmare = false;
         this.container.removeChild(this.sprite)
         this.sprite = new PIXI.Graphics()
-            .rect(0,0,20,20)
+            .rect(0, 0, 20, 20)
             .fill(0xFFFFFF);
         this.container.addChild(this.sprite);
     }
 
-    destroy(){
+    destroy() {
         this.cell.delete(this);
         this.game.nightmares = this.game.nightmares.filter((k) => k.id != this.id);
         this.game.mainContainer.removeChild(this.container);
