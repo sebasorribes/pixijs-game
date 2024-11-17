@@ -21,6 +21,8 @@ class Nightmare extends Entity {
 
         this.godMoeTime = 10;
         this.isNightmare = true;
+        this.expGain =false; 
+        this.isActive = true;
 
         this.animatedSprite();
     }
@@ -45,7 +47,7 @@ class Nightmare extends Entity {
 
 
     update(actualFrame,attacks){
-
+        if(!this.isActive) return
         super.update();
         if(!this.isNightmare) return;
         
@@ -198,7 +200,6 @@ class Nightmare extends Entity {
                     attack
                 ) || distance(this, attack) <= 1
             ) {
-                console.log(this.life)
 
                 this.life -= attack.damage;
                     this.godMode = true;
@@ -222,6 +223,13 @@ class Nightmare extends Entity {
         this.container.addChild(this.sprite);
     }
 
-    
+    destroy(){
+        this.cell.delete(this);
+        this.game.nightmares = this.game.nightmares.filter((k) => k.id != this.id);
+        this.game.mainContainer.removeChild(this.container);
+        this.sprite.destroy();
+        this.container.destroy()
+        this.expGain = true;
+    }
 }
 

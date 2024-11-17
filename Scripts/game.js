@@ -7,11 +7,11 @@ class Game {
         this.backgroundSize = { x: this.cellSize * 18, y: this.cellSize * 12 }
         //this.background = this.preload()
 
-
         this.scale = 1;
 
 
         this.attacks = []
+        this.skills = { basic: 1, attack1: 0, attack2: 0, attack3: 0 }
         this.nightmares = [];
         this.keysPressed = {};
         let promise = this.app.init({ width: this.width, height: this.height });
@@ -108,12 +108,12 @@ class Game {
 
     makeBasic(actualFrames) {
         if (actualFrames % 60 == 0) {
-            let attack = new BasicSlashAttack(this.player, actualFrames);
+            let attack = new BasicSlashAttack(this.player, actualFrames, this.skills.basic);
             this.attacks.push(attack);
         }
 
         for (let attack of this.attacks) {
-            if ((actualFrames+1 - attack.lastFrameExecuted) % 5 == 0 && attack.type == "basic") {
+            if ((actualFrames + 1 - attack.lastFrameExecuted) % 5 == 0 && attack.type == "basic") {
                 attack.destroy();
                 this.attacks = this.attacks.filter((k) => k.id != attack.id);
             }
@@ -133,7 +133,7 @@ class Game {
             if (!this.isGameOver) {
                 nightmare.changeStateGodMode(frameCounter);
             }
-            nightmare.update(frameCounter,this.attacks);
+            nightmare.update(frameCounter, this.attacks);
             nightmare.render();
         }
     }
@@ -167,13 +167,13 @@ class Game {
             text: "Game Over", style: {
                 fontFamily: "Arial",
                 fontSize: 64,
-                fill: "#0720fa",
+                fill: "#00ff00",
                 align: "center"
             }
         });
         gameOverText.anchor.set(0.5);
         gameOverText.x = this.width / 2;
-        gameOverText.y = this.height / 2 + 120;
+        gameOverText.y = this.height / 2 + 25;
 
 
 
@@ -196,13 +196,207 @@ class Game {
         this.app.stage.addChild(this.gameOverMenu);
     }
 
-    buildlevelUpMenu(){
+    buildlevelUpMenu() {
+        this.app.ticker.stop();
         this.levelUpMenu = new PIXI.Graphics();
         this.levelUpMenu.clear();
-        this.levelUpMenu.beginFill("0x000000", 0.5);
+        this.levelUpMenu.beginFill("0x000000", 0.7);
         this.levelUpMenu.drawRect(0, 0, this.width, this.height);
         this.levelUpMenu.endFill()
 
+        const levelUpText = new PIXI.Text({
+            text: "Level up", style: {
+                fontFamily: "Arial",
+                fontSize: 64,
+                fill: "#0720fa",
+                align: "center"
+            }
+        });
+        levelUpText.anchor.set(0.5);
+        levelUpText.x = this.width / 2;
+        levelUpText.y = 50;
+
+        const basicAttack = new PIXI.Text({
+            text: "Scratch", style: {
+                fontFamily: "Arial",
+                fontSize: 28,
+                fill: "#0720fa",
+                align: "center"
+            }
+        });
+        basicAttack.anchor.set(0.5);
+        basicAttack.x = this.width / 2 - 30;
+        basicAttack.y = this.height / 2+10 ;
+
+        const basicAttackLevel = new PIXI.Text({
+            text: `${this.skills.basic}`, style: {
+                fontFamily: "Arial",
+                fontSize: 28,
+                fill: "#0720fa",
+                align: "center"
+            }
+        });
+        basicAttackLevel.anchor.set(0.5);
+        basicAttackLevel.x = this.width / 2 + 50;
+        basicAttackLevel.y = this.height / 2+10 ;
+
+        const basicAttackUp = new PIXI.Text({
+            text: `+`, style: {
+                fontFamily: "Arial",
+                fontSize: 30,
+                fill: "#0720fa",
+                align: "center"
+            }
+        });
+        basicAttackUp.anchor.set(0.5);
+        basicAttackUp.x = this.width / 2 + 80;
+        basicAttackUp.y = this.height / 2 +10 ;
+        basicAttackUp.interactive = true;
+        basicAttackUp.buttonMode = true;
+        basicAttackUp.on('pointerdown', () => this.upgradeSkill('basic'));
+
+        const attack1 = new PIXI.Text({
+            text: "Attack 1", style: {
+                fontFamily: "Arial",
+                fontSize: 28,
+                fill: "#0720fa",
+                align: "center"
+            }
+        });
+        attack1.anchor.set(0.5);
+        attack1.x = this.width / 2 -30 ;
+        attack1.y = this.height / 2 + 50;
+
+        const attack1Level = new PIXI.Text({
+            text: `${this.skills.attack1}`, style: {
+                fontFamily: "Arial",
+                fontSize: 28,
+                fill: "#0720fa",
+                align: "center"
+            }
+        });
+        attack1Level.anchor.set(0.5);
+        attack1Level.x = this.width / 2 + 50;
+        attack1Level.y = this.height / 2 + 50;
+
+        const attack1Up = new PIXI.Text({
+            text: "+", style: {
+                fontFamily: "Arial",
+                fontSize: 30,
+                fill: "#0720fa",
+                align: "center"
+            }
+        });
+        attack1Up.anchor.set(0.5);
+        attack1Up.x = this.width / 2 + 80;
+        attack1Up.y = this.height / 2 + 50;
+        attack1Up.interactive = true;
+        attack1Up.buttonMode = true;
+        attack1Up.on('pointerdown', () => this.upgradeSkill('attack1'));
+
+        const attack2 = new PIXI.Text({
+            text: "Attack 2", style: {
+                fontFamily: "Arial",
+                fontSize: 28,
+                fill: "#0720fa",
+                align: "center"
+            }
+        });
+        attack2.anchor.set(0.5);
+        attack2.x = this.width / 2 - 30;
+        attack2.y = this.height / 2 + 90;
+
+        const attack2Level = new PIXI.Text({
+            text: `${this.skills.attack2}`, style: {
+                fontFamily: "Arial",
+                fontSize: 28,
+                fill: "#0720fa",
+                align: "center"
+            }
+        });
+        attack2Level.anchor.set(0.5);
+        attack2Level.x = this.width / 2 + 50;
+        attack2Level.y = this.height / 2 + 90;
+
+        const attack2Up = new PIXI.Text({
+            text: `+`, style: {
+                fontFamily: "Arial",
+                fontSize: 30,
+                fill: "#0720fa",
+                align: "center"
+            }
+        });
+        attack2Up.anchor.set(0.5);
+        attack2Up.x = this.width / 2 + 80;
+        attack2Up.y = this.height / 2 + 90;
+        attack2Up.interactive = true;
+        attack2Up.buttonMode = true;
+        attack2Up.on('pointerdown', () => this.upgradeSkill('attack2'));
+
+        const attack3 = new PIXI.Text({
+            text: "Attack 3", style: {
+                fontFamily: "Arial",
+                fontSize: 28,
+                fill: "#0720fa",
+                align: "center"
+            }
+        });
+        attack3.anchor.set(0.5);
+        attack3.x = this.width / 2 - 30;
+        attack3.y = this.height / 2 + 130;
+
+        const attack3Level = new PIXI.Text({
+            text: `${this.skills.attack2}`, style: {
+                fontFamily: "Arial",
+                fontSize: 28,
+                fill: "#0720fa",
+                align: "center"
+            }
+        });
+        attack3Level.anchor.set(0.5);
+        attack3Level.x = this.width / 2 + 50;
+        attack3Level.y = this.height / 2 + 130;
+
+        const attack3Up = new PIXI.Text({
+            text: `+`, style: {
+                fontFamily: "Arial",
+                fontSize: 28,
+                fill: "#0720fa",
+                align: "center"
+            }
+        });
+        attack3Up.anchor.set(0.5);
+        attack3Up.x = this.width / 2 + 80;
+        attack3Up.y = this.height / 2 + 130;
+        attack3Up.interactive = true;
+        attack3Up.buttonMode = true;
+        attack3Up.on('pointerdown', () => this.upgradeSkill('attack3'));
+
+        this.levelUpMenu.addChild(levelUpText);
+        this.levelUpMenu.addChild(basicAttack);
+        this.levelUpMenu.addChild(basicAttackLevel);
+        if (this.skills.basic < 3) this.levelUpMenu.addChild(basicAttackUp);
+        this.levelUpMenu.addChild(attack1);
+        this.levelUpMenu.addChild(attack1Level);
+        if (this.skills.attack1 < 3) this.levelUpMenu.addChild(attack1Up);
+        this.levelUpMenu.addChild(attack2);
+        this.levelUpMenu.addChild(attack2Level);
+        if (this.skills.attack2 < 3) this.levelUpMenu.addChild(attack2Up);
+        this.levelUpMenu.addChild(attack3);
+        this.levelUpMenu.addChild(attack3Level);
+        if (this.skills.attack3 < 3) this.levelUpMenu.addChild(attack3Up);
+
+        this.app.stage.addChild(this.levelUpMenu);
+
+    }
+
+    upgradeSkill(skill) {
+        if (this.skills[skill] < 3) { // Verifica que la habilidad no esté en el máximo nivel 
+            this.skills[skill]++;
+            console.log(`Habilidad ${skill} mejorada a nivel ${this.skills[skill]}`);
+        }
+        this.app.stage.removeChild(this.levelUpMenu);
+        this.app.ticker.start();
     }
 
     showGameOverMenu() {
