@@ -67,3 +67,12 @@ function isOverlap(rect1, rect2) {
 
     return isOverlapping;
 }
+
+// Nueva función para generar posiciones aleatorias // NUEVO
+function generateRandomPosition(width, height) {
+    // Genera una posición aleatoria dentro de las dimensiones del juego
+    const x = Math.random() * width;
+    const y = Math.random() * height;
+
+    return { x, y };
+}

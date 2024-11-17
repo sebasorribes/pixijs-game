@@ -44,7 +44,7 @@ class Nightmare extends Entity {
 
 
     update(){
-
+        super.update();
         this.nightmaresNear = this.findNightmaresNear();
 
         this.cohesion(this.nightmaresNear);
@@ -52,7 +52,7 @@ class Nightmare extends Entity {
         this.alignment(this.nightmaresNear);
         this.Chase();
 
-        super.update();
+        
     }
 
     findNearNightmaresUsingGrid() {
