@@ -155,8 +155,9 @@ class Game {
     
 
     moveCamera() {
-        this.mainContainer.pivot.x = this.player.x - (window.innerWidth / 2.4) / this.scale;
-        this.mainContainer.pivot.y = this.player.y - (window.innerHeight / 2.4) / this.scale;
+
+        this.mainContainer.pivot.x = lerp(this.mainContainer.pivot.x, this.player.x - window.innerWidth / 2 / this.scale , 0.1);
+        this.mainContainer.pivot.y = lerp(this.mainContainer.pivot.y, this.player.y - window.innerHeight / 2 / this.scale, 0.1);
 
         this.mainContainer.scale.set(this.scale);
     }

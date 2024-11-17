@@ -42,7 +42,7 @@ function calcDistance(obj1, obj2) {
     // let dist = distancia(obj1, obj2);
     // this.distanceLookUpTable.set(obj1, obj2, dist);
     // return dist;
-  }
+}
 
 function normalizeVector(vector) {
     // Calcula la magnitud del vector
@@ -96,3 +96,8 @@ function mixArray(array) {
     return array;
 }
 
+function lerp(a, b, t) {
+    t = Math.max(0, Math.min(1, t));
+
+    return a + (b - a) * t;
+}
