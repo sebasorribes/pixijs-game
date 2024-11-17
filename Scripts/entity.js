@@ -13,13 +13,45 @@ class Entity {
         this.game.mainContainer.addChild(this.container);
 
         this.cell;
+        this.nearEntities = [];
+
+        this.vision = 100;
+        this.ready = false;
+
+        this.godMode = false;
+        this.lastFrameGodMode=0;
 
         this.speed = { x: 0, y: 0 };
         this.acc = { x: 0, y: 0 };
     }
 
+    checkLimitScreen() {
+        let margin = 50
+        if (this.x > this.game.backgroundSize.x- margin) {
+            //margen derecho
+            this.speed.x = -Math.abs(this.speed.x)
+        } else if (this.x < margin) {
+            //margen izq
+            this.speed.x = Math.abs(this.speed.x)
+        }
+
+        if (this.y > this.game.backgroundSize.y - margin) {
+            this.speed.y = -Math.abs(this.speed.y)
+        } else if (this.y < margin) {
+            this.speed.y = Math.abs( this.speed.y)
+        }
+
+
+    }
+
+    changeStateGodMode(actualFrame) {
+        if (this.godMode && (actualFrame - this.lastFrameGodMode) % this.godModeTime == 0) {
+            this.godMode = false;
+        }
+    }
+
     update() {
-        if (!this.listo) return
+        if (!this.ready) return
 
         this.acc = limitMagnitude(this.acc, this.accMax);
         this.speed.x += this.acc.x;
@@ -33,10 +65,13 @@ class Entity {
 
         this.x += this.speed.x;
         this.y += this.speed.y;
+        this.checkLimitScreen();
 
         //this.refreshPositionOnGrid();
-        
+
         this.friction()
+        this.refreshPositionOnGrid();
+        this.nightmaresNear = this.findNearNightmaresUsingGrid();
     }
 
     applyForce(x, y) {
@@ -60,15 +95,6 @@ class Entity {
         this.container.zIndex = this.y
     }
 
-    destruction() {
-        if (this.sprite) {
-            this.sprite.destroy(); // Destruir el sprite animado
-        }
-        if (this.container) {
-            this.container.destroy({ children: true }); // Destruir el contenedor y sus hijos
-        }
-    }
-
     InTheSameCellPreviousFrame() {
         if (isNaN(this.xPrevious) || isNaN(this.yPrevious)) return false;
 
@@ -87,5 +113,26 @@ class Entity {
 
     refreshPositionOnGrid() {
         this.game.grid.updateEntityPosition(this);
+    }
+
+    findNearNightmaresUsingGrid() {
+        let ret = [];
+        if (this.cell) {
+            //let nearEntities = this.cell.getEntitiesHereAndCellsNear();
+
+            for (let i = 0; i < this.nearEntities.length; i++) {
+                let dep = this.nearEntities[i];
+                if (dep.id != "player" && dep != this) {
+                    let dist = calcDistance(dep, this);
+                    if (dist < this.vision) {
+                        ret.push({ nightmare: dep, dist: dist });
+                    }
+                }
+            }
+        } else {
+            return [];
+        }
+        
+        return ret;
     }
 }

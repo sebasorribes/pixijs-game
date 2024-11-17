@@ -2,25 +2,29 @@ class MainCharacter extends Entity {
     constructor(x, y, game) {
         super(x, y, game);
         this.width = 30;
-        this.height = 30;
+        this.height = 48;
 
+        this.id = "player";
         this.speedMax = 10;
         this.accMax = 2;
-
-        this.listo = false;
 
         this.walkAcc = 1;
 
         this.life = 500;
-        this.godMode = false;
+        this.godModeTime = 2500000;
+
+        this.actualExp = 0;
+        this.actualLevel = 1;
+        this.lastExpFrame = 0;
+
 
         this.currentDirection = "front";
 
         this.animatedSprite();
-        
+
     }
 
-    async animatedSprite(){
+    async animatedSprite() {
         let json = await PIXI.Assets.load("./Sprites/moa/texture.json");
         this.animations = {
             front: json.animations["walkFront"],
@@ -34,16 +38,16 @@ class MainCharacter extends Entity {
         this.sprite.play()
         this.container.addChild(this.sprite)
 
-        this.sprite.anchor.set(0.5,1);
-        this.sprite.currentFrame = Math.floor(Math.random()*8)
+        this.sprite.anchor.set(0.5, 1);
+        this.sprite.currentFrame = Math.floor(Math.random() * 8)
 
-        this.listo = true
+        this.ready = true
     }
 
     changePlaySpeedOfAnimatedSprite() {
         try {
             this.sprite.animationSpeed = Math.sqrt(this.speed.x ** 2 + this.speed.y ** 2) * 0.1;
-            
+
         } catch (error) {
             console.log("no esta listo el sprite");
         }
@@ -51,11 +55,11 @@ class MainCharacter extends Entity {
 
     handleSpriteDirection() {
         let newDirection = this.currentDirection;
-    
+
         // Calcular la magnitud absoluta del movimiento en X y Y
         const absSpeedX = Math.abs(this.speed.x);
         const absSpeedY = Math.abs(this.speed.y);
-    
+
         // Si el movimiento horizontal es mayor al vertical
         if (absSpeedX > absSpeedY) {
             if (this.speed.x > 0) newDirection = "right";  // Movimiento hacia la derecha
@@ -65,23 +69,23 @@ class MainCharacter extends Entity {
             if (this.speed.y > 0) newDirection = "front";  // Movimiento hacia abajo
             else if (this.speed.y < 0) newDirection = "back";  // Movimiento hacia arriba
         }
-    
+
         // Cambiar la animación solo si la dirección es diferente
         if (newDirection !== this.currentDirection) {
             this.sprite.textures = this.animations[newDirection];
             this.sprite.play();
             this.currentDirection = newDirection;
         }
-    
+
         // Ajustar la dirección de escala para que el personaje mire hacia la izquierda/derecha
         if (newDirection === "right") this.sprite.scale.x = -1;
         else if (newDirection === "left") this.sprite.scale.x = 1;
     }
-    
+
 
     moveLeft() {
         this.applyForce(-this.walkAcc, 0);
-        
+
     }
     moveRight() {
         this.applyForce(this.walkAcc, 0);
@@ -100,50 +104,80 @@ class MainCharacter extends Entity {
         this.container.addChild(this.grafico);
     }
 
-    update() {
-        this.damaged();
+    update(actualFrames) {
+        if (!this.ready) return;
         super.update();
+        this.damaged(actualFrames);
         this.handleSpriteDirection();
         this.changePlaySpeedOfAnimatedSprite();
-        this.godTime -= 1;
+
     }
 
-    damaged() {
-        for (let i = 0; i < this.game.nightmares.length; i++) {
-            let enemy = this.game.nightmares[i];
 
+
+
+    damaged(actualFrame) {
+        for (let i = 0; i < this.nightmaresNear.length; i++) {
+            let enemy = this.nightmaresNear[i].nightmare;
             if (
                 isOverlap(
                     { ...this, y: this.y, x: this.x },
                     enemy
-                )
+                ) || distance(this, enemy) <= 1
             ) {
-                if (! this.godMode) {
-                    this.life -= 25;
-                    this.changeStateGodMode();
-                    if (this.life <= 0) {
-                        this.gameOver();
+                if (enemy.isNightmare) {
+                    if (!this.godMode) {
+                        this.life -= 25;
+                        this.godMode = true;
+                        this.lastFrameGodMode = actualFrame;
+                        if (this.life <= 0) {
+                            this.gameOver();
+                        }
                     }
+                } else {
+
+                    if (!enemy.gainExp) {
+                        enemy.destroy(this);
+                        this.gainExp(actualFrame);
+                    }
+
                 }
             }
 
         }
     }
 
-    changeStateGodMode(){
-        this.godMode = true;
+    gainExp(actualFrame) {
+        // console.log(actualFrame)
+        // console.log(this.lastExpFrame)
+        this.lastExpFrame = actualFrame;
+        this.actualExp += 200;
+        if (this.actualExp >= 500 * this.actualLevel) {
+            this.actualExp = 0;
+            this.levelUp();
+        }
 
-        // Desactivar God Mode después de medio segundo
-        setTimeout(() => {
-            this.godMode = false;
-        }, 500); 
+    }
+
+    levelUp() {
+        this.actualLevel++;
+        if (this.game.skills.basic < 3 ||
+            this.game.skills.attack1 < 3 ||
+            this.game.skills.attack2 < 3 ||
+            this.game.skills.attack3 < 3
+        ) {
+            this.game.buildlevelUpMenu();
+        } else {
+            this.life += 20;
+        }
+
     }
 
     gameOver() {
         this.game.gameOver();
     }
 
-    
+
 }
 
 
