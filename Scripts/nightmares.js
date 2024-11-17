@@ -199,7 +199,7 @@ class Nightmare extends Entity {
 
             for (let i = 0; i < this.nearEntities.length; i++) {
                 let dep = this.nearEntities[i];
-                if (dep.id != "player" && dep.id.substring(0,9) != "Nightmare" && dep != this) {
+                if (dep.id.substring(0,6) == "Attack" && dep != this) {
                     ret.push(dep);
                 }
             }

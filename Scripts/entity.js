@@ -70,6 +70,8 @@ class Entity {
         this.friction()
         this.refreshPositionOnGrid();
         this.nightmaresNear = this.findNearNightmaresUsingGrid();
+        this.findNearRocksUsingGrid();
+        this.encounterRocks();
     }
 
     applyForce(x, y) {
@@ -120,7 +122,7 @@ class Entity {
 
             for (let i = 0; i < this.nearEntities.length; i++) {
                 let dep = this.nearEntities[i];
-                if (dep.id != "player" && (dep.id.substring(0,6) != "Attack") && dep != this) {
+                if ( (dep.id.substring(0,9) == "Nightmare") && dep != this) {
                     let dist = calcDistance(dep, this);
                     if (dist < this.vision) {
                         ret.push({ nightmare: dep, dist: dist });
@@ -132,5 +134,39 @@ class Entity {
         }
         
         return ret;
+    }
+
+    findNearRocksUsingGrid() {
+        let ret = [];
+        if (this.cell) {
+            //let nearEntities = this.cell.getEntitiesHereAndCellsNear();
+
+            for (let i = 0; i < this.nearEntities.length; i++) {
+                let dep = this.nearEntities[i];
+                if ((dep.id.substring(0, 4) == "rock") && dep != this) {
+                    ret.push(dep);
+
+                }
+            }
+        } else {
+            return [];
+        }
+
+        return ret;
+    }
+
+    encounterRocks() {
+        for (let i = 0; i < this.rocksNear.length; i++) {
+            let rock = this.rocksNear[i];
+            if (
+                isOverlap(
+                    { ...this, y: this.y, x: this.x },
+                    rock
+                ) || distance(this, rock) <= 1
+            ) {
+                console.log("roquita");
+            }
+
+        }
     }
 }

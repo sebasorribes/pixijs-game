@@ -54,7 +54,12 @@ class Game {
 
             // Add the background to the stage
             this.mainContainer.addChild(background);
+
+            
+
         })
+
+        
     }
 
     startGame() {
@@ -75,6 +80,7 @@ class Game {
         window.__PIXI_APP__ = this.app;
         this.listeners();
         this.grid = new Grid(this, this.cellSize);
+        this.rockManager = new RockManager(this, this.grid, this.cellSize, 10); // Borrar a la bosta si no funciona
         this.placePlayer();
         this.placeNightmares(70);
         this.app.ticker.add((e) => {
