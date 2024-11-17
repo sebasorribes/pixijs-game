@@ -1,5 +1,6 @@
 class Game {
     constructor() {
+        
         this.app = new PIXI.Application();
         this.cellSize = 180; //VER
         this.width = window.innerWidth;
@@ -7,14 +8,20 @@ class Game {
         this.backgroundSize = { x: this.cellSize * 18, y: this.cellSize * 12 }
         //this.background = this.preload()
 
-        this.scale = 1;
 
+ 
+        this.scale = 1;
+      
 
         this.attacks = []
         this.skills = { basic: 1, attack1: 0, attack2: 0, attack3: 0 }
+
         this.nightmares = [];
         this.keysPressed = {};
         let promise = this.app.init({ width: this.width, height: this.height });
+
+        
+
 
         this.app.stage.sortableChildren = true;
         promise.then(e => {
@@ -22,7 +29,11 @@ class Game {
         })
     }
 
+    
+    
+
     preload() {
+
         PIXI.Assets.load('sprites/background/fondo.png').then((texture) => {
             // Create a sprite from the loaded texture
             const background = new PIXI.Sprite(texture);
@@ -423,6 +434,9 @@ class Game {
         }
         this.nightmares = [];
     }
+
+ 
+
     pause() {
         if (!this.isPaused) {
             this.app.ticker.stop();
@@ -432,4 +446,6 @@ class Game {
             this.isPaused = false;
         }
     }
+
+    
 }
