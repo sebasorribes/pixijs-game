@@ -30,6 +30,20 @@ function distance(obj1, obj2) {
     return Math.sqrt((obj1.x - obj2.x) ** 2 + (obj1.y - obj2.y) ** 2);
 }
 
+function calcDistance(obj1, obj2) {
+    if (obj1.id == obj2.id) return 0;
+    return distance(obj1, obj2);
+
+    // let distLookUpTable = this.distanceLookUpTable.get(obj1, obj2);
+    // if (distLookUpTable) {
+    //   return distLookUpTable;
+    // }
+
+    // let dist = distancia(obj1, obj2);
+    // this.distanceLookUpTable.set(obj1, obj2, dist);
+    // return dist;
+  }
+
 function normalizeVector(vector) {
     // Calcula la magnitud del vector
     const magnitude = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
@@ -68,11 +82,17 @@ function isOverlap(rect1, rect2) {
     return isOverlapping;
 }
 
-// Nueva función para generar posiciones aleatorias // NUEVO
-function generateRandomPosition(width, height) {
-    // Genera una posición aleatoria dentro de las dimensiones del juego
-    const x = Math.random() * width;
-    const y = Math.random() * height;
 
-    return { x, y };
+
+function arrayUnique(arr) {
+    return [...new Set(arr)];
 }
+
+function mixArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
