@@ -167,8 +167,7 @@ class MainCharacter extends Entity {
         this.actualLevel++;
         if (this.game.skills.basic < 3 ||
             this.game.skills.attack1 < 3 ||
-            this.game.skills.attack2 < 3 ||
-            this.game.skills.attack3 < 3
+            this.game.skills.attack2 < 3
         ) {
             this.game.buildlevelUpMenu();
         } else {
