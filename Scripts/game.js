@@ -104,6 +104,7 @@ class Game {
         this.frameCounter = 0;
         this.isPaused = false;
         this.isGameOver = false;
+        this.inMap = 70;
 
         document.body.appendChild(this.app.canvas);
         window.__PIXI_APP__ = this.app;
@@ -476,7 +477,7 @@ class Game {
     }
 
     placeNightmares(numerNightmares = 10) {
-        for (let i = 0; i <= numerNightmares; i++) {
+        for (let i = 0; i < numerNightmares; i++) {
             let nightMare = new Nightmare(Math.random() * this.backgroundSize.x, Math.random() * this.backgroundSize.y, this, this.nightmareLife);
             this.nightmares.push(nightMare);
         }
@@ -485,9 +486,10 @@ class Game {
     }
 
     checkWave() {
-
-        if (this.nightmares.length <= 0) {
+        this.inMap --
+        if (this.inMap == 0) {
             this.placeNightmares(70);
+            this.inMap = 70;
         }
     }
 
