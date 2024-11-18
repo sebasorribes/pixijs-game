@@ -47,6 +47,7 @@ class Nightmare extends Entity {
 
 
     update(actualFrame) {
+        if(!this.ready) return
         if (!this.isActive) return
         super.update();
         if (!this.isNightmare) return;
@@ -227,8 +228,6 @@ class Nightmare extends Entity {
                     this.life = 0
                     this.game.points += 20;
                     this.game.restantNightmare--;
-                    console.log(this.game.restantNightmare)
-                    this.game.checkWave();
                     this.changeToDream();
                 }
 
@@ -239,6 +238,7 @@ class Nightmare extends Entity {
 
     changeToDream() {
         this.isNightmare = false;
+        this.game.checkWave();
         this.container.removeChild(this.sprite)
         this.sprite = new PIXI.Graphics()
             .rect(0, 0, 20, 20)

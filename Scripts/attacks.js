@@ -95,13 +95,13 @@ class BasicSlashAttack extends Attack {
     position(playerDirection) {
         if (playerDirection == "right" || playerDirection == "left") {
             // Posicionar el ataque frente al personaje
-            this.x = this.character.x + (playerDirection == "right" ? 100 : -200); // Ajusta según la dirección
+            this.x = this.character.x + (playerDirection == "right" ? 30 : -60); // Ajusta según la dirección
             this.y = this.character.y - 50;
 
         } else {
             // Posicionar el ataque frente al personaje
             this.x = this.character.x - 50;
-            this.y = this.character.y + (playerDirection == "front" ? 100 : -200); // Ajusta según la dirección
+            this.y = this.character.y + (playerDirection == "front" ? 60 : -30); // Ajusta según la dirección
         }
     }
 
