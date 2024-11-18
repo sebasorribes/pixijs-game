@@ -52,7 +52,7 @@ class Rock {
 
     refreshPositionOnGrid() {
         this.game.grid.updateEntityPosition(this);
-    }
+}
 
     InTheSameCellPreviousFrame() {
         if (isNaN(this.xPrevious) || isNaN(this.yPrevious)) return false;

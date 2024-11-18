@@ -165,6 +165,7 @@ class Entity {
                 ) || distance(this, rock) <= 1
             ) {
                 console.log("roquita");
+                this.applyForce(-this.speed.x, -this.speed.y); 
             }
 
         }
