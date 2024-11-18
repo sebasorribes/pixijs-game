@@ -70,7 +70,7 @@ class Entity {
         this.friction()
         this.refreshPositionOnGrid();
         this.nightmaresNear = this.findNearNightmaresUsingGrid();
-        this.findNearRocksUsingGrid();
+        this.rocksNear = this.findNearRocksUsingGrid();
         this.encounterRocks();
     }
 

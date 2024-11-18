@@ -6,14 +6,6 @@ class Attack {
         this.character = player;
         this.game = player.game;
         this.active = true;
-        if (player.currentDirection == "right" || player.currentDirection == "left") {
-            this.width = 20;
-            this.height = 100;
-
-        } else {
-            this.width = 100;
-            this.height = 20;
-        }
 
         this.container = new PIXI.Container();
         this.container.name = "mainContainer"
@@ -36,7 +28,7 @@ class Attack {
         this.sprite.destroy();
         this.container.destroy();
         this.game.mainContainer.removeChild(this.container); // Eliminar del contenedor principal
-        this.game.attacks = this.game.attacks.filter((k) => k.id =! this.id)
+        this.game.attacks = this.game.attacks.filter((k) => k.id != this.id)
         //console.log("Ataque destruido");
     }
 
@@ -62,13 +54,23 @@ class Attack {
 }
 
 class BasicSlashAttack extends Attack {
-    constructor(player, initialExecutionFrame, actualLevel) {
+    constructor(player, initialExecutionFrame, actualLevel,direction) {
         super(player, initialExecutionFrame);
         this.damage = 25 * actualLevel;
         this.type = "basic";
 
+        if (direction == "right" || direction == "left") {
+            this.width = 20;
+            this.height = 100;
+
+        } else {
+            this.width = 100;
+            this.height = 20;
+        }
+
         this.makeSprite();
-        this.position(this.character.currentDirection);
+        
+        this.position(direction);
         this.game.mainContainer.addChild(this.container);
         this.refreshPositionOnGrid();
         this.render();
@@ -80,6 +82,14 @@ class BasicSlashAttack extends Attack {
             .rect(0, 0, this.width, this.height)
             .fill(0xff0000);
         this.container.addChild(this.sprite);
+    }
+
+    makeSecondSprite() {
+        // Crear el sprite del ataque (puedes usar una textura)
+        this.sprite2 = new PIXI.Graphics()
+            .rect(0, 0, this.width, this.height)
+            .fill(0xff0000);
+        this.container.addChild(this.sprite2);
     }
 
     position(playerDirection) {
@@ -101,4 +111,111 @@ class BasicSlashAttack extends Attack {
     }
 
 
+}
+
+class FishStrike extends Attack {
+    constructor(player, initialExecutionFrame, actualLevel,velocityX) {
+        super(player, initialExecutionFrame);
+        this.damage = 50 * actualLevel;
+        this.type = "fishStrike";
+        this.velocityY = -15;
+        this.velocityX = velocityX;
+        this.gravity = 0.5;
+        this.width = 20;
+        this.height = 20;
+
+        this.makeSprite();
+        this.game.mainContainer.addChild(this.container);
+        this.render();
+    }
+
+    makeSprite() {
+        // Crear el sprite del ataque (puedes usar una textura)
+        this.sprite = new PIXI.Graphics()
+            .rect(0, 0, this.width, this.height)
+            .fill(0xff0000);
+        this.container.addChild(this.sprite);
+    }
+
+    update() {
+        if (!this.active) return;
+        this.y += this.velocityY;
+        this.x += this.velocityX;
+        this.velocityY += this.gravity; // Aplicar gravedad 
+        if (this.y > this.game.backgroundSize.y + 30) {
+            this.destroy(); // Destruir el ataque si cae fuera del juego 
+            return;
+        }
+        this.render();
+        this.refreshPositionOnGrid();
+    }
+
+    render() {
+        this.container.x = this.x
+        this.container.y = this.y
+    }
+}
+
+class StoneTrailAttack extends Attack {
+    constructor(player, initialExecutionFrame) {
+        super(player, initialExecutionFrame);
+        this.damage = 14; // Daño del ataque 
+        this.type = "stoneTrail";
+        this.width = 25;
+        this.height = 25;
+        this.duration = 45 ; // Duración en frames antes de desaparecer 
+        this.trail = []; // Almacenar las posiciones de las piedras 
+        this.createTrail();
+        this.game.mainContainer.addChild(this.container);
+        this.refreshPositionOnGrid();
+    }
+
+    createTrail() {
+        let stone = new PIXI.Graphics().beginFill(0x8B4513) // Color marrón para las piedras 
+            .drawRect(0, 0, this.width, this.height)
+            .endFill();
+        stone.x = this.character.x;
+        stone.y = this.character.y;
+        this.trail.push({ stone, frame: 0 });
+        this.container.addChild(stone);
+    }
+
+    update(actualFrames, actualLevel) {
+        if (!this.active) return; // Crear nuevas piedras 
+        if (actualLevel > 2) {
+            this.damage = 20;
+            this.width = 50;
+            this.height = 50;
+            this.duration = 65; // Duración en frames antes de desaparecer 
+        }
+        if (actualFrames % 30 === 0) { // Ajustar la frecuencia de creación de piedras 
+            this.createTrail();
+        } // Actualizar y eliminar piedras según su duración 
+        this.trail.forEach((stoneData, index) => {
+            stoneData.frame++;
+            if (stoneData.frame >= this.duration) {
+                this.container.removeChild(stoneData.stone);
+                this.trail.splice(index, 1);
+            }
+        });
+        this.render();
+        this.refreshPositionOnGrid();
+    }
+    render() {
+        this.trail.forEach(stoneData => {
+            stoneData.stone.x = stoneData.stone.x;
+            stoneData.stone.y = stoneData.stone.y;
+        });
+    }
+
+    destroy() {
+        if (!this.active) return;
+        this.active = false;
+        this.trail.forEach(stoneData => {
+            this.container.removeChild(stoneData.stone);
+        });
+        this.container.destroy();
+        this.game.mainContainer.removeChild(this.container);
+        this.cell.delete(this)
+    }
 }
