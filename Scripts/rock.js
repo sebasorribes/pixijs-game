@@ -39,7 +39,6 @@ class Rock {
             sprite.y = this.y;
        
             sprite.anchor.set(0.5, 1); // Centrado de la roca
-            console.log(sprite)
             this.container.addChild(sprite);  // Agregar el sprite al escenario
 
 

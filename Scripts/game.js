@@ -1,6 +1,6 @@
 class Game {
     constructor() {
-        
+
         this.app = new PIXI.Application();
         this.cellSize = 180; //VER
         this.width = window.innerWidth;
@@ -8,18 +8,20 @@ class Game {
         this.backgroundSize = { x: this.cellSize * 18, y: this.cellSize * 12 }
         //this.background = this.preload()
 
-
- 
         this.scale = 1;
-      
+
 
         this.attacks = []
-        this.skills = { basic: 1, attack1: 0, attack2: 0, attack3: 0 }
+        this.skills = { basic: 1, attack1: 0, attack2: 0 }
 
- 
+
         this.scale = 1;
 
-       
+
+        // Cargar la música de fondo
+        this.backgroundMusic = new Audio('Sound/Babymetal-ijime,dame,zettai.mp3');
+        this.backgroundMusic.loop = true;
+        this.backgroundMusic.volume = 0.05;;
 
         this.nightmares = [];
         this.keysPressed = {};
@@ -30,14 +32,41 @@ class Game {
 
         this.app.stage.sortableChildren = true;
         promise.then(e => {
-            this.startGame()
+            this.createStartButton()
         })
     }
 
+    createStartButton() {
+        const startButton = document.createElement('button');
+        startButton.textContent = "Start Game";
+        startButton.style.position = "absolute";
+        startButton.style.top = "50%";
+        startButton.style.left = "50%";
+        startButton.style.transform = "translate(-50%, -50%)";
+        startButton.style.padding = "15px 30px";
+        startButton.style.fontSize = "20px";
+        startButton.style.backgroundColor = "#FF5733";
+        startButton.style.color = "#FFFFFF";
+        startButton.style.border = "none";
+        startButton.style.cursor = "pointer";
+        startButton.style.borderRadius = "10px";
+        document.body.appendChild(startButton);
 
+        startButton.addEventListener('click', () => {
+            // Reproducir música de fondo
+            this.backgroundMusic.play().then(() => {
+                console.log("Música de fondo iniciada");
+            }).catch(error => {
+                console.error("Error al reproducir música:", error);
+            });
 
-    
-    preload(){
+            // Eliminar botón y empezar el juego
+            document.body.removeChild(startButton);
+            this.startGame();
+        });
+    }
+
+    preload() {
 
         PIXI.Assets.load('sprites/background/fondo.png').then((texture) => {
             // Create a sprite from the loaded texture
@@ -55,11 +84,11 @@ class Game {
             // Add the background to the stage
             this.mainContainer.addChild(background);
 
-            
+
 
         })
 
-        
+
     }
 
     startGame() {
@@ -83,6 +112,8 @@ class Game {
         this.rockManager = new RockManager(this, this.grid, this.cellSize, 10); // Borrar a la bosta si no funciona
         this.placePlayer();
         this.placeNightmares(70);
+
+
         this.app.ticker.add((e) => {
             this.gameLoop(e);
         });
@@ -113,6 +144,7 @@ class Game {
     }
 
     gameLoop() {
+
         if (this.player.ready) {
             this.frameCounter++;
             this.handleMovement();
@@ -125,13 +157,20 @@ class Game {
 
     makeAttacks(actualFrames) {
         this.makeBasic(actualFrames);
-
+        if (this.skills.attack1 >= 1) this.makeFishStrike(actualFrames);
+        if (this.skills.attack2 >= 1) this.makeStoneTrail(actualFrames);
     }
 
     makeBasic(actualFrames) {
-        if (actualFrames % 60 == 0) {
-            let attack = new BasicSlashAttack(this.player, actualFrames, this.skills.basic);
+        if (actualFrames % 45 == 0) {
+            let attack = new BasicSlashAttack(this.player, actualFrames, this.skills.basic, this.player.currentDirection);
             this.attacks.push(attack);
+            if (this.skills.basic > 2) {
+                console.log("entro")
+                let oppositeDirection = this.opposite();
+                let attack = new BasicSlashAttack(this.player, actualFrames, this.skills.basic, oppositeDirection);
+                this.attacks.push(attack);
+            }
         }
 
         for (let attack of this.attacks) {
@@ -139,6 +178,41 @@ class Game {
                 attack.destroy();
             }
         }
+    }
+
+    opposite(){
+        switch (this.player.currentDirection) {
+            case "right": return "left";
+            case "left": return "right";
+            case "front": return "back";
+            case "back": return "front";
+            default: return this.player.currentDirection;
+        }
+    }
+
+    makeFishStrike(actualFrames) {
+        if (actualFrames % 120 == 0) { // Ejecutar cada 120 frames (ajustable) 
+            let attack = new FishStrike(this.player, actualFrames, this.skills.attack1,1);
+            this.attacks.push(attack);
+            if(this.skills.attack1 > 2){
+                let attack = new FishStrike(this.player, actualFrames, this.skills.attack1,-1);
+                this.attacks.push(attack);
+            }
+        }
+        for (let attack of this.attacks) {
+            if (attack.type == "fishStrike") {
+                attack.update();
+            }
+        }
+    }
+
+    makeStoneTrail(actualFrames) {
+        let exists = this.attacks.some(attack => attack instanceof StoneTrailAttack);
+        if (!exists) {
+            let attack = new StoneTrailAttack(this.player, actualFrames, this.skills.attack2);
+            this.attacks.push(attack);
+        }
+        this.attacks.find(attack => attack instanceof StoneTrailAttack).update(actualFrames, this.skills.attack2);
     }
 
     playerLoop(frameCounter) {
@@ -163,11 +237,11 @@ class Game {
         this.player = new MainCharacter(this.backgroundSize.x / 2, this.backgroundSize.y / 2, this);
     }
 
-    
+
 
     moveCamera() {
 
-        this.mainContainer.pivot.x = lerp(this.mainContainer.pivot.x, this.player.x - window.innerWidth / 2 / this.scale , 0.1);
+        this.mainContainer.pivot.x = lerp(this.mainContainer.pivot.x, this.player.x - window.innerWidth / 2 / this.scale, 0.1);
         this.mainContainer.pivot.y = lerp(this.mainContainer.pivot.y, this.player.y - window.innerHeight / 2 / this.scale, 0.1);
 
         this.mainContainer.scale.set(this.scale);
@@ -234,7 +308,7 @@ class Game {
         levelUpText.y = 50;
 
         const basicAttack = new PIXI.Text({
-            text: "Scratch", style: {
+            text: "Arañazo", style: {
                 fontFamily: "Arial",
                 fontSize: 28,
                 fill: "#0720fa",
@@ -243,7 +317,7 @@ class Game {
         });
         basicAttack.anchor.set(0.5);
         basicAttack.x = this.width / 2 - 30;
-        basicAttack.y = this.height / 2+10 ;
+        basicAttack.y = this.height / 2 + 10;
 
         const basicAttackLevel = new PIXI.Text({
             text: `${this.skills.basic}`, style: {
@@ -255,7 +329,7 @@ class Game {
         });
         basicAttackLevel.anchor.set(0.5);
         basicAttackLevel.x = this.width / 2 + 50;
-        basicAttackLevel.y = this.height / 2+10 ;
+        basicAttackLevel.y = this.height / 2 + 10;
 
         const basicAttackUp = new PIXI.Text({
             text: `+`, style: {
@@ -267,13 +341,13 @@ class Game {
         });
         basicAttackUp.anchor.set(0.5);
         basicAttackUp.x = this.width / 2 + 80;
-        basicAttackUp.y = this.height / 2 +10 ;
+        basicAttackUp.y = this.height / 2 + 10;
         basicAttackUp.interactive = true;
         basicAttackUp.buttonMode = true;
         basicAttackUp.on('pointerdown', () => this.upgradeSkill('basic'));
 
         const attack1 = new PIXI.Text({
-            text: "Attack 1", style: {
+            text: "Pescadazo", style: {
                 fontFamily: "Arial",
                 fontSize: 28,
                 fill: "#0720fa",
@@ -281,7 +355,7 @@ class Game {
             }
         });
         attack1.anchor.set(0.5);
-        attack1.x = this.width / 2 -30 ;
+        attack1.x = this.width / 2 - 30;
         attack1.y = this.height / 2 + 50;
 
         const attack1Level = new PIXI.Text({
@@ -312,7 +386,7 @@ class Game {
         attack1Up.on('pointerdown', () => this.upgradeSkill('attack1'));
 
         const attack2 = new PIXI.Text({
-            text: "Attack 2", style: {
+            text: "Piedritas", style: {
                 fontFamily: "Arial",
                 fontSize: 28,
                 fill: "#0720fa",
@@ -350,44 +424,6 @@ class Game {
         attack2Up.buttonMode = true;
         attack2Up.on('pointerdown', () => this.upgradeSkill('attack2'));
 
-        const attack3 = new PIXI.Text({
-            text: "Attack 3", style: {
-                fontFamily: "Arial",
-                fontSize: 28,
-                fill: "#0720fa",
-                align: "center"
-            }
-        });
-        attack3.anchor.set(0.5);
-        attack3.x = this.width / 2 - 30;
-        attack3.y = this.height / 2 + 130;
-
-        const attack3Level = new PIXI.Text({
-            text: `${this.skills.attack2}`, style: {
-                fontFamily: "Arial",
-                fontSize: 28,
-                fill: "#0720fa",
-                align: "center"
-            }
-        });
-        attack3Level.anchor.set(0.5);
-        attack3Level.x = this.width / 2 + 50;
-        attack3Level.y = this.height / 2 + 130;
-
-        const attack3Up = new PIXI.Text({
-            text: `+`, style: {
-                fontFamily: "Arial",
-                fontSize: 28,
-                fill: "#0720fa",
-                align: "center"
-            }
-        });
-        attack3Up.anchor.set(0.5);
-        attack3Up.x = this.width / 2 + 80;
-        attack3Up.y = this.height / 2 + 130;
-        attack3Up.interactive = true;
-        attack3Up.buttonMode = true;
-        attack3Up.on('pointerdown', () => this.upgradeSkill('attack3'));
 
         this.levelUpMenu.addChild(levelUpText);
         this.levelUpMenu.addChild(basicAttack);
@@ -399,9 +435,6 @@ class Game {
         this.levelUpMenu.addChild(attack2);
         this.levelUpMenu.addChild(attack2Level);
         if (this.skills.attack2 < 3) this.levelUpMenu.addChild(attack2Up);
-        this.levelUpMenu.addChild(attack3);
-        this.levelUpMenu.addChild(attack3Level);
-        if (this.skills.attack3 < 3) this.levelUpMenu.addChild(attack3Up);
 
         this.app.stage.addChild(this.levelUpMenu);
 
@@ -422,6 +455,7 @@ class Game {
 
     gameOver() {
         this.app.ticker.stop();
+        this.backgroundMusic.stop();
         this.isGameOver = true;
         this.showGameOverMenu();
     }
@@ -443,16 +477,16 @@ class Game {
 
     placeNightmares(numerNightmares = 10) {
         for (let i = 0; i <= numerNightmares; i++) {
-            let nightMare = new Nightmare(Math.random() * this.backgroundSize.x, Math.random() * this.backgroundSize.y, this,this.nightmareLife);
+            let nightMare = new Nightmare(Math.random() * this.backgroundSize.x, Math.random() * this.backgroundSize.y, this, this.nightmareLife);
             this.nightmares.push(nightMare);
         }
         this.nightmareLife *= 1.2;
         this.restantNightmare += numerNightmares;
     }
 
-    checkWave(){
-        
-        if(this.nightmares.length <= 0){
+    checkWave() {
+
+        if (this.nightmares.length <= 0) {
             this.placeNightmares(70);
         }
     }
@@ -460,12 +494,14 @@ class Game {
     pause() {
         if (!this.isPaused) {
             this.app.ticker.stop();
+            this.backgroundMusic.pause()
             this.isPaused = true;
         } else {
             this.app.ticker.start();
+            this.backgroundMusic.play()
             this.isPaused = false;
         }
     }
 
-    
+
 }
