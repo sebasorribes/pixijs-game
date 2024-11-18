@@ -31,6 +31,7 @@ class MainCharacter extends Entity {
             back: json.animations["walkBack"],
             left: json.animations["walkLeft"],
             right: json.animations["walkRight"]
+            
         };
         this.sprite = new PIXI.AnimatedSprite(this.animations.front);
         this.sprite.animationSpeed = 0.1

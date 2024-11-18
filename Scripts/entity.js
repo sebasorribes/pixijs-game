@@ -70,7 +70,7 @@ class Entity {
         this.friction()
         this.refreshPositionOnGrid();
         this.nightmaresNear = this.findNearNightmaresUsingGrid();
-        this.findNearRocksUsingGrid();
+        this.rocksNear = this.findNearRocksUsingGrid();
         this.encounterRocks();
     }
 
@@ -165,6 +165,7 @@ class Entity {
                 ) || distance(this, rock) <= 1
             ) {
                 console.log("roquita");
+                this.applyForce(-this.speed.x, -this.speed.y); 
             }
 
         }
