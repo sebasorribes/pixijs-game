@@ -192,36 +192,55 @@ class FishStrike extends Attack {
 }
 
 class StoneTrailAttack extends Attack {
+    stoneTexture = null;
     constructor(player, initialExecutionFrame) {
         super(player, initialExecutionFrame);
         this.damage = 14; // Daño del ataque 
         this.type = "stoneTrail";
-        this.width = 25;
-        this.height = 25;
+        this.width = 50;
+        this.height = 50;
         this.duration = 45 ; // Duración en frames antes de desaparecer 
         this.trail = []; // Almacenar las posiciones de las piedras 
         this.container.name = this.type;
-        this.createTrail();
+        
+        if (!StoneTrailAttack.stoneTexture) {
+            PIXI.Assets.load('./Sprites/ataques/piedritas.png').then((texture) => {
+                StoneTrailAttack.stoneTexture = texture;
+                // Una vez cargada, crear el sprite
+                this.createTrail();
+            });
+        } else {
+            // Si la textura ya está cargada, crear el sprite de inmediato
+            this.createTrail();
+        }
+        
         this.game.mainContainer.addChild(this.container);
         this.refreshPositionOnGrid();
     }
 
     createTrail() {
-        let stone = new PIXI.Graphics().beginFill(0x8B4513) // Color marrón para las piedras 
-            .drawRect(0, 0, this.width, this.height)
-            .endFill();
-        stone.x = this.character.x;
-        stone.y = this.character.y;
-        this.trail.push({ stone, frame: 0 });
-        this.container.addChild(stone);
+         // Asegurarse de que la textura esté cargada antes de crear el sprite
+         if (StoneTrailAttack.stoneTexture) {
+            let stone = new PIXI.Sprite(StoneTrailAttack.stoneTexture);
+            stone.anchor.set(0.5, 0.5);
+            stone.x = this.character.x;
+            stone.y = this.character.y;
+            stone.width = this.width;
+            stone.height = this.height;
+
+            // Agregar el sprite al contenedor
+            console.log(stone);
+            this.trail.push({ stone, frame: 0 });
+            this.container.addChild(stone);
+        }
     }
 
     update(actualFrames, actualLevel) {
         if (!this.active) return; // Crear nuevas piedras 
         if (actualLevel > 2) {
             this.damage = 20;
-            this.width = 50;
-            this.height = 50;
+            this.width = 100;
+            this.height = 100;
             this.duration = 65; // Duración en frames antes de desaparecer 
         }
         if (actualFrames % 30 === 0) { // Ajustar la frecuencia de creación de piedras 

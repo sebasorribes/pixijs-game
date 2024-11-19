@@ -1,13 +1,13 @@
 class Game {
     constructor() {
-
+        
         this.app = new PIXI.Application();
         this.cellSize = 180; //VER
         this.width = window.innerWidth;
         this.height = window.innerHeight;
         this.backgroundSize = { x: this.cellSize * 18, y: this.cellSize * 12 }
         //this.background = this.preload()
-
+        
         this.scale = 1;
 
 
