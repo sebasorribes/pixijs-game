@@ -19,7 +19,7 @@ class Entity {
         this.ready = false;
 
         this.godMode = false;
-        this.lastFrameGodMode=0;
+        this.lastFrameGodMode = 0;
 
         this.speed = { x: 0, y: 0 };
         this.acc = { x: 0, y: 0 };
@@ -27,7 +27,7 @@ class Entity {
 
     checkLimitScreen() {
         let margin = 50
-        if (this.x > this.game.backgroundSize.x- margin) {
+        if (this.x > this.game.backgroundSize.x - margin) {
             //margen derecho
             this.speed.x = -Math.abs(this.speed.x)
         } else if (this.x < margin) {
@@ -38,7 +38,7 @@ class Entity {
         if (this.y > this.game.backgroundSize.y - margin) {
             this.speed.y = -Math.abs(this.speed.y)
         } else if (this.y < margin) {
-            this.speed.y = Math.abs( this.speed.y)
+            this.speed.y = Math.abs(this.speed.y)
         }
 
 
@@ -73,6 +73,7 @@ class Entity {
         this.rocksNear = this.findNearRocksUsingGrid();
         this.encounterRocks();
     }
+
 
     applyForce(x, y) {
         this.acc.x += x;
@@ -122,7 +123,7 @@ class Entity {
 
             for (let i = 0; i < this.nearEntities.length; i++) {
                 let dep = this.nearEntities[i];
-                if ( (dep.id.substring(0,9) == "Nightmare") && dep != this) {
+                if ((dep.id.substring(0, 9) == "Nightmare") && dep != this) {
                     let dist = calcDistance(dep, this);
                     if (dist < this.vision) {
                         ret.push({ nightmare: dep, dist: dist });
@@ -132,7 +133,7 @@ class Entity {
         } else {
             return [];
         }
-        
+
         return ret;
     }
 
@@ -159,17 +160,60 @@ class Entity {
         for (let i = 0; i < this.rocksNear.length; i++) {
             let rock = this.rocksNear[i];
             if (
-                isOverlap(
-                    { ...this, y: this.y, x: this.x },
-                    rock
-                ) || distance(this, rock) <= 1
+                distance(this, rock) < rock.radio * rock.radio
             ) {
-                console.log("roquita");
-                this.applyForce(-this.speed.x, -this.speed.y); 
+                if (this.x > rock.x) {
+                    //margen derecho
+                    this.speed.x = Math.abs(this.speed.x)
+                } else if (this.x < rock.x) {
+                    //margen izq
+                    this.speed.x = -Math.abs(this.speed.x)
+                }
+        
+                if (this.y > rock.y) {
+                    this.speed.y = Math.abs(this.speed.y)
+                } else if (this.y < rock.y) {
+                    this.speed.y = -Math.abs(this.speed.y)
+                }
             }
 
         }
     }
 
-    
+    repelerObstaculos(vecinos) {
+        const vecFuerza = new PIXI.Point(0, 0);
+        let cant = 0;
+        vecinos.forEach((obstaculo) => {
+            if (obstaculo instanceof Piedra) {
+                const distCuadrada = distanciaAlCuadrado(
+                    this.container.x,
+                    this.container.y,
+                    obstaculo.container.x,
+                    obstaculo.container.y
+                );
+
+                if (distCuadrada < obstaculo.radio ** 2) {
+                    //SI ESTA A MENOS DE UNA CELDA DE DIST
+                    const dif = new PIXI.Point(
+                        this.container.x - obstaculo.container.x,
+                        this.container.y - obstaculo.container.y
+                    );
+                    dif.x /= distCuadrada;
+                    dif.y /= distCuadrada;
+                    vecFuerza.x += dif.x;
+                    vecFuerza.y += dif.y;
+                    cant++;
+                }
+            }
+        });
+        if (cant) {
+            vecFuerza.x *= 40;
+            vecFuerza.y *= 40;
+            // vecFuerza.x += -this.velocidad.x;
+            // vecFuerza.y += -this.velocidad.y;
+        }
+
+        return vecFuerza;
+    }
+
 }
