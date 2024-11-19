@@ -32,6 +32,23 @@ class Grid {
         }
       }
     }
+
+    getCellPX(x, y) {
+      const xIndex = Math.floor(x / this.cellSize);
+      const yIndex = Math.floor(y / this.cellSize);
+  
+      let newx = Math.max(0, Math.min(this.numberCellsWidth - 1, xIndex));
+      let newy = Math.max(0, Math.min(this.numberCellsHeight - 1, yIndex));
+      return this.cells[newx][newy];
+    }
+  
+    getCell(x, y) {
+      // Asegurarse de que los índices estén dentro de los límites de la matriz
+      let newx = Math.max(0, Math.min(this.numberCellsWidth - 1, x));
+      let newy = Math.max(0, Math.min(this.numberCellsHeight - 1, y));
+  
+      return this.cells[newx][newy];
+    }
   
     updateEntityPosition(entity) {
       if (entity.InTheSameCellPreviousFrame()) return; //ver esto
