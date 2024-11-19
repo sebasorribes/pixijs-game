@@ -6,8 +6,8 @@ class Nightmare extends Entity {
 
         this.id = "Nightmare" + generateRandomID()
         this.container.name = this.id;
-        this.width = 12;
-        this.height = 10;
+        this.width = 22;
+        this.height = 20;
 
         this.life =life;
         this.speedMax = 10;
@@ -29,7 +29,7 @@ class Nightmare extends Entity {
         
         // Cargar la textura si no se ha cargado aún
          if (!Nightmare.beautyTexture) {
-            PIXI.Assets.load('./Sprites/ataques/pescadazo.png').then((texture) => {
+            PIXI.Assets.load('./Sprites/ratoncito.png').then((texture) => {
                 Nightmare.beautyTexture = texture;
                 // Una vez cargada, crear el sprite
                 
