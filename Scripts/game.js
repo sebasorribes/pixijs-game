@@ -1,4 +1,4 @@
-class Game {  
+class Game {
     constructor() {
 
         this.app = new PIXI.Application();
@@ -18,10 +18,11 @@ class Game {
         this.scale = 1;
 
 
+
         // Cargar la música de fondo
         this.backgroundMusic = new Audio('Sound/Babymetal-ijime,dame,zettai.mp3');
         this.backgroundMusic.loop = true;
-        this.backgroundMusic.volume = 0.05;;
+        this.backgroundMusic.volume = 0.05;
 
         this.nightmares = [];
         this.keysPressed = {};
@@ -29,6 +30,7 @@ class Game {
         this.points = 0;
         this.nightmareLife = 200;
         this.restantNightmare = 0;
+        this.numberWave = 1;
 
         this.app.stage.sortableChildren = true;
         promise.then(e => {
@@ -91,6 +93,15 @@ class Game {
 
     }
 
+    imageFilter() {
+        this.tetricFilter = new PIXI.Graphics()
+        this.tetricFilter.beginFill("0x000000", 0.6);
+        this.tetricFilter.drawRect(0, 0, this.width, this.height);
+        this.tetricFilter.endFill();
+
+        this.app.stage.addChild(this.tetricFilter)
+    }
+
     startGame() {
 
         this.mainContainer = new PIXI.Container();
@@ -100,11 +111,12 @@ class Game {
         this.preload();
         this.sketcher = new PIXI.Graphics();
         this.mainContainer.addChild(this.sketcher);
-
+        //this.imageFilter();
+        this.firstWave = true;
         this.frameCounter = 0;
         this.isPaused = false;
         this.isGameOver = false;
-        this.inMap = 70;
+        this.restantNightmare = 5;
 
         document.body.appendChild(this.app.canvas);
         window.__PIXI_APP__ = this.app;
@@ -112,7 +124,7 @@ class Game {
         this.grid = new Grid(this, this.cellSize);
         this.rockManager = new RockManager(this, this.grid, this.cellSize, 10); // Borrar a la bosta si no funciona
         this.placePlayer();
-        this.placeNightmares(70);
+        this.placeNightmares(5);
 
 
         this.app.ticker.add((e) => {
@@ -181,7 +193,7 @@ class Game {
         }
     }
 
-    opposite(){
+    opposite() {
         switch (this.player.currentDirection) {
             case "right": return "left";
             case "left": return "right";
@@ -193,10 +205,10 @@ class Game {
 
     makeFishStrike(actualFrames) {
         if (actualFrames % 120 == 0) { // Ejecutar cada 120 frames (ajustable) 
-            let attack = new FishStrike(this.player, actualFrames, this.skills.attack1,1);
+            let attack = new FishStrike(this.player, actualFrames, this.skills.attack1, 1);
             this.attacks.push(attack);
-            if(this.skills.attack1 > 2){
-                let attack = new FishStrike(this.player, actualFrames, this.skills.attack1,-1);
+            if (this.skills.attack1 > 2) {
+                let attack = new FishStrike(this.player, actualFrames, this.skills.attack1, -1);
                 this.attacks.push(attack);
             }
         }
@@ -240,13 +252,83 @@ class Game {
 
 
 
+    //camara clamp al mapa
+    // moveCamera() {
+    //     const playerX = this.player.container.x;
+    //     const playerY = this.player.container.y;
+
+    //     const halfGroundnWidth = this.backgroundSize.x / 2;
+    //     const halfGroundHeight = this.backgroundSize.y / 2;
+
+    //     const targetX = halfGroundnWidth - playerX;
+    //     const targetY = halfGroundHeight - playerY;
+
+    //     const clampedX = Math.min(
+    //       Math.max(targetX, -(this.width - this.backgroundSize.x)),
+    //       0
+    //     );
+    //     const clampedY = Math.min(
+    //       Math.max(targetY, -(this.height - this.backgroundSize.y)),
+    //       0
+    //     );
+
+    //     this.mainContainer.pivot.x = lerp(
+    //         this.mainContainer.pivot.x,
+    //         clampedX,
+    //         0.1
+    //     );
+    //     this.app.stage.position.y = lerp(
+    //       this.mainContainer.pivot.y,
+    //       clampedY,
+    //       0.1
+    //     );
+    //     // this.mainContainer.pivot.x = lerp(this.mainContainer.pivot.x, this.player.x - window.innerWidth / 2 / this.scale, 0.05);
+    //     // this.mainContainer.pivot.y = lerp(this.mainContainer.pivot.y, this.player.y - window.innerHeight / 2 / this.scale, 0.05);
+
+    //     // this.mainContainer.scale.set(this.scale);
+    // }
+
     moveCamera() {
+        let playerX = this.player.container.x;
+        let playerY = this.player.container.y;
 
-        this.mainContainer.pivot.x = lerp(this.mainContainer.pivot.x, this.player.x - window.innerWidth / 2 / this.scale, 0.1);
-        this.mainContainer.pivot.y = lerp(this.mainContainer.pivot.y, this.player.y - window.innerHeight / 2 / this.scale, 0.1);
+        const halfWindowWidth = window.innerWidth / 2;
+        const halfWindowHeight = window.innerHeight / 2;
+        console.log(window.innerHeight)
+        console.log(window.innerWidth)
 
+        console.log("empieza")
+        console.log(halfWindowHeight)
+        console.log(halfWindowWidth)
+
+        // Límites de la cámara
+        const minX = 0;
+        const maxX = (this.backgroundSize.x - halfWindowWidth-650);
+        console.log(maxX)
+        const minY = 0;
+        const maxY = (this.backgroundSize.y - halfWindowHeight - 300);
+        console.log(maxY)
+        // Calcular la posición objetivo de la cámara
+        let targetX = playerX - halfWindowWidth;
+        let targetY = playerY - halfWindowHeight;
+        console.log(targetX)
+        console.log(targetY)
+
+        // Ajustar la posición objetivo para que no salga de los límites
+        if (targetX < minX) targetX = minX;
+        if (targetX > maxX) targetX = maxX;
+        if (targetY < minY) targetY = minY;
+        if (targetY > maxY) targetY = maxY;
+
+        console.log(targetX)
+        console.log(targetY)
+        // Aplicar el lerp para suavizar el movimiento
+        this.mainContainer.pivot.x = lerp(this.mainContainer.pivot.x, targetX, 0.1);
+        this.mainContainer.pivot.y = lerp(this.mainContainer.pivot.y, targetY, 0.1);
         this.mainContainer.scale.set(this.scale);
     }
+
+
 
     buildGameOverMenu() {
         this.gameOverMenu = new PIXI.Graphics();
@@ -482,14 +564,17 @@ class Game {
             this.nightmares.push(nightMare);
         }
         this.nightmareLife *= 1.2;
-        this.restantNightmare += numerNightmares;
     }
 
+    //sumar progresivamente bichos
     checkWave() {
-        this.inMap --
-        if (this.inMap == 0) {
-            this.placeNightmares(70);
-            this.inMap = 70;
+        console.log(this.restantNightmare)
+        this.restantNightmare--
+        if (this.restantNightmare < 1) {
+            this.numberWave++;
+            let numberNightmares = Math.floor(5 + this.numberWave * 1.5)
+            this.restantNightmare = numberNightmares;
+            this.placeNightmares(numberNightmares);
         }
     }
 
