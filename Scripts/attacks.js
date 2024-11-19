@@ -59,6 +59,7 @@ class BasicSlashAttack extends Attack {
         super(player, initialExecutionFrame);
         this.damage = 25 * actualLevel;
         this.type = "basic";
+        this.container.name = this.type;
 
         if (direction == "right" || direction == "left") {
             this.width = 20;
@@ -89,19 +90,14 @@ class BasicSlashAttack extends Attack {
     }
 
     makeSprite() {
-        // Asegurarse de que la textura esté cargada antes de crear el sprite
         if (BasicSlashAttack.slashTexture) {
             this.sprite = new PIXI.Sprite(BasicSlashAttack.slashTexture);
             this.sprite.anchor.set(0.5, 1);
             this.sprite.width = this.width;
-            this.sprite.height = this.height;
-
-            // Agregar el sprite al contenedor
+            this. sprite.height = this.height;
             this.container.addChild(this.sprite);
         }
     }
-    
-   
     makeSecondSprite() {  // IGNORAR
         // Crear el sprite del ataque (puedes usar una textura)
         this.sprite2 = new PIXI.Graphics()
@@ -143,6 +139,7 @@ class FishStrike extends Attack {
         this.gravity = 0.5;
         this.width = 20;
         this.height = 20;
+        this.container.name = this.type;
 
         if (!FishStrike.slashTexture) {
             PIXI.Assets.load('./Sprites/ataques/pescadazo.png').then((texture) => {
@@ -203,6 +200,7 @@ class StoneTrailAttack extends Attack {
         this.height = 25;
         this.duration = 45 ; // Duración en frames antes de desaparecer 
         this.trail = []; // Almacenar las posiciones de las piedras 
+        this.container.name = this.type;
         this.createTrail();
         this.game.mainContainer.addChild(this.container);
         this.refreshPositionOnGrid();

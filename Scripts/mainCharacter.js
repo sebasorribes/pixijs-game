@@ -116,6 +116,7 @@ class MainCharacter extends Entity {
     update(actualFrames) {
         if (!this.ready) return;
         super.update();
+        this.encounterRocks();
         this.damaged(actualFrames);
         this.handleSpriteDirection();
         this.changePlaySpeedOfAnimatedSprite();
