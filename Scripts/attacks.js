@@ -80,7 +80,7 @@ class BasicSlashAttack extends Attack {
             // Si la textura ya está cargada, crear el sprite de inmediato
             this.makeSprite();
         }
-        //this.makeSprite();
+        this.makeSprite();
         
         this.position(direction);
         this.game.mainContainer.addChild(this.container);
@@ -88,27 +88,20 @@ class BasicSlashAttack extends Attack {
         this.render();
     }
 
-    /*makeSprite() {
+    makeSprite() {
         // Asegurarse de que la textura esté cargada antes de crear el sprite
         if (BasicSlashAttack.slashTexture) {
-            const sprite = new PIXI.Sprite(BasicSlashAttack.slashTexture);
-            sprite.anchor.set(0.5, 1);
-            sprite.width = this.width;
-            sprite.height = this.height;
+            this.sprite = new PIXI.Sprite(BasicSlashAttack.slashTexture);
+            this.sprite.anchor.set(0.5, 1);
+            this.sprite.width = this.width;
+            this.sprite.height = this.height;
 
             // Agregar el sprite al contenedor
-            this.container.addChild(sprite);
+            this.container.addChild(this.sprite);
         }
-    }*/
-    
-    makeSprite() {
-        // Crear el sprite del ataque (puedes usar una textura)
-        this.sprite = new PIXI.Graphics()
-            .rect(0, 0, this.width, this.height)
-            .fill(0xff0000);
-        this.container.addChild(this.sprite);
     }
-
+    
+   
     makeSecondSprite() {  // IGNORAR
         // Crear el sprite del ataque (puedes usar una textura)
         this.sprite2 = new PIXI.Graphics()
@@ -120,13 +113,13 @@ class BasicSlashAttack extends Attack {
     position(playerDirection) {
         if (playerDirection == "right" || playerDirection == "left") {
             // Posicionar el ataque frente al personaje
-            this.x = this.character.x + (playerDirection == "right" ? 30 : -60); // Ajusta según la dirección
-            this.y = this.character.y - 50;
-
+            this.x = this.character.x + (playerDirection == "right" ? 40 : -40); // Ajusta según la dirección
+            this.y = this.character.y + 20;
+            
         } else {
             // Posicionar el ataque frente al personaje
-            this.x = this.character.x - 50;
-            this.y = this.character.y + (playerDirection == "front" ? 60 : -20); // Ajusta según la dirección
+            this.x = this.character.x;
+            this.y = this.character.y + (playerDirection == "front" ? 40 : -40); // Ajusta según la dirección
         }
     }
 
@@ -139,6 +132,7 @@ class BasicSlashAttack extends Attack {
 }
 
 class FishStrike extends Attack {
+    static slashTexture = null;
     constructor(player, initialExecutionFrame, actualLevel,velocityX) {
         super(player, initialExecutionFrame);
         this.damage = 50 * actualLevel;
@@ -150,17 +144,34 @@ class FishStrike extends Attack {
         this.width = 20;
         this.height = 20;
 
-        this.makeSprite();
+        if (!FishStrike.slashTexture) {
+            PIXI.Assets.load('./Sprites/ataques/pescadazo.png').then((texture) => {
+                FishStrike.slashTexture = texture;
+                // Una vez cargada, crear el sprite
+                this.makeSprite();
+            });
+        } else {
+            // Si la textura ya está cargada, crear el sprite de inmediato
+            this.makeSprite();
+        }
+        
+        
+        //this.makeSprite();
         this.game.mainContainer.addChild(this.container);
         this.render();
     }
 
     makeSprite() {
-        // Crear el sprite del ataque (puedes usar una textura)
-        this.sprite = new PIXI.Graphics()
-            .rect(0, 0, this.width, this.height)
-            .fill(0xff0000);
-        this.container.addChild(this.sprite);
+        // Asegurarse de que la textura esté cargada antes de crear el sprite
+        if (FishStrike.slashTexture) {
+            this.sprite = new PIXI.Sprite(FishStrike.slashTexture);
+            this.sprite.anchor.set(0.5, 1);
+            this.sprite.width = this.width;
+            this.sprite.height = this.height;
+
+            // Agregar el sprite al contenedor
+            this.container.addChild(this.sprite);
+        }
     }
 
     update() {

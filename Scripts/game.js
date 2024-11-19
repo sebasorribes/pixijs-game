@@ -70,7 +70,7 @@ class Game {
 
     preload() {
 
-        PIXI.Assets.load('sprites/background/fondo.png').then((texture) => {
+        PIXI.Assets.load('sprites/background/fondito.png').then((texture) => {
             // Create a sprite from the loaded texture
             const background = new PIXI.Sprite(texture);
             background.zIndex = -999999999999;

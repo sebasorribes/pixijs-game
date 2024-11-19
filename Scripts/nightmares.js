@@ -256,7 +256,9 @@ class Nightmare extends Entity {
     changeToDream() {
         this.isNightmare = false;
         this.game.checkWave();
-        this.container.removeChild(this.sprite)
+
+        this.container.removeChild(this.sprite)                                                                                                
+        
         this.sprite = new PIXI.Graphics()
             .rect(0, 0, 20, 20)
             .fill(0xFFFFFF);
