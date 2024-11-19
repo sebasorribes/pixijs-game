@@ -165,7 +165,7 @@ class FishStrike extends Attack {
         // Asegurarse de que la textura esté cargada antes de crear el sprite
         if (FishStrike.slashTexture) {
             this.sprite = new PIXI.Sprite(FishStrike.slashTexture);
-            this.sprite.anchor.set(0.5, 1);
+            this.sprite.anchor.set(0.5, 0.5);
             this.sprite.width = this.width;
             this.sprite.height = this.height;
 
@@ -190,7 +190,7 @@ class FishStrike extends Attack {
     render() {
         this.container.x = this.x
         this.container.y = this.y
-        this.container.rotation += 0.15;
+        this.container.rotation += 0.35;
     }
 }
 

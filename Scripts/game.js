@@ -12,7 +12,7 @@ class Game {
 
 
         this.attacks = []
-        this.skills = { basic: 1, attack1: 0, attack2: 0 }
+        this.skills = { basic: 1, attack1: 1, attack2: 1 }
 
 
         this.scale = 1;
