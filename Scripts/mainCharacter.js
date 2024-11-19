@@ -1,10 +1,11 @@
 class MainCharacter extends Entity {
     constructor(x, y, game) {
         super(x, y, game);
-        this.width = 64;
-        this.height = 64;
+        this.width = 12;
+        this.height = 10;
 
         this.id = "player";
+        this.container.name = this.id;
         this.speedMax = 10;
         this.accMax = 2;
 
@@ -40,10 +41,19 @@ class MainCharacter extends Entity {
         this.container.addChild(this.sprite)
 
         
-        this.sprite.anchor.set(0.5, 0.2);
+        this.sprite.anchor.set(0.5, 1);
+        this.container.pivot.x = this.sprite.anchor.x/2;
+        this.container.pivot.y = this.sprite.anchor.y;
         this.sprite.currentFrame = Math.floor(Math.random() * 8)
 
         this.ready = true
+    }
+
+    makeGraf() {
+        this.grafico = new PIXI.Graphics()
+            .rect(0, 0, this.width, this.height)
+            .fill(0xff0000);
+        this.container.addChild(this.grafico);
     }
 
     changePlaySpeedOfAnimatedSprite() {
@@ -99,12 +109,6 @@ class MainCharacter extends Entity {
         this.applyForce(0, this.walkAcc);
     }
 
-    makeGraf() {
-        this.grafico = new PIXI.Graphics()
-            .rect(0, 0, this.width, this.height)
-            .fill(0xff0000);
-        this.container.addChild(this.grafico);
-    }
 
     update(actualFrames) {
         if (!this.ready) return;
@@ -179,8 +183,6 @@ class MainCharacter extends Entity {
     gameOver() {
         this.game.gameOver();
     }
-
-    
 
 }
 

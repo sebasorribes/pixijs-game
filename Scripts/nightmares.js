@@ -3,7 +3,8 @@ class Nightmare extends Entity {
         super(x, y, game);
 
         this.id = "Nightmare" + generateRandomID()
-        this.width = 20;
+        this.container.name = this.id;
+        this.width = 12;
         this.height = 10;
 
         this.life =life;
@@ -26,16 +27,23 @@ class Nightmare extends Entity {
 
         this.animatedSprite();
     }
+    makeGraf() {
+        this.grafico = new PIXI.Graphics()
+            .rect(0, 0, this.width, this.height)
+            .fill(0xff0000);
+        this.container.addChild(this.grafico);
+    }
 
     async animatedSprite() {
-        let json = await PIXI.Assets.load('./Sprites/perros/texture.json')
-        this.sprite = new PIXI.AnimatedSprite(json.animations["run"])
-        this.sprite.animationSpeed = 0.1
-        this.sprite.loop = true
-        this.sprite.play()
-        this.container.addChild(this.sprite)
-
+        let json = await PIXI.Assets.load('./Sprites/perros/texture.json');
+        this.sprite = new PIXI.AnimatedSprite(json.animations["run"]);
+        this.sprite.animationSpeed = 0.1;
+        this.sprite.loop = true;
+        this.sprite.play();
+        this.container.addChild(this.sprite);
         this.sprite.anchor.set(0.5, 1);
+        this.container.pivot.x = this.sprite.anchor.x/2;
+        this.container.pivot.y = this.sprite.anchor.y;
         this.sprite.currentFrame = Math.floor(Math.random() * 5)
 
         this.ready = true
@@ -47,15 +55,14 @@ class Nightmare extends Entity {
 
 
     update(actualFrame) {
-        if(!this.ready) return
-        if (!this.isActive) return
+        if(!this.ready || !this.isActive) return
         super.update();
         if (!this.isNightmare) return;
 
         this.cohesion(this.nightmaresNear);
         this.separation(this.nightmaresNear);
         this.alignment(this.nightmaresNear);
-        this.Chase();
+        this.chase(this.findPlayerNearUsingGrid());
         this.nearAttacks = this.findNearAttacksUsingGrid();
         this.takeDamage(actualFrame, this.nearAttacks)
 
@@ -164,12 +171,13 @@ class Nightmare extends Entity {
         );
     }
 
-    Chase() {
-        if (!game.player.ready) return;
+    chase(player) {
+        if(!player || !player.ready) return;
 
-        let vectorToTarget = { x: game.player.x - this.x, y: game.player.y - this.y };
+        let vectorToTarget = { x: player.x - this.x, y: player.y - this.y };
 
-        if (distance(this, this.game.player) > 500) return;
+        //agregar spatial hashing aca
+
         // Normalizar el vector
         let normalizedVector = normalizeVector(vectorToTarget);
 
@@ -182,13 +190,10 @@ class Nightmare extends Entity {
 
         this.applyForce(normalizedWishSpeed.x, normalizedWishSpeed.y);
 
-        // Ahora, determinar hacia dónde está mirando el Nightmare:
-        // Si el vector de velocidad en X es positivo, el Nightmare va a la derecha, si es negativo, va a la izquierda
+
         if (normalizedWishSpeed.x > 0) {
-            // El Nightmare se mueve hacia la derecha, asegurémonos de que mira a la derecha
             this.sprite.scale.x = -1;
         } else if (normalizedWishSpeed.x < 0) {
-            // El Nightmare se mueve hacia la izquierda, asegurémonos de que mira a la izquierda
             this.sprite.scale.x = 1;
         }
     }
@@ -210,6 +215,19 @@ class Nightmare extends Entity {
         return ret;
     }
 
+    findPlayerNearUsingGrid() {
+        if (this.cell) {
+
+            if(this.nearEntities.length > 0){
+                return this.nearEntities.find(entity => entity.id.substring(0,6) == "player");
+            }else{
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
     takeDamage(actualFrame, attacks) {
         if (attacks.length == 0) return;
         for (let i = 0; i < attacks.length; i++) {
@@ -227,7 +245,6 @@ class Nightmare extends Entity {
                 if (this.life <= 0) {
                     this.life = 0
                     this.game.points += 20;
-                    this.game.restantNightmare--;
                     this.changeToDream();
                 }
 
