@@ -126,7 +126,7 @@ class BasicSlashAttack extends Attack {
         } else {
             // Posicionar el ataque frente al personaje
             this.x = this.character.x - 50;
-            this.y = this.character.y + (playerDirection == "front" ? 60 : -30); // Ajusta según la dirección
+            this.y = this.character.y + (playerDirection == "front" ? 60 : -20); // Ajusta según la dirección
         }
     }
 
@@ -142,9 +142,10 @@ class FishStrike extends Attack {
     constructor(player, initialExecutionFrame, actualLevel,velocityX) {
         super(player, initialExecutionFrame);
         this.damage = 50 * actualLevel;
+        this.originPoint = player.y;
         this.type = "fishStrike";
         this.velocityY = -15;
-        this.velocityX = velocityX;
+        this.velocityX = velocityX * 3;
         this.gravity = 0.5;
         this.width = 20;
         this.height = 20;
@@ -167,7 +168,7 @@ class FishStrike extends Attack {
         this.y += this.velocityY;
         this.x += this.velocityX;
         this.velocityY += this.gravity; // Aplicar gravedad 
-        if (this.y > this.game.backgroundSize.y + 30) {
+        if (this.y > this.originPoint + 30) {
             this.destroy(); // Destruir el ataque si cae fuera del juego 
             return;
         }
@@ -178,6 +179,7 @@ class FishStrike extends Attack {
     render() {
         this.container.x = this.x
         this.container.y = this.y
+        this.container.rotation += 0.15;
     }
 }
 
