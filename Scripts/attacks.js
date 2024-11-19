@@ -54,6 +54,7 @@ class Attack {
 }
 
 class BasicSlashAttack extends Attack {
+    static slashTexture = null; // prueba
     constructor(player, initialExecutionFrame, actualLevel,direction) {
         super(player, initialExecutionFrame);
         this.damage = 25 * actualLevel;
@@ -68,7 +69,18 @@ class BasicSlashAttack extends Attack {
             this.height = 20;
         }
 
-        this.makeSprite();
+        // Cargar la textura si no se ha cargado aún
+        if (!BasicSlashAttack.slashTexture) {
+            PIXI.Assets.load('./Sprites/ataques/zarpazo.png').then((texture) => {
+                BasicSlashAttack.slashTexture = texture;
+                // Una vez cargada, crear el sprite
+                this.makeSprite();
+            });
+        } else {
+            // Si la textura ya está cargada, crear el sprite de inmediato
+            this.makeSprite();
+        }
+        //this.makeSprite();
         
         this.position(direction);
         this.game.mainContainer.addChild(this.container);
@@ -76,6 +88,19 @@ class BasicSlashAttack extends Attack {
         this.render();
     }
 
+    /*makeSprite() {
+        // Asegurarse de que la textura esté cargada antes de crear el sprite
+        if (BasicSlashAttack.slashTexture) {
+            const sprite = new PIXI.Sprite(BasicSlashAttack.slashTexture);
+            sprite.anchor.set(0.5, 1);
+            sprite.width = this.width;
+            sprite.height = this.height;
+
+            // Agregar el sprite al contenedor
+            this.container.addChild(sprite);
+        }
+    }*/
+    
     makeSprite() {
         // Crear el sprite del ataque (puedes usar una textura)
         this.sprite = new PIXI.Graphics()
@@ -84,7 +109,7 @@ class BasicSlashAttack extends Attack {
         this.container.addChild(this.sprite);
     }
 
-    makeSecondSprite() {
+    makeSecondSprite() {  // IGNORAR
         // Crear el sprite del ataque (puedes usar una textura)
         this.sprite2 = new PIXI.Graphics()
             .rect(0, 0, this.width, this.height)

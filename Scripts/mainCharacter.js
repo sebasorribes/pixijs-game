@@ -25,12 +25,12 @@ class MainCharacter extends Entity {
     }
 
     async animatedSprite() {
-        let json = await PIXI.Assets.load("./Sprites/moa/texture.json");
+        let json = await PIXI.Assets.load("./Sprites/gato/texture.json");
         this.animations = {
-            front: json.animations["walkFront"],
-            back: json.animations["walkBack"],
-            left: json.animations["walkLeft"],
-            right: json.animations["walkRight"]
+            front: json.animations["front"],
+            back: json.animations["back"],
+            left: json.animations["left"],
+            right: json.animations["right"],
             
         };
         this.sprite = new PIXI.AnimatedSprite(this.animations.front);
@@ -41,7 +41,7 @@ class MainCharacter extends Entity {
 
         
         this.sprite.anchor.set(0.5, 0.2);
-        this.sprite.currentFrame = Math.floor(Math.random() * 8)
+        this.sprite.currentFrame = Math.floor(Math.random() * 3)
 
         this.ready = true
     }
@@ -80,8 +80,8 @@ class MainCharacter extends Entity {
         }
 
         // Ajustar la dirección de escala para que el personaje mire hacia la izquierda/derecha
-        if (newDirection === "right") this.sprite.scale.x = -1;
-        else if (newDirection === "left") this.sprite.scale.x = 1;
+        /*if (newDirection === "right") this.sprite.scale.x = -1;
+        else if (newDirection === "left") this.sprite.scale.x = 1;*/
     }
 
 
