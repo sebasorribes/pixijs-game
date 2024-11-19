@@ -64,11 +64,12 @@ class Nightmare extends Entity {
         this.alignment(this.nightmaresNear);
         this.chase(this.findPlayerNearUsingGrid());
         this.nearAttacks = this.findNearAttacksUsingGrid();
+        this.evadirRocas();
+        
         this.takeDamage(actualFrame, this.nearAttacks)
 
 
     }
-
 
     findNightmaresNear() {
         let nightmaresNear = [];
@@ -271,5 +272,50 @@ class Nightmare extends Entity {
         this.container.destroy()
         this.expGain = true;
     }
+
+    evadirRocas() {
+        let framesParaPredecir = 10;
+        let factor = 100000000;
+    
+        for (let obs of this.findNearRocksUsingGrid()) {
+          //VEO LA DISTANCIA DESDE DONDE VOY A ESTAR EN 10 FRAMES HASTA EL OBSTACULO
+          let distCuadrada = distance(obs, {
+            x: this.x + this.speed.x * framesParaPredecir,
+            y: this.y + this.speed.y * framesParaPredecir,
+          });
+    
+          let radioCuadrado = obs.radio ** 2;
+    
+          // let distAlCubo = dist * dist;
+    
+          if (distCuadrada <= 0) return;
+    
+          //SI ESTA TOCANDO EL OBSTACULO (CON 5 PIXELES DE CHANGUI):
+          //ESTO ES UNA COLISION DIGAMOS...
+          if (distCuadrada < radioCuadrado + 5) {
+            //LE APLICO MUCHA MAS FUERZA
+            let vectorQApuntaDelObstaculoHaciaMi = {
+              x: this.x - obs.x,
+              y: this.y - obs.y,
+            };
+            this.applyForce(
+              vectorQApuntaDelObstaculoHaciaMi.x * factor,
+              vectorQApuntaDelObstaculoHaciaMi.y * factor
+            );
+          } else if (distCuadrada < 3 * radioCuadrado) {
+            //SI LA DISTANCIA ES MENOR AL TRIPLE DEL RADIO...
+            let vectorQApuntaDelObstaculoHaciaMi = {
+              x: this.x + this.speed.x - obs.x,
+              y: this.y + this.speed.y - obs.y,
+            };
+            //APLICO EL FACTOR DE FUERZA INICIAL Q ES UNA BOCHA, DIVIDIDO LA DIST AL CUBO.
+            //LA IDEA ES QUE CUANTO MAS LEJOS MENOS FUERZA Y CUANTO MAS CERCA ESTAS MAS FUERZA EJERCE
+            this.applyForce(
+              (vectorQApuntaDelObstaculoHaciaMi.x * factor) / distCuadrada,
+              (vectorQApuntaDelObstaculoHaciaMi.y * factor) / distCuadrada
+            );
+          }
+        }
+      }
 }
 

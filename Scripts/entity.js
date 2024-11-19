@@ -71,7 +71,7 @@ class Entity {
         this.refreshPositionOnGrid();
         this.nightmaresNear = this.findNearNightmaresUsingGrid();
         this.rocksNear = this.findNearRocksUsingGrid();
-        this.encounterRocks();
+        
     }
 
 

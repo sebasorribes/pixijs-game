@@ -251,43 +251,6 @@ class Game {
     }
 
 
-
-    //camara clamp al mapa
-    // moveCamera() {
-    //     const playerX = this.player.container.x;
-    //     const playerY = this.player.container.y;
-
-    //     const halfGroundnWidth = this.backgroundSize.x / 2;
-    //     const halfGroundHeight = this.backgroundSize.y / 2;
-
-    //     const targetX = halfGroundnWidth - playerX;
-    //     const targetY = halfGroundHeight - playerY;
-
-    //     const clampedX = Math.min(
-    //       Math.max(targetX, -(this.width - this.backgroundSize.x)),
-    //       0
-    //     );
-    //     const clampedY = Math.min(
-    //       Math.max(targetY, -(this.height - this.backgroundSize.y)),
-    //       0
-    //     );
-
-    //     this.mainContainer.pivot.x = lerp(
-    //         this.mainContainer.pivot.x,
-    //         clampedX,
-    //         0.1
-    //     );
-    //     this.app.stage.position.y = lerp(
-    //       this.mainContainer.pivot.y,
-    //       clampedY,
-    //       0.1
-    //     );
-    //     // this.mainContainer.pivot.x = lerp(this.mainContainer.pivot.x, this.player.x - window.innerWidth / 2 / this.scale, 0.05);
-    //     // this.mainContainer.pivot.y = lerp(this.mainContainer.pivot.y, this.player.y - window.innerHeight / 2 / this.scale, 0.05);
-
-    //     // this.mainContainer.scale.set(this.scale);
-    // }
-
     moveCamera() {
         let playerX = this.player.container.x;
         let playerY = this.player.container.y;

@@ -46,7 +46,7 @@ class MainCharacter extends Entity {
         this.sprite.anchor.set(0.5, 1);
         this.container.pivot.x = this.sprite.anchor.x/2;
         this.container.pivot.y = this.sprite.anchor.y;
-        this.sprite.currentFrame = Math.floor(Math.random() * 8)
+        this.sprite.currentFrame = Math.floor(Math.random() * 3)
 
 
         this.ready = true
@@ -116,6 +116,7 @@ class MainCharacter extends Entity {
     update(actualFrames) {
         if (!this.ready) return;
         super.update();
+        this.encounterRocks();
         this.damaged(actualFrames);
         this.handleSpriteDirection();
         this.changePlaySpeedOfAnimatedSprite();
