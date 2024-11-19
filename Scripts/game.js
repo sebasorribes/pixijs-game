@@ -12,7 +12,7 @@ class Game {
 
 
         this.attacks = []
-        this.skills = { basic: 1, attack1: 0, attack2: 0 }
+        this.skills = { basic: 1, attack1: 1, attack2: 1 }
 
 
         this.scale = 1;
@@ -70,7 +70,7 @@ class Game {
 
     preload() {
 
-        PIXI.Assets.load('sprites/background/fondo.png').then((texture) => {
+        PIXI.Assets.load('sprites/background/fondito.png').then((texture) => {
             // Create a sprite from the loaded texture
             const background = new PIXI.Sprite(texture);
             background.zIndex = -999999999999;
