@@ -1,58 +1,79 @@
 class Rock {
     constructor(game, x, y, cellSize) {
-        
+
         this.container = new PIXI.Container();
-        this.container.name = "MainContainer"
+        this.container.name = "Rock"
         this.innerContainer = new PIXI.Container();
         this.innerContainer.name = "innerContainer"
         this.container.addChild(this.innerContainer);
-       
+
+
+
 
         this.id = "rock" + generateRandomID();
         this.game = game;
         this.x = x;
         this.y = y;
+        this.container.x = this.x;
+        this.container.y = this.y;
         this.cellSize = cellSize;
 
-        this.width = 40;  // Tamaño de la roca
-        this.height = 40;
-        
         this.cell;
         this.nearEntities = [];
-        
+
         this.game.mainContainer.addChild(this.container);
         // Crear el sprite de la roca
-        
-        this.cargarSprite();
-        this.refreshPositionOnGrid();
+
+        this.loadSprite();
     }
 
-   
-    cargarSprite(){
+    loadSprite() {
         PIXI.Assets.load('sprites/obstaculos/roca2.png').then((texture) => {
             // Create a sprite from the loaded texture
-            const sprite = new PIXI.Sprite(texture);
-            
+            let width = texture.width;
+            this.sprite = new PIXI.Sprite(texture);
 
-            // Set the position and size of the background
-            sprite.x = this.x;
-            sprite.y = this.y;
-       
-            sprite.anchor.set(0.5, 1); // Centrado de la roca
-            this.container.addChild(sprite);  // Agregar el sprite al escenario
+            //GUARDO EL RADIO DEL OBSTACULO PORQ LO USO PARA DETECTAR COLISIONES CON LOS PERSONAJES
+            this.radio = 8;
+
+            this.sprite.anchor.set(0.5, 0.82); // Centrado de la roca
+
+            this.container.pivot.x = this.sprite.anchor.x / 2;
+            this.container.pivot.y = this.sprite.anchor.y +6;
+
+            this.container.addChild(this.sprite);  // Agregar el sprite al escenario
 
 
-            // Add the background to the stage
-           
-
-            
-
+            this.container.zIndex = Math.floor(this.container.y);
+            this.container.scale.x = -1;
+            this.addToGrid();
         })
+    }
+
+    addToGrid() {
+        this.refreshPositionOnGrid();
+        //ME FIJO EL ANCHO DE ESTA PIEDRA Y LA METO EN MAS DE UNA CELDA, PARA Q LAS COLISIONES NO SEAN SOLO CON LA CELDA CENTRAL DONDE ESTA LA PIEDRA
+        if (this.radio > this.game.grid.cellSize) {
+            let dif = this.radio - this.game.grid.cellSize;
+            let numberNeighborsCell = Math.ceil(dif / this.game.grid.cellSize);
+            let myCell = this.game.grid.getCellPX(
+                this.container.x,
+                this.container.y
+            );
+            for (let i = 1; i <= numberNeighborsCell; i++) {
+                //celda para la izq:
+                let leftCell = this.game.grid.getCell(myCell.x - i, myCell.y);
+                leftCell.add(this);
+                //celda der:
+                let rightCell = this.juego.grid.getCell(myCell.x + i, myCell.y);
+                rightCell.add(this);
+            }
+        }
     }
 
     refreshPositionOnGrid() {
         this.game.grid.updateEntityPosition(this);
-}
+    }
 
     InTheSameCellPreviousFrame() {
         if (isNaN(this.xPrevious) || isNaN(this.yPrevious)) return false;
@@ -70,6 +91,6 @@ class Rock {
         return false;
     }
 }
-    
+
 
 

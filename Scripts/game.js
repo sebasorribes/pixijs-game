@@ -294,25 +294,15 @@ class Game {
 
         const halfWindowWidth = window.innerWidth / 2;
         const halfWindowHeight = window.innerHeight / 2;
-        console.log(window.innerHeight)
-        console.log(window.innerWidth)
-
-        console.log("empieza")
-        console.log(halfWindowHeight)
-        console.log(halfWindowWidth)
 
         // Límites de la cámara
         const minX = 0;
         const maxX = (this.backgroundSize.x - halfWindowWidth-650);
-        console.log(maxX)
         const minY = 0;
         const maxY = (this.backgroundSize.y - halfWindowHeight - 300);
-        console.log(maxY)
-        // Calcular la posición objetivo de la cámara
+
         let targetX = playerX - halfWindowWidth;
         let targetY = playerY - halfWindowHeight;
-        console.log(targetX)
-        console.log(targetY)
 
         // Ajustar la posición objetivo para que no salga de los límites
         if (targetX < minX) targetX = minX;
@@ -320,8 +310,6 @@ class Game {
         if (targetY < minY) targetY = minY;
         if (targetY > maxY) targetY = maxY;
 
-        console.log(targetX)
-        console.log(targetY)
         // Aplicar el lerp para suavizar el movimiento
         this.mainContainer.pivot.x = lerp(this.mainContainer.pivot.x, targetX, 0.1);
         this.mainContainer.pivot.y = lerp(this.mainContainer.pivot.y, targetY, 0.1);

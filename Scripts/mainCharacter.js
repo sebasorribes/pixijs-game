@@ -134,7 +134,7 @@ class MainCharacter extends Entity {
                 isOverlap(
                     { ...this, y: this.y, x: this.x },
                     enemy
-                ) || distance(this, enemy) <= 1
+                ) 
             ) {
                 if (enemy.isNightmare) {
                     if (!this.godMode) {
