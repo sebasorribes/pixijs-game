@@ -1,5 +1,7 @@
 class Nightmare extends Entity {
+    static beautyTexture = null
     constructor(x, y, game,life) {
+        
         super(x, y, game);
 
         this.id = "Nightmare" + generateRandomID()
@@ -24,7 +26,15 @@ class Nightmare extends Entity {
         this.isNightmare = true;
         this.expGain = false;
         this.isActive = true;
-
+        
+        // Cargar la textura si no se ha cargado aún
+         if (!Nightmare.beautyTexture) {
+            PIXI.Assets.load('./Sprites/ataques/pescadazo.png').then((texture) => {
+                Nightmare.beautyTexture = texture;
+                // Una vez cargada, crear el sprite
+                
+            });
+        } 
         this.animatedSprite();
     }
     makeGraf() {
@@ -259,10 +269,16 @@ class Nightmare extends Entity {
 
         this.container.removeChild(this.sprite)                                                                                                
         
-        this.sprite = new PIXI.Graphics()
-            .rect(0, 0, 20, 20)
-            .fill(0xFFFFFF);
-        this.container.addChild(this.sprite);
+        if (Nightmare.beautyTexture) {
+            this.sprite = new PIXI.Sprite(Nightmare.beautyTexture);
+            this.sprite.anchor.set(0.5, 1);
+            this.sprite.width = this.width;
+            this.sprite.height = this.height;
+
+            // Agregar el sprite al contenedor
+            this.container.addChild(this.sprite);
+        }
+
     }
 
     destroy() {

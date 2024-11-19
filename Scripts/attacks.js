@@ -80,7 +80,7 @@ class BasicSlashAttack extends Attack {
             // Si la textura ya está cargada, crear el sprite de inmediato
             this.makeSprite();
         }
-        this.makeSprite();
+        
         
         this.position(direction);
         this.game.mainContainer.addChild(this.container);
