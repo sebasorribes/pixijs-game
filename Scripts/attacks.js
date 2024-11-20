@@ -229,7 +229,6 @@ class StoneTrailAttack extends Attack {
             stone.height = this.height;
 
             // Agregar el sprite al contenedor
-            console.log(stone);
             this.trail.push({ stone, frame: 0 });
             this.container.addChild(stone);
         }
