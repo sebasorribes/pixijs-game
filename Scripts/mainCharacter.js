@@ -12,7 +12,7 @@ class MainCharacter extends Entity {
         this.walkAcc = 1;
 
         this.life = 500;
-        this.godModeTime = 2500000;
+        this.godModeTime = 25;
 
         this.actualExp = 0;
         this.actualLevel = 1;
