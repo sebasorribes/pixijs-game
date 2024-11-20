@@ -257,6 +257,7 @@ class Nightmare extends Entity {
     changeToDream() {
         this.isNightmare = false;
         this.game.checkWave();
+        this.game.refreshUI();
 
         this.container.removeChild(this.sprite)                                                                                                
         

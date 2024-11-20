@@ -8,6 +8,7 @@ class Game {
         this.backgroundSize = { x: this.cellSize * 18, y: this.cellSize * 12 }
         //this.background = this.preload()
 
+        this.isVible= false;
         this.scale = 1;
 
 
@@ -39,33 +40,74 @@ class Game {
     }
 
     createStartButton() {
-        const startButton = document.createElement('button');
-        startButton.textContent = "Start Game";
-        startButton.style.position = "absolute";
-        startButton.style.top = "50%";
-        startButton.style.left = "50%";
-        startButton.style.transform = "translate(-50%, -50%)";
-        startButton.style.padding = "15px 30px";
-        startButton.style.fontSize = "20px";
-        startButton.style.backgroundColor = "#FF5733";
-        startButton.style.color = "#FFFFFF";
-        startButton.style.border = "none";
-        startButton.style.cursor = "pointer";
-        startButton.style.borderRadius = "10px";
-        document.body.appendChild(startButton);
 
-        startButton.addEventListener('click', () => {
-            // Reproducir música de fondo
-            this.backgroundMusic.play().then(() => {
-                console.log("Música de fondo iniciada");
-            }).catch(error => {
-                console.error("Error al reproducir música:", error);
+        
+
+        document.fonts.ready.then(() => {
+            const gameTitle = document.createElement("p")
+            gameTitle.textContent = "LA PESADILLA DEL SEÑOR BIGOTES";
+            gameTitle.style.fontFamily = "PixelTerror, Arial, sans-serif";
+            gameTitle.style.position = "absolute";
+            gameTitle.style.top = "25%";
+            gameTitle.style.left = "50%";
+            gameTitle.style.transform = "translate(-50%, -50%)";
+            gameTitle.style.padding = "0";
+            gameTitle.style.margin = "0";
+            gameTitle.style.whiteSpace = "nowrap";
+            gameTitle.style.fontSize = "64px";
+            gameTitle.style.color = "#ff0000";
+            gameTitle.style.textAlign = "center";
+            document.body.appendChild(gameTitle);
+
+
+            const startButton = document.createElement('button');
+            startButton.textContent = "Start Game";
+            startButton.style.position = "absolute";
+            startButton.style.top = "90%";
+            startButton.style.left = "50%";
+            startButton.style.transform = "translate(-50%, -50%)";
+            startButton.style.padding = "15px 30px";
+            startButton.style.fontSize = "20px";
+            startButton.style.fontFamily = "Arial, sans-serif"
+            startButton.style.backgroundColor = "#FF5733";
+            startButton.style.color = "#FFFFFF";
+            startButton.style.border = "none";
+            startButton.style.cursor = "pointer";
+            startButton.style.borderRadius = "10px";
+            document.body.appendChild(startButton);
+
+            const textLore = `Ayuda al señor Bigotes a enfrentar a sus pesadillas. <br><br> <span style="color: #cdcfcc;">Para eso utiliza WASD para moverlo y deja que él se encargue de golpearlas</span>`;
+            const loreText = document.createElement("p")
+            loreText.innerHTML = textLore;
+            loreText.style.fontFamily = "Arial, sans-serif";
+            loreText.style.position = "fixed";
+            loreText.style.top = "55%";
+            loreText.style.left = "50%";
+            loreText.style.transform = "translate(-50%, -50%)";
+            loreText.style.padding = "0";
+            loreText.style.margin = "0";
+            loreText.style.whiteSpace = "nowrap";
+            loreText.style.fontSize = "35px";
+            loreText.style.color = "#ff0000";
+            loreText.style.textAlign = "center";
+            document.body.appendChild(loreText);
+
+            startButton.addEventListener('click', () => {
+                // Reproducir música de fondo
+                this.backgroundMusic.play().then(() => {
+                    console.log("Música de fondo iniciada");
+                }).catch(error => {
+                    console.error("Error al reproducir música:", error);
+                });
+
+                // Eliminar botón y empezar el juego
+                document.body.removeChild(startButton);
+                document.body.removeChild(gameTitle);
+                document.body.removeChild(loreText);
+                this.startGame();
             });
 
-            // Eliminar botón y empezar el juego
-            document.body.removeChild(startButton);
-            this.startGame();
-        });
+        })
     }
 
     preload() {
@@ -102,12 +144,77 @@ class Game {
         this.app.stage.addChild(this.tetricFilter)
     }
 
+    createUI(){
+        this.pointsText = new PIXI.Text({
+            text: `Puntos: ${this.points}`, style: {
+                fontFamily: "Arial",
+                fontSize: 28,
+                fill: "#cdcfcc",
+                align: "center"
+            }
+        });
+        this.pointsText.anchor.set(0.5);
+        this.pointsText.x = 70;
+        this.pointsText.y = 15;
+
+        this.app.stage.addChild( this.pointsText);
+
+        this.waveText = new PIXI.Text({
+            text: `Oleada: ${this.numberWave}`, style: {
+                fontFamily: "Arial",
+                fontSize: 28,
+                fill: "#cdcfcc",
+                align: "center"
+            }
+        });
+        this.waveText.anchor.set(0.5);
+        this.waveText.x = this.width / 2;
+        this.waveText.y = 15;
+
+        this.app.stage.addChild(this.waveText);
+
+        this.restantNightmareText = new PIXI.Text({
+            text: `pesadillas en el sueño: ${this.restantNightmare}`, style: {
+                fontFamily: "Arial",
+                fontSize: 28,
+                fill: "#cdcfcc",
+                align: "center"
+            }
+        });
+        this.restantNightmareText.anchor.set(0.5);
+        this.restantNightmareText.x = this.width / 2;
+        this.restantNightmareText.y = 0 + 50;
+
+        this.app.stage.addChild(this.restantNightmareText);
+
+        this.pauseIndication = new PIXI.Text({
+            text: `Esc para pausar`, style: {
+                fontFamily: "Arial",
+                fontSize: 28,
+                fill: "#cdcfcc",
+                align: "center"
+            }
+        });
+        this.pauseIndication.anchor.set(0.5);
+        this.pauseIndication.x = 110;
+        this.pauseIndication.y = this.height - 50;
+
+        this.app.stage.addChild(this.pauseIndication);
+    }
+
+    refreshUI(){
+        this.pointsText.text = `Puntos: ${this.points}`;
+        this.waveText.text = `Oleada: ${this.numberWave}`;
+        this.restantNightmareText.text = `pesadillas en el sueño: ${this.restantNightmare}`;
+    }
+
     startGame() {
 
         this.mainContainer = new PIXI.Container();
         this.mainContainer.name = "mainContainer";
 
         this.app.stage.addChild(this.mainContainer);
+        
         this.preload();
         this.sketcher = new PIXI.Graphics();
         this.mainContainer.addChild(this.sketcher);
@@ -126,7 +233,7 @@ class Game {
         this.placePlayer();
         this.placeNightmares(5);
 
-
+        this.createUI();
         this.app.ticker.add((e) => {
             this.gameLoop(e);
         });
@@ -260,7 +367,7 @@ class Game {
 
         // Límites de la cámara
         const minX = 0;
-        const maxX = (this.backgroundSize.x - halfWindowWidth-650);
+        const maxX = (this.backgroundSize.x - halfWindowWidth - 650);
         const minY = 0;
         const maxY = (this.backgroundSize.y - halfWindowHeight - 300);
 
@@ -289,31 +396,43 @@ class Game {
         this.gameOverMenu.endFill();
 
         const gameOverText = new PIXI.Text({
-            text: "Game Over", style: {
-                fontFamily: "Arial",
-                fontSize: 64,
-                fill: "#00ff00",
+            text: "GAME OVER", style: {
+                fontFamily: "PixelTerror,Arial",
+                fontSize: 120,
+                fill: "#ff0000",
                 align: "center"
             }
         });
         gameOverText.anchor.set(0.5);
         gameOverText.x = this.width / 2;
-        gameOverText.y = this.height / 2 + 25;
+        gameOverText.y = 100;
 
+        const finalPoints = new PIXI.Text({
+            text: `Puntaje Final: ${this.points}`, style: {
+                fontFamily: "Arial",
+                fontSize: 28,
+                fill: "#cdcfcc",
+                align: "center"
+            }
+        });
+        finalPoints.anchor.set(0.5);
+        finalPoints.x = this.width / 2;
+        finalPoints.y = this.height / 2;
 
 
         // Estilo para el botón de reinicio
         const restartStyle = new PIXI.TextStyle({
             fontSize: 28,
-            fill: "#00ff00" // Color verde para "Restart"
+            fill: "#cdcfcc" // Color verde para "Restart"
         });
 
         const restartText = new PIXI.Text(`F5 para reiniciar`, restartStyle);
         restartText.anchor.set(0.5);
         restartText.x = this.width / 2;
-        restartText.y = this.height / 2 + 60;
+        restartText.y = this.height / 2 + 100;
 
         // Agregar los textos después del fondo, al mismo contenedor
+        this.gameOverMenu.addChild(finalPoints)
         this.gameOverMenu.addChild(gameOverText);
         this.gameOverMenu.addChild(restartText);
 
@@ -333,7 +452,7 @@ class Game {
             text: "Level up", style: {
                 fontFamily: "Arial",
                 fontSize: 64,
-                fill: "#0720fa",
+                fill: "5bde00",
                 align: "center"
             }
         });
@@ -345,7 +464,7 @@ class Game {
             text: "Arañazo", style: {
                 fontFamily: "Arial",
                 fontSize: 28,
-                fill: "#0720fa",
+                fill: "#cdcfcc",
                 align: "center"
             }
         });
@@ -357,24 +476,24 @@ class Game {
             text: `${this.skills.basic}`, style: {
                 fontFamily: "Arial",
                 fontSize: 28,
-                fill: "#0720fa",
+                fill: "#ffe806",
                 align: "center"
             }
         });
         basicAttackLevel.anchor.set(0.5);
-        basicAttackLevel.x = this.width / 2 + 50;
+        basicAttackLevel.x = this.width / 2 + 60;
         basicAttackLevel.y = this.height / 2 + 10;
 
         const basicAttackUp = new PIXI.Text({
             text: `+`, style: {
                 fontFamily: "Arial",
                 fontSize: 30,
-                fill: "#0720fa",
+                fill: "5bde00",
                 align: "center"
             }
         });
         basicAttackUp.anchor.set(0.5);
-        basicAttackUp.x = this.width / 2 + 80;
+        basicAttackUp.x = this.width / 2 + 100;
         basicAttackUp.y = this.height / 2 + 10;
         basicAttackUp.interactive = true;
         basicAttackUp.buttonMode = true;
@@ -384,7 +503,7 @@ class Game {
             text: "Pescadazo", style: {
                 fontFamily: "Arial",
                 fontSize: 28,
-                fill: "#0720fa",
+                fill: "#cdcfcc",
                 align: "center"
             }
         });
@@ -396,24 +515,24 @@ class Game {
             text: `${this.skills.attack1}`, style: {
                 fontFamily: "Arial",
                 fontSize: 28,
-                fill: "#0720fa",
+                fill: "#ffe806",
                 align: "center"
             }
         });
         attack1Level.anchor.set(0.5);
-        attack1Level.x = this.width / 2 + 50;
+        attack1Level.x = this.width / 2 + 60;
         attack1Level.y = this.height / 2 + 50;
 
         const attack1Up = new PIXI.Text({
             text: "+", style: {
                 fontFamily: "Arial",
                 fontSize: 30,
-                fill: "#0720fa",
+                fill: "5bde00",
                 align: "center"
             }
         });
         attack1Up.anchor.set(0.5);
-        attack1Up.x = this.width / 2 + 80;
+        attack1Up.x = this.width / 2 + 100;
         attack1Up.y = this.height / 2 + 50;
         attack1Up.interactive = true;
         attack1Up.buttonMode = true;
@@ -423,7 +542,7 @@ class Game {
             text: "Piedritas", style: {
                 fontFamily: "Arial",
                 fontSize: 28,
-                fill: "#0720fa",
+                fill: "#cdcfcc",
                 align: "center"
             }
         });
@@ -435,24 +554,24 @@ class Game {
             text: `${this.skills.attack2}`, style: {
                 fontFamily: "Arial",
                 fontSize: 28,
-                fill: "#0720fa",
+                fill: "#ffe806",
                 align: "center"
             }
         });
         attack2Level.anchor.set(0.5);
-        attack2Level.x = this.width / 2 + 50;
+        attack2Level.x = this.width / 2 + 60;
         attack2Level.y = this.height / 2 + 90;
 
         const attack2Up = new PIXI.Text({
             text: `+`, style: {
                 fontFamily: "Arial",
                 fontSize: 30,
-                fill: "#0720fa",
+                fill: "5bde00",
                 align: "center"
             }
         });
         attack2Up.anchor.set(0.5);
-        attack2Up.x = this.width / 2 + 80;
+        attack2Up.x = this.width / 2 + 100;
         attack2Up.y = this.height / 2 + 90;
         attack2Up.interactive = true;
         attack2Up.buttonMode = true;
@@ -489,7 +608,7 @@ class Game {
 
     gameOver() {
         this.app.ticker.stop();
-        this.backgroundMusic.stop();
+        this.backgroundMusic.pause()
         this.isGameOver = true;
         this.showGameOverMenu();
     }
@@ -529,6 +648,7 @@ class Game {
         }
     }
 
+
     pause() {
         if (!this.isPaused) {
             this.app.ticker.stop();
@@ -539,6 +659,7 @@ class Game {
             this.backgroundMusic.play()
             this.isPaused = false;
         }
+
     }
 
 
