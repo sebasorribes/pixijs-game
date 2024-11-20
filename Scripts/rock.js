@@ -36,7 +36,7 @@ class Rock {
             //GUARDO EL RADIO DEL OBSTACULO PORQ LO USO PARA DETECTAR COLISIONES CON LOS PERSONAJES
             this.radio = 8;
 
-            this.sprite.anchor.set(0.5, 0.82); // Centrado de la roca
+            this.sprite.anchor.set(0.5, 0.79); // Centrado de la roca
 
             this.container.pivot.x = this.sprite.anchor.x / 2;
             this.container.pivot.y = this.sprite.anchor.y +6;

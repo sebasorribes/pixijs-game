@@ -14,13 +14,13 @@ class Nightmare extends Entity {
         this.accMax = 2;
 
 
-        this.factorGroup = 1;
-        this.separationFactor = 84;
-        this.limitToBeClose = 35;
-        this.alignFactor = 6.3;
+        this.factorGroup = 0.01;
+        this.separationFactor = 0.05;
+        this.limitToBeClose = 50;
+        this.alignFactor = 0.03;
         this.averagePositionVector = { x: 0, y: 0 };
 
-        this.chaseFactor = 55;
+        this.chaseFactor = 1;
 
         this.godMoeTime = 10;
         this.isNightmare = true;
@@ -191,7 +191,7 @@ class Nightmare extends Entity {
 
         // Normalizar el vector
         let normalizedVector = normalizeVector(vectorToTarget);
-
+        console.log(normalizedVector)
 
         // El vector de velocidad para llegar al objetivo
         let normalizedWishSpeed = {
@@ -293,7 +293,7 @@ class Nightmare extends Entity {
     }
 
     evadirRocas() {
-        let framesParaPredecir = 10;
+        let framesParaPredecir = 50;
         let factor = 100000000;
     
         for (let obs of this.findNearRocksUsingGrid()) {
@@ -303,7 +303,7 @@ class Nightmare extends Entity {
             y: this.y + this.speed.y * framesParaPredecir,
           });
     
-          let radioCuadrado = obs.radio ** 2;
+          let radioCuadrado = 5 ** 2;
     
           // let distAlCubo = dist * dist;
     
