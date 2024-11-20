@@ -91,7 +91,6 @@ class Entity {
         this.speed.y *= 0.9;
     }
 
-
     changeZOrder() {
         this.container.zIndex = this.y
     }
