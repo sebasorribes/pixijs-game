@@ -191,7 +191,6 @@ class Nightmare extends Entity {
 
         // Normalizar el vector
         let normalizedVector = normalizeVector(vectorToTarget);
-        console.log(normalizedVector)
 
         // El vector de velocidad para llegar al objetivo
         let normalizedWishSpeed = {
