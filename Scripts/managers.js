@@ -22,7 +22,21 @@ class RockManager {
 
         }
     }
+}
 
+class HealthManager{
+    constructor(game){
+        this.game = game;
+        this.healths = [];
+    }
 
+    putHealth(){
+        if(this.checkHealtsInMap()){
+            this.healths.push(new Health(this.game,this));
+        }
+    }
 
+    checkHealtsInMap(){
+        return this.healths.length <= 2;
+    }
 }

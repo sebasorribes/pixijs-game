@@ -39,8 +39,6 @@ class Game {
 
     createStartButton() {
 
-        
-
         document.fonts.ready.then(() => {
             const gameTitle = document.createElement("p")
             gameTitle.textContent = "LA PESADILLA DEL SEÑOR BIGOTES";
@@ -217,6 +215,7 @@ class Game {
         this.sketcher = new PIXI.Graphics();
         this.mainContainer.addChild(this.sketcher);
         //this.imageFilter();
+        this.healthManager = new HealthManager(this);
         this.firstWave = true;
         this.frameCounter = 0;
         this.isPaused = false;
@@ -228,6 +227,7 @@ class Game {
         this.listeners();
         this.grid = new Grid(this, this.cellSize);
         this.rockManager = new RockManager(this, this.grid, this.cellSize, 10); // Borrar a la bosta si no funciona
+        this.healthManager.putHealth(this);
         this.placePlayer();
         this.placeNightmares(5);
 
@@ -643,6 +643,7 @@ class Game {
             let numberNightmares = Math.floor(5 + this.numberWave * 1.5)
             this.restantNightmare = numberNightmares;
             this.placeNightmares(numberNightmares);
+            this.healthManager.putHealth(this);
         }
     }
 

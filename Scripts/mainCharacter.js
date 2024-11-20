@@ -118,14 +118,13 @@ class MainCharacter extends Entity {
         super.update();
         this.encounterRocks();
         this.damaged(actualFrames);
+        this.heal();
         this.handleSpriteDirection();
         this.changePlaySpeedOfAnimatedSprite();
 
         this.rocksNear = this.findNearRocksUsingGrid();
         this.encounterRocks();
     }
-
-
 
 
     damaged(actualFrame) {
@@ -159,6 +158,20 @@ class MainCharacter extends Entity {
         }
     }
 
+    heal(){
+        for (let heal of this.game.healthManager.healths){
+            if (
+                isOverlap(
+                    { ...this, y: this.y, x: this.x },
+                    heal
+                ) 
+            ) {
+                this.life += heal.cura;
+                this.life = this.life>500 ? 500 : this.life;
+                heal.destroy();
+            }
+        }
+    }
     gainExp(actualFrame) {
         // console.log(actualFrame)
         // console.log(this.lastExpFrame)
