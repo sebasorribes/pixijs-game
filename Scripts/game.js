@@ -8,13 +8,8 @@ class Game {
         this.backgroundSize = { x: this.cellSize * 18, y: this.cellSize * 12 }
         this.scale = 1;
 
-
         this.attacks = []
         this.skills = { basic: 1, attack1: 1, attack2: 1 }
-
-
-        this.scale = 1;
-
 
 
         // Cargar la música de fondo
@@ -32,11 +27,11 @@ class Game {
 
         this.app.stage.sortableChildren = true;
         promise.then(e => {
-            this.createStartButton()
+            this.createMainMenu()
         })
     }
 
-    createStartButton() {
+    createMainMenu() {
 
         document.fonts.ready.then(() => {
             const gameTitle = document.createElement("p")
@@ -71,7 +66,8 @@ class Game {
             startButton.style.borderRadius = "10px";
             document.body.appendChild(startButton);
 
-            const textLore = `Ayuda al señor Bigotes a enfrentar a sus pesadillas. <br><br> <span style="color: #cdcfcc;">Para eso utiliza WASD para moverlo y deja que él se encargue de golpearlas</span>`;
+            const textLore = `Ayuda al señor Bigotes a enfrentar a sus pesadillas. <br><br> <span style="color: #cdcfcc;">Para eso utiliza WASD para moverlo y deja que él se encargue de golpearlas.</span>
+                                <br> <span style="color: #cdcfcc;x";>Si la vida del señor bigotes es muy baja,<br>busca el pollo que aparece en cada oleada</span>`;
             const loreText = document.createElement("p")
             loreText.innerHTML = textLore;
             loreText.style.fontFamily = "Arial, sans-serif";
@@ -105,46 +101,7 @@ class Game {
         })
     }
 
-    preload() {
-        // Cargar fondo
-        PIXI.Assets.load('sprites/background/fondito.png').then((texture) => {
-            // Create a sprite from the loaded texture
-            const background = new PIXI.Sprite(texture);
-            background.zIndex = -999999999999;
-
-            // Set the position and size of the background
-            background.anchor.set(0, 0);
-            background.width = this.backgroundSize.x;
-            background.height = this.backgroundSize.y;
-            background.x = 0;
-            background.y = 0;
-
-            this.mainContainer.addChild(background);
-
-            // Cargar los sprites de la barra de vida
-            this.lifeBarSprites = {
-                llena: PIXI.Texture.from('sprites/barraVida/llena.png'),
-                tresCuartos: PIXI.Texture.from('sprites/barraVida/tresCuartos.png'),
-                mitad: PIXI.Texture.from('sprites/barraVida/mitad.png'),
-                baja: PIXI.Texture.from('sprites/barraVida/baja.png'),
-                muyBaja: PIXI.Texture.from('sprites/barraVida/muyBaja.png'),
-                ultima: PIXI.Texture.from('sprites/barraVida/ultima.png')
-            };
-        });
-
-
-    }
-
-    imageFilter() {
-        this.tetricFilter = new PIXI.Graphics()
-        this.tetricFilter.beginFill("0x000000", 0.6);
-        this.tetricFilter.drawRect(0, 0, this.width, this.height);
-        this.tetricFilter.endFill();
-
-        this.app.stage.addChild(this.tetricFilter)
-    }
-
-    createUI(){
+    createGameplayUI(){
         this.pointsText = new PIXI.Text({
             text: `Puntos: ${this.points}`, style: {
                 fontFamily: "Arial",
@@ -208,7 +165,48 @@ class Game {
         this.restantNightmareText.text = `pesadillas en el sueño: ${this.restantNightmare}`;
     }
 
+    preload() {
+        // Cargar fondo
+        PIXI.Assets.load('sprites/background/fondito.png').then((texture) => {
+            // Create a sprite from the loaded texture
+            const background = new PIXI.Sprite(texture);
+            background.zIndex = -999999999999;
+
+            // Set the position and size of the background
+            background.anchor.set(0, 0);
+            background.width = this.backgroundSize.x;
+            background.height = this.backgroundSize.y;
+            background.x = 0;
+            background.y = 0;
+
+            this.mainContainer.addChild(background);
+
+            // Cargar los sprites de la barra de vida
+            this.lifeBarSprites = {
+                llena: PIXI.Texture.from('sprites/barraVida/llena.png'),
+                tresCuartos: PIXI.Texture.from('sprites/barraVida/tresCuartos.png'),
+                mitad: PIXI.Texture.from('sprites/barraVida/mitad.png'),
+                baja: PIXI.Texture.from('sprites/barraVida/baja.png'),
+                muyBaja: PIXI.Texture.from('sprites/barraVida/muyBaja.png'),
+                ultima: PIXI.Texture.from('sprites/barraVida/ultima.png')
+            };
+        });
+
+
+    }
+
+    imageFilter() {
+        this.tetricFilter = new PIXI.Graphics()
+        this.tetricFilter.beginFill("0x000000", 0.6);
+        this.tetricFilter.drawRect(0, 0, this.width, this.height);
+        this.tetricFilter.endFill();
+
+        this.app.stage.addChild(this.tetricFilter)
+    }
+
     startGame() {
+        console.log(this.width)
+        console.log(this.height)
 
         this.mainContainer = new PIXI.Container();
         this.mainContainer.name = "mainContainer";
@@ -234,8 +232,9 @@ class Game {
         this.healthManager.putHealth(this);
         this.placePlayer();
         this.placeNightmares(5);
+        this.miniMap();
 
-        this.createUI();
+        this.createGameplayUI();
         this.app.ticker.add((e) => {
             this.gameLoop(e);
         });
@@ -274,6 +273,7 @@ class Game {
             this.nightmaresLoop(this.frameCounter);
             this.moveCamera();
             this.makeAttacks(this.frameCounter);
+            this.updateMiniMap(this.player,this.nightmares,this.healthManager.healths)
         }
     }
 
@@ -640,7 +640,6 @@ class Game {
 
     //sumar progresivamente bichos
     checkWave() {
-        console.log(this.restantNightmare)
         this.restantNightmare--
         if (this.restantNightmare < 1) {
             this.numberWave++;
@@ -665,5 +664,74 @@ class Game {
 
     }
 
+    miniMap() {
+        // Crear contenedor para el mini mapa
+        this.miniMapContainer = new PIXI.Container();
+        this.miniMapContainer.x = this.width - 200;  // Posición del mini mapa
+        this.miniMapContainer.y = this.height - 200;
+        this.mapWidth = this.width; // Ancho del mundo real
+        this.mapHeight = this.height; // Alto del mundo real
+        this.miniMapContainer.scale.set(0.2); // Escala del mini mapa
+        this.app.stage.addChild(this.miniMapContainer);
+
+        // Crear un fondo de mini mapa (puedes reemplazarlo con un mapa real)
+        this.miniMapBackground = new PIXI.Graphics();
+        this.miniMapBackground.beginFill(0xCCCCCC);
+        this.miniMapBackground.drawRect(0, 0, 720, 480);
+        this.miniMapBackground.endFill();
+        this.miniMapContainer.addChild(this.miniMapBackground);
+
+        // Crear un contenedor para los iconos de enemigos y curas
+        this.miniMapIcons = new PIXI.Container();
+        this.miniMapContainer.addChild(this.miniMapIcons);
+
+        // Crear contenedor para el jugador
+        this.playerIcon = new PIXI.Graphics();
+        this.playerIcon.beginFill(0x0000FF);
+        this.playerIcon.drawCircle(0, 0, 10);  // El jugador será un pequeño círculo rojo
+        this.playerIcon.endFill();
+        this.miniMapIcons.addChild(this.playerIcon);
+
+        // Inicialización de enemigos y curas
+        this.enemies = [];
+        this.healthItems = [];
+
+        // Escuchar el movimiento del jugador
+        this.playerX = 0;
+        this.playerY = 0;
+    }
+
+    // Actualiza el mini mapa
+    updateMiniMap(player,nightmares,healths) {
+        const scale =0.22;
+        // Actualizar la posición del jugador en el mini mapa
+        this.playerIcon.x = player.x * scale;  // Escala de 1:10
+        this.playerIcon.y = player.y * scale;  // Escala de 1:10
+
+        // Dibujar los enemigos en el mini mapa
+        this.miniMapIcons.removeChildren();
+        this.miniMapIcons.addChild(this.playerIcon); // Volver a añadir el icono del jugador
+
+        nightmares.forEach(enemy => {
+            let enemyIcon = new PIXI.Graphics();
+            enemyIcon.beginFill(0xFF0000);  // Color verde para los enemigos
+            enemyIcon.drawCircle(0, 0, 10);  // Enemigos representados por círculos pequeños
+            enemyIcon.endFill();
+            enemyIcon.x = enemy.x * scale;
+            enemyIcon.y = enemy.y * scale;
+            this.miniMapIcons.addChild(enemyIcon);
+        });
+
+        // Dibujar los items de cura en el mini mapa
+        healths.forEach(healthItem => {
+            let healthIcon = new PIXI.Graphics();
+            healthIcon.beginFill(0x00FF00);  // Color azul para los items de cura 0x0000FF
+            healthIcon.drawCircle(0, 0, 10);  // Items de cura representados por círculos
+            healthIcon.endFill();
+            healthIcon.x = healthItem.x * scale;
+            healthIcon.y = healthItem.y * scale;
+            this.miniMapIcons.addChild(healthIcon);
+        });
+    }
 
 }
