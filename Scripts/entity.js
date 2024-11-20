@@ -71,7 +71,7 @@ class Entity {
         this.refreshPositionOnGrid();
         this.nightmaresNear = this.findNearNightmaresUsingGrid();
         this.rocksNear = this.findNearRocksUsingGrid();
-        
+
     }
 
 
@@ -124,9 +124,7 @@ class Entity {
                 let dep = this.nearEntities[i];
                 if ((dep.id.substring(0, 9) == "Nightmare") && dep != this) {
                     let dist = calcDistance(dep, this);
-                    if (dist < this.vision) {
-                        ret.push({ nightmare: dep, dist: dist });
-                    }
+                    ret.push({ nightmare: dep, dist: dist });
                 }
             }
         } else {
@@ -168,7 +166,7 @@ class Entity {
                     //margen izq
                     this.speed.x = -Math.abs(this.speed.x)
                 }
-        
+
                 if (this.y > rock.y) {
                     this.speed.y = Math.abs(this.speed.y)
                 } else if (this.y < rock.y) {

@@ -1,7 +1,7 @@
 class Nightmare extends Entity {
     static beautyTexture = null
-    constructor(x, y, game,life) {
-        
+    constructor(x, y, game, life) {
+
         super(x, y, game);
 
         this.id = "Nightmare" + generateRandomID()
@@ -9,7 +9,7 @@ class Nightmare extends Entity {
         this.width = 22;
         this.height = 20;
 
-        this.life =life;
+        this.life = life;
         this.speedMax = 10;
         this.accMax = 2;
 
@@ -26,15 +26,15 @@ class Nightmare extends Entity {
         this.isNightmare = true;
         this.expGain = false;
         this.isActive = true;
-        
+
         // Cargar la textura si no se ha cargado aún
-         if (!Nightmare.beautyTexture) {
+        if (!Nightmare.beautyTexture) {
             PIXI.Assets.load('./Sprites/ratoncito.png').then((texture) => {
                 Nightmare.beautyTexture = texture;
                 // Una vez cargada, crear el sprite
-                
+
             });
-        } 
+        }
         this.animatedSprite();
     }
     makeGraf() {
@@ -52,7 +52,7 @@ class Nightmare extends Entity {
         this.sprite.play();
         this.container.addChild(this.sprite);
         this.sprite.anchor.set(0.5, 1);
-        this.container.pivot.x = this.sprite.anchor.x/2;
+        this.container.pivot.x = this.sprite.anchor.x / 2;
         this.container.pivot.y = this.sprite.anchor.y;
         this.sprite.currentFrame = Math.floor(Math.random() * 5)
 
@@ -65,20 +65,55 @@ class Nightmare extends Entity {
 
 
     update(actualFrame) {
-        if(!this.ready || !this.isActive) return
+        if (!this.ready || !this.isActive) return
         super.update();
         if (!this.isNightmare) return;
 
         this.cohesion(this.nightmaresNear);
         this.separation(this.nightmaresNear);
         this.alignment(this.nightmaresNear);
-        this.chase(this.findPlayerNearUsingGrid());
+        this.actions();
         this.nearAttacks = this.findNearAttacksUsingGrid();
         this.evadirRocas();
-        
+
         this.takeDamage(actualFrame, this.nearAttacks)
 
 
+    }
+
+    actions() {
+        let player = this.findPlayerNearUsingGrid();
+        if (player) {
+            let findNearNightmaresPlayer = player.findNearNightmaresUsingGrid();
+            if (player.findNearNightmaresUsingGrid().length > 1 &&
+            findNearNightmaresPlayer.every(nightmare => nightmare.nightmare.isNightmare)
+            ) {
+                this.chase(player);
+            } else {
+                this.scape(player);
+            }
+        }
+    }
+
+    scape(player) {
+        let vectorToTarget = { x: this.x - player.x, y: this.y - player.y };
+
+        let normalizedVector = normalizeVector(vectorToTarget);
+
+        // El vector de velocidad para llegar al objetivo
+        let normalizedWishSpeed = {
+            x: normalizedVector.x * 0.5,
+            y: normalizedVector.y * 0.5,
+        };
+
+        this.applyForce(normalizedWishSpeed.x, normalizedWishSpeed.y);
+
+
+        if (normalizedWishSpeed.x > 0) {
+            this.sprite.scale.x = -1;
+        } else if (normalizedWishSpeed.x < 0) {
+            this.sprite.scale.x = 1;
+        }
     }
 
     findNightmaresNear() {
@@ -183,7 +218,7 @@ class Nightmare extends Entity {
     }
 
     chase(player) {
-        if(!player || !player.ready) return;
+        if (!player || !player.ready) return;
 
         let vectorToTarget = { x: player.x - this.x, y: player.y - this.y };
 
@@ -215,7 +250,7 @@ class Nightmare extends Entity {
 
             for (let i = 0; i < this.nearEntities.length; i++) {
                 let dep = this.nearEntities[i];
-                if (dep.id.substring(0,6) == "Attack" && dep != this) {
+                if (dep.id.substring(0, 6) == "Attack" && dep != this) {
                     ret.push(dep);
                 }
             }
@@ -228,9 +263,9 @@ class Nightmare extends Entity {
     findPlayerNearUsingGrid() {
         if (this.cell) {
 
-            if(this.nearEntities.length > 0){
-                return this.nearEntities.find(entity => entity.id.substring(0,6) == "player");
-            }else{
+            if (this.nearEntities.length > 0) {
+                return this.nearEntities.find(entity => entity.id.substring(0, 6) == "player");
+            } else {
                 return null;
             }
         } else {
@@ -266,10 +301,10 @@ class Nightmare extends Entity {
     changeToDream() {
         this.isNightmare = false;
         this.game.checkWave();
-        this.game.refreshUI();
+        this.game.uiManager.refreshUI();
 
-        this.container.removeChild(this.sprite)                                                                                                
-        
+        this.container.removeChild(this.sprite)
+
         if (Nightmare.beautyTexture) {
             this.sprite = new PIXI.Sprite(Nightmare.beautyTexture);
             this.sprite.anchor.set(0.5, 1);
@@ -294,46 +329,46 @@ class Nightmare extends Entity {
     evadirRocas() {
         let framesParaPredecir = 50;
         let factor = 100000000;
-    
+
         for (let obs of this.findNearRocksUsingGrid()) {
-          //VEO LA DISTANCIA DESDE DONDE VOY A ESTAR EN 10 FRAMES HASTA EL OBSTACULO
-          let distCuadrada = distance(obs, {
-            x: this.x + this.speed.x * framesParaPredecir,
-            y: this.y + this.speed.y * framesParaPredecir,
-          });
-    
-          let radioCuadrado = 5 ** 2;
-    
-          // let distAlCubo = dist * dist;
-    
-          if (distCuadrada <= 0) return;
-    
-          //SI ESTA TOCANDO EL OBSTACULO (CON 5 PIXELES DE CHANGUI):
-          //ESTO ES UNA COLISION DIGAMOS...
-          if (distCuadrada < radioCuadrado + 5) {
-            //LE APLICO MUCHA MAS FUERZA
-            let vectorQApuntaDelObstaculoHaciaMi = {
-              x: this.x - obs.x,
-              y: this.y - obs.y,
-            };
-            this.applyForce(
-              vectorQApuntaDelObstaculoHaciaMi.x * factor,
-              vectorQApuntaDelObstaculoHaciaMi.y * factor
-            );
-          } else if (distCuadrada < 3 * radioCuadrado) {
-            //SI LA DISTANCIA ES MENOR AL TRIPLE DEL RADIO...
-            let vectorQApuntaDelObstaculoHaciaMi = {
-              x: this.x + this.speed.x - obs.x,
-              y: this.y + this.speed.y - obs.y,
-            };
-            //APLICO EL FACTOR DE FUERZA INICIAL Q ES UNA BOCHA, DIVIDIDO LA DIST AL CUBO.
-            //LA IDEA ES QUE CUANTO MAS LEJOS MENOS FUERZA Y CUANTO MAS CERCA ESTAS MAS FUERZA EJERCE
-            this.applyForce(
-              (vectorQApuntaDelObstaculoHaciaMi.x * factor) / distCuadrada,
-              (vectorQApuntaDelObstaculoHaciaMi.y * factor) / distCuadrada
-            );
-          }
+            //VEO LA DISTANCIA DESDE DONDE VOY A ESTAR EN 10 FRAMES HASTA EL OBSTACULO
+            let distCuadrada = distance(obs, {
+                x: this.x + this.speed.x * framesParaPredecir,
+                y: this.y + this.speed.y * framesParaPredecir,
+            });
+
+            let radioCuadrado = 5 ** 2;
+
+            // let distAlCubo = dist * dist;
+
+            if (distCuadrada <= 0) return;
+
+            //SI ESTA TOCANDO EL OBSTACULO (CON 5 PIXELES DE CHANGUI):
+            //ESTO ES UNA COLISION DIGAMOS...
+            if (distCuadrada < radioCuadrado + 5) {
+                //LE APLICO MUCHA MAS FUERZA
+                let vectorQApuntaDelObstaculoHaciaMi = {
+                    x: this.x - obs.x,
+                    y: this.y - obs.y,
+                };
+                this.applyForce(
+                    vectorQApuntaDelObstaculoHaciaMi.x * factor,
+                    vectorQApuntaDelObstaculoHaciaMi.y * factor
+                );
+            } else if (distCuadrada < 3 * radioCuadrado) {
+                //SI LA DISTANCIA ES MENOR AL TRIPLE DEL RADIO...
+                let vectorQApuntaDelObstaculoHaciaMi = {
+                    x: this.x + this.speed.x - obs.x,
+                    y: this.y + this.speed.y - obs.y,
+                };
+                //APLICO EL FACTOR DE FUERZA INICIAL Q ES UNA BOCHA, DIVIDIDO LA DIST AL CUBO.
+                //LA IDEA ES QUE CUANTO MAS LEJOS MENOS FUERZA Y CUANTO MAS CERCA ESTAS MAS FUERZA EJERCE
+                this.applyForce(
+                    (vectorQApuntaDelObstaculoHaciaMi.x * factor) / distCuadrada,
+                    (vectorQApuntaDelObstaculoHaciaMi.y * factor) / distCuadrada
+                );
+            }
         }
-      }
+    }
 }
 
