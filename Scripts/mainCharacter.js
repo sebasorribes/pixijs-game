@@ -12,6 +12,8 @@ class MainCharacter extends Entity {
         this.walkAcc = 1;
 
         this.life = 500;
+        this.initLifeBar();
+
         this.godModeTime = 25;
 
         this.actualExp = 0;
@@ -23,6 +25,30 @@ class MainCharacter extends Entity {
 
         this.animatedSprite();
 
+    }
+
+    initLifeBar() {
+        // Crear gráfico de barra de vida
+        this.lifeBar = new PIXI.Graphics();
+        this.updateLifeBar(); // Conf. barra inicial
+        // Añadir la barra de vida al cont. del pj
+        this.container.addChild(this.lifeBar);
+    }       
+
+    // Modificar barra de vida en tiempo real
+    updateLifeBar() {
+        const lifePercentage = this.life / 500; // Calcula el porcentaje de vida
+
+        // Dibujar barra de vida
+        this.lifeBar.clear();
+        this.lifeBar.beginFill(0xFF0000);
+        this.lifeBar.drawRect(
+            -this.width / 1.1, // Centrar barra horizontalmente
+            this.height - 10 , // Posicionar barra debajo del personaje
+            this.width * 2 * lifePercentage, // Ancho de la barra en función de la vida actual
+            5            
+        );
+        this.lifeBar.endFill();
     }
 
     async animatedSprite() {
@@ -122,6 +148,8 @@ class MainCharacter extends Entity {
         this.handleSpriteDirection();
         this.changePlaySpeedOfAnimatedSprite();
 
+
+        this.updateLifeBar();
         this.rocksNear = this.findNearRocksUsingGrid();
         this.encounterRocks();
     }
@@ -156,6 +184,7 @@ class MainCharacter extends Entity {
             }
 
         }
+        this.updateLifeBar();
     }
 
     heal(){
@@ -171,6 +200,7 @@ class MainCharacter extends Entity {
                 heal.destroy();
             }
         }
+        this.updateLifeBar();
     }
     gainExp(actualFrame) {
         // console.log(actualFrame)

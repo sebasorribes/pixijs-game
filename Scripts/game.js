@@ -6,7 +6,6 @@ class Game {
         this.width = window.innerWidth;
         this.height = window.innerHeight;
         this.backgroundSize = { x: this.cellSize * 18, y: this.cellSize * 12 }
-        //this.background = this.preload()
         this.scale = 1;
 
 
@@ -107,7 +106,7 @@ class Game {
     }
 
     preload() {
-
+        // Cargar fondo
         PIXI.Assets.load('sprites/background/fondito.png').then((texture) => {
             // Create a sprite from the loaded texture
             const background = new PIXI.Sprite(texture);
@@ -120,13 +119,18 @@ class Game {
             background.x = 0;
             background.y = 0;
 
-
-            // Add the background to the stage
             this.mainContainer.addChild(background);
 
-
-
-        })
+            // Cargar los sprites de la barra de vida
+            this.lifeBarSprites = {
+                llena: PIXI.Texture.from('sprites/barraVida/llena.png'),
+                tresCuartos: PIXI.Texture.from('sprites/barraVida/tresCuartos.png'),
+                mitad: PIXI.Texture.from('sprites/barraVida/mitad.png'),
+                baja: PIXI.Texture.from('sprites/barraVida/baja.png'),
+                muyBaja: PIXI.Texture.from('sprites/barraVida/muyBaja.png'),
+                ultima: PIXI.Texture.from('sprites/barraVida/ultima.png')
+            };
+        });
 
 
     }
