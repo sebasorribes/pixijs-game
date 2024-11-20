@@ -174,7 +174,6 @@ class MainCharacter extends Entity {
                         }
                     }
                 } else {
-
                     if (!enemy.gainExp) {
                         enemy.destroy(this);
                         this.gainExp(actualFrame);
@@ -220,7 +219,7 @@ class MainCharacter extends Entity {
             this.game.skills.attack1 < 3 ||
             this.game.skills.attack2 < 3
         ) {
-            this.game.buildlevelUpMenu();
+            this.game.uiManager.buildlevelUpMenu();
         } else {
             this.life += 20;
         }

@@ -1,6 +1,5 @@
 class Game {
     constructor() {
-        
         this.app = new PIXI.Application();
         this.cellSize = 180; //VER
         this.width = window.innerWidth;
@@ -19,151 +18,19 @@ class Game {
 
         this.nightmares = [];
         this.keysPressed = {};
+
         let promise = this.app.init({ width: this.width, height: this.height });
-        this.points = 0;
-        this.nightmareLife = 200;
-        this.restantNightmare = 0;
-        this.numberWave = 1;
 
         this.app.stage.sortableChildren = true;
         promise.then(e => {
-            this.createMainMenu()
+            document.body.appendChild(this.app.canvas);
+            window.__PIXI_APP__ = this.app;
+            this.uiManager = new UIManager(this);
+            this.uiManager.createMainMenu()
         })
     }
 
-    createMainMenu() {
-
-        document.fonts.ready.then(() => {
-            const gameTitle = document.createElement("p")
-            gameTitle.textContent = "LA PESADILLA DEL SEÑOR BIGOTES";
-            gameTitle.style.fontFamily = "PixelTerror, Arial, sans-serif";
-            gameTitle.style.position = "absolute";
-            gameTitle.style.top = "25%";
-            gameTitle.style.left = "50%";
-            gameTitle.style.transform = "translate(-50%, -50%)";
-            gameTitle.style.padding = "0";
-            gameTitle.style.margin = "0";
-            gameTitle.style.whiteSpace = "nowrap";
-            gameTitle.style.fontSize = "64px";
-            gameTitle.style.color = "#ff0000";
-            gameTitle.style.textAlign = "center";
-            document.body.appendChild(gameTitle);
-
-
-            const startButton = document.createElement('button');
-            startButton.textContent = "Start Game";
-            startButton.style.position = "absolute";
-            startButton.style.top = "90%";
-            startButton.style.left = "50%";
-            startButton.style.transform = "translate(-50%, -50%)";
-            startButton.style.padding = "15px 30px";
-            startButton.style.fontSize = "20px";
-            startButton.style.fontFamily = "Arial, sans-serif"
-            startButton.style.backgroundColor = "#FF5733";
-            startButton.style.color = "#FFFFFF";
-            startButton.style.border = "none";
-            startButton.style.cursor = "pointer";
-            startButton.style.borderRadius = "10px";
-            document.body.appendChild(startButton);
-
-            const textLore = `Ayuda al señor Bigotes a enfrentar a sus pesadillas. <br><br> <span style="color: #cdcfcc;">Para eso utiliza WASD para moverlo y deja que él se encargue de golpearlas.</span>
-                                <br> <span style="color: #cdcfcc;x";>Si la vida del señor bigotes es muy baja,<br>busca el pollo que aparece en cada oleada</span>`;
-            const loreText = document.createElement("p")
-            loreText.innerHTML = textLore;
-            loreText.style.fontFamily = "Arial, sans-serif";
-            loreText.style.position = "fixed";
-            loreText.style.top = "55%";
-            loreText.style.left = "50%";
-            loreText.style.transform = "translate(-50%, -50%)";
-            loreText.style.padding = "0";
-            loreText.style.margin = "0";
-            loreText.style.whiteSpace = "nowrap";
-            loreText.style.fontSize = "35px";
-            loreText.style.color = "#ff0000";
-            loreText.style.textAlign = "center";
-            document.body.appendChild(loreText);
-
-            startButton.addEventListener('click', () => {
-                // Reproducir música de fondo
-                this.backgroundMusic.play().then(() => {
-                    console.log("Música de fondo iniciada");
-                }).catch(error => {
-                    console.error("Error al reproducir música:", error);
-                });
-
-                // Eliminar botón y empezar el juego
-                document.body.removeChild(startButton);
-                document.body.removeChild(gameTitle);
-                document.body.removeChild(loreText);
-                this.startGame();
-            });
-
-        })
-    }
-
-    createGameplayUI(){
-        this.pointsText = new PIXI.Text({
-            text: `Puntos: ${this.points}`, style: {
-                fontFamily: "Arial",
-                fontSize: 28,
-                fill: "#cdcfcc",
-                align: "center"
-            }
-        });
-        this.pointsText.anchor.set(0.5);
-        this.pointsText.x = 70;
-        this.pointsText.y = 15;
-
-        this.app.stage.addChild( this.pointsText);
-
-        this.waveText = new PIXI.Text({
-            text: `Oleada: ${this.numberWave}`, style: {
-                fontFamily: "Arial",
-                fontSize: 28,
-                fill: "#cdcfcc",
-                align: "center"
-            }
-        });
-        this.waveText.anchor.set(0.5);
-        this.waveText.x = this.width / 2;
-        this.waveText.y = 15;
-
-        this.app.stage.addChild(this.waveText);
-
-        this.restantNightmareText = new PIXI.Text({
-            text: `pesadillas en el sueño: ${this.restantNightmare}`, style: {
-                fontFamily: "Arial",
-                fontSize: 28,
-                fill: "#cdcfcc",
-                align: "center"
-            }
-        });
-        this.restantNightmareText.anchor.set(0.5);
-        this.restantNightmareText.x = this.width / 2;
-        this.restantNightmareText.y = 0 + 50;
-
-        this.app.stage.addChild(this.restantNightmareText);
-
-        this.pauseIndication = new PIXI.Text({
-            text: `Esc para pausar`, style: {
-                fontFamily: "Arial",
-                fontSize: 28,
-                fill: "#cdcfcc",
-                align: "center"
-            }
-        });
-        this.pauseIndication.anchor.set(0.5);
-        this.pauseIndication.x = 110;
-        this.pauseIndication.y = this.height - 50;
-
-        this.app.stage.addChild(this.pauseIndication);
-    }
-
-    refreshUI(){
-        this.pointsText.text = `Puntos: ${this.points}`;
-        this.waveText.text = `Oleada: ${this.numberWave}`;
-        this.restantNightmareText.text = `pesadillas en el sueño: ${this.restantNightmare}`;
-    }
+   
 
     preload() {
         // Cargar fondo
@@ -205,14 +72,11 @@ class Game {
     }
 
     startGame() {
-        console.log(this.width)
-        console.log(this.height)
-
         this.mainContainer = new PIXI.Container();
         this.mainContainer.name = "mainContainer";
 
         this.app.stage.addChild(this.mainContainer);
-        
+
         this.preload();
         this.sketcher = new PIXI.Graphics();
         this.mainContainer.addChild(this.sketcher);
@@ -223,18 +87,19 @@ class Game {
         this.isPaused = false;
         this.isGameOver = false;
         this.restantNightmare = 5;
+        this.points = 0;
+        this.nightmareLife = 200;
+        this.numberWave = 1;
 
-        document.body.appendChild(this.app.canvas);
-        window.__PIXI_APP__ = this.app;
         this.listeners();
         this.grid = new Grid(this, this.cellSize);
         this.rockManager = new RockManager(this, this.grid, this.cellSize, 10); // Borrar a la bosta si no funciona
         this.healthManager.putHealth(this);
         this.placePlayer();
         this.placeNightmares(5);
-        this.miniMap();
 
-        this.createGameplayUI();
+        this.uiManager.createGameplayUI();
+        this.uiManager.miniMap();
         this.app.ticker.add((e) => {
             this.gameLoop(e);
         });
@@ -265,7 +130,6 @@ class Game {
     }
 
     gameLoop() {
-
         if (this.player.ready) {
             this.frameCounter++;
             this.handleMovement();
@@ -273,7 +137,7 @@ class Game {
             this.nightmaresLoop(this.frameCounter);
             this.moveCamera();
             this.makeAttacks(this.frameCounter);
-            this.updateMiniMap(this.player,this.nightmares,this.healthManager.healths)
+            this.uiManager.updateMiniMap(this.player, this.nightmares, this.healthManager.healths);
         }
     }
 
@@ -388,231 +252,22 @@ class Game {
         this.mainContainer.scale.set(this.scale);
     }
 
-
-
-    buildGameOverMenu() {
-        this.gameOverMenu = new PIXI.Graphics();
-        this.gameOverMenu.clear();
-        this.gameOverMenu.beginFill("0x000000", 0.5);
-        this.gameOverMenu.drawRect(0, 0, this.width, this.height);
-        this.gameOverMenu.endFill();
-
-        const gameOverText = new PIXI.Text({
-            text: "GAME OVER", style: {
-                fontFamily: "PixelTerror,Arial",
-                fontSize: 120,
-                fill: "#ff0000",
-                align: "center"
-            }
-        });
-        gameOverText.anchor.set(0.5);
-        gameOverText.x = this.width / 2;
-        gameOverText.y = 100;
-
-        const finalPoints = new PIXI.Text({
-            text: `Puntaje Final: ${this.points}`, style: {
-                fontFamily: "Arial",
-                fontSize: 28,
-                fill: "#cdcfcc",
-                align: "center"
-            }
-        });
-        finalPoints.anchor.set(0.5);
-        finalPoints.x = this.width / 2;
-        finalPoints.y = this.height / 2;
-
-
-        // Estilo para el botón de reinicio
-        const restartStyle = new PIXI.TextStyle({
-            fontSize: 28,
-            fill: "#cdcfcc" // Color verde para "Restart"
-        });
-
-        const restartText = new PIXI.Text(`F5 para reiniciar`, restartStyle);
-        restartText.anchor.set(0.5);
-        restartText.x = this.width / 2;
-        restartText.y = this.height / 2 + 100;
-
-        // Agregar los textos después del fondo, al mismo contenedor
-        this.gameOverMenu.addChild(finalPoints)
-        this.gameOverMenu.addChild(gameOverText);
-        this.gameOverMenu.addChild(restartText);
-
-        // Finalmente, agregar el menú al stage
-        this.app.stage.addChild(this.gameOverMenu);
-    }
-
-    buildlevelUpMenu() {
-        this.app.ticker.stop();
-        this.levelUpMenu = new PIXI.Graphics();
-        this.levelUpMenu.clear();
-        this.levelUpMenu.beginFill("0x000000", 0.7);
-        this.levelUpMenu.drawRect(0, 0, this.width, this.height);
-        this.levelUpMenu.endFill()
-
-        const levelUpText = new PIXI.Text({
-            text: "Level up", style: {
-                fontFamily: "Arial",
-                fontSize: 64,
-                fill: "5bde00",
-                align: "center"
-            }
-        });
-        levelUpText.anchor.set(0.5);
-        levelUpText.x = this.width / 2;
-        levelUpText.y = 50;
-
-        const basicAttack = new PIXI.Text({
-            text: "Arañazo", style: {
-                fontFamily: "Arial",
-                fontSize: 28,
-                fill: "#cdcfcc",
-                align: "center"
-            }
-        });
-        basicAttack.anchor.set(0.5);
-        basicAttack.x = this.width / 2 - 30;
-        basicAttack.y = this.height / 2 + 10;
-
-        const basicAttackLevel = new PIXI.Text({
-            text: `${this.skills.basic}`, style: {
-                fontFamily: "Arial",
-                fontSize: 28,
-                fill: "#ffe806",
-                align: "center"
-            }
-        });
-        basicAttackLevel.anchor.set(0.5);
-        basicAttackLevel.x = this.width / 2 + 60;
-        basicAttackLevel.y = this.height / 2 + 10;
-
-        const basicAttackUp = new PIXI.Text({
-            text: `+`, style: {
-                fontFamily: "Arial",
-                fontSize: 30,
-                fill: "5bde00",
-                align: "center"
-            }
-        });
-        basicAttackUp.anchor.set(0.5);
-        basicAttackUp.x = this.width / 2 + 100;
-        basicAttackUp.y = this.height / 2 + 10;
-        basicAttackUp.interactive = true;
-        basicAttackUp.buttonMode = true;
-        basicAttackUp.on('pointerdown', () => this.upgradeSkill('basic'));
-
-        const attack1 = new PIXI.Text({
-            text: "Pescadazo", style: {
-                fontFamily: "Arial",
-                fontSize: 28,
-                fill: "#cdcfcc",
-                align: "center"
-            }
-        });
-        attack1.anchor.set(0.5);
-        attack1.x = this.width / 2 - 30;
-        attack1.y = this.height / 2 + 50;
-
-        const attack1Level = new PIXI.Text({
-            text: `${this.skills.attack1}`, style: {
-                fontFamily: "Arial",
-                fontSize: 28,
-                fill: "#ffe806",
-                align: "center"
-            }
-        });
-        attack1Level.anchor.set(0.5);
-        attack1Level.x = this.width / 2 + 60;
-        attack1Level.y = this.height / 2 + 50;
-
-        const attack1Up = new PIXI.Text({
-            text: "+", style: {
-                fontFamily: "Arial",
-                fontSize: 30,
-                fill: "5bde00",
-                align: "center"
-            }
-        });
-        attack1Up.anchor.set(0.5);
-        attack1Up.x = this.width / 2 + 100;
-        attack1Up.y = this.height / 2 + 50;
-        attack1Up.interactive = true;
-        attack1Up.buttonMode = true;
-        attack1Up.on('pointerdown', () => this.upgradeSkill('attack1'));
-
-        const attack2 = new PIXI.Text({
-            text: "Piedritas", style: {
-                fontFamily: "Arial",
-                fontSize: 28,
-                fill: "#cdcfcc",
-                align: "center"
-            }
-        });
-        attack2.anchor.set(0.5);
-        attack2.x = this.width / 2 - 30;
-        attack2.y = this.height / 2 + 90;
-
-        const attack2Level = new PIXI.Text({
-            text: `${this.skills.attack2}`, style: {
-                fontFamily: "Arial",
-                fontSize: 28,
-                fill: "#ffe806",
-                align: "center"
-            }
-        });
-        attack2Level.anchor.set(0.5);
-        attack2Level.x = this.width / 2 + 60;
-        attack2Level.y = this.height / 2 + 90;
-
-        const attack2Up = new PIXI.Text({
-            text: `+`, style: {
-                fontFamily: "Arial",
-                fontSize: 30,
-                fill: "5bde00",
-                align: "center"
-            }
-        });
-        attack2Up.anchor.set(0.5);
-        attack2Up.x = this.width / 2 + 100;
-        attack2Up.y = this.height / 2 + 90;
-        attack2Up.interactive = true;
-        attack2Up.buttonMode = true;
-        attack2Up.on('pointerdown', () => this.upgradeSkill('attack2'));
-
-
-        this.levelUpMenu.addChild(levelUpText);
-        this.levelUpMenu.addChild(basicAttack);
-        this.levelUpMenu.addChild(basicAttackLevel);
-        if (this.skills.basic < 3) this.levelUpMenu.addChild(basicAttackUp);
-        this.levelUpMenu.addChild(attack1);
-        this.levelUpMenu.addChild(attack1Level);
-        if (this.skills.attack1 < 3) this.levelUpMenu.addChild(attack1Up);
-        this.levelUpMenu.addChild(attack2);
-        this.levelUpMenu.addChild(attack2Level);
-        if (this.skills.attack2 < 3) this.levelUpMenu.addChild(attack2Up);
-
-        this.app.stage.addChild(this.levelUpMenu);
-
-    }
-
     upgradeSkill(skill) {
         if (this.skills[skill] < 3) { // Verifica que la habilidad no esté en el máximo nivel 
             this.skills[skill]++;
             console.log(`Habilidad ${skill} mejorada a nivel ${this.skills[skill]}`);
         }
-        this.app.stage.removeChild(this.levelUpMenu);
+        this.app.stage.removeChild(this.uiManager.levelUpMenu);
         this.app.ticker.start();
-    }
-
-    showGameOverMenu() {
-        this.buildGameOverMenu();
     }
 
     gameOver() {
         this.app.ticker.stop();
         this.backgroundMusic.pause()
         this.isGameOver = true;
-        this.showGameOverMenu();
+        this.app.stage.removeChild(this.uiManager.uiContainer);
+        this.app.stage.removeChild(this.uiManager.miniMapContainer);
+        this.uiManager.buildGameOverMenu();
     }
 
     removePlayer() {
@@ -650,7 +305,6 @@ class Game {
         }
     }
 
-
     pause() {
         if (!this.isPaused) {
             this.app.ticker.stop();
@@ -662,76 +316,6 @@ class Game {
             this.isPaused = false;
         }
 
-    }
-
-    miniMap() {
-        // Crear contenedor para el mini mapa
-        this.miniMapContainer = new PIXI.Container();
-        this.miniMapContainer.x = this.width - 200;  // Posición del mini mapa
-        this.miniMapContainer.y = this.height - 200;
-        this.mapWidth = this.width; // Ancho del mundo real
-        this.mapHeight = this.height; // Alto del mundo real
-        this.miniMapContainer.scale.set(0.2); // Escala del mini mapa
-        this.app.stage.addChild(this.miniMapContainer);
-
-        // Crear un fondo de mini mapa (puedes reemplazarlo con un mapa real)
-        this.miniMapBackground = new PIXI.Graphics();
-        this.miniMapBackground.beginFill(0xCCCCCC);
-        this.miniMapBackground.drawRect(0, 0, 720, 480);
-        this.miniMapBackground.endFill();
-        this.miniMapContainer.addChild(this.miniMapBackground);
-
-        // Crear un contenedor para los iconos de enemigos y curas
-        this.miniMapIcons = new PIXI.Container();
-        this.miniMapContainer.addChild(this.miniMapIcons);
-
-        // Crear contenedor para el jugador
-        this.playerIcon = new PIXI.Graphics();
-        this.playerIcon.beginFill(0x0000FF);
-        this.playerIcon.drawCircle(0, 0, 10);  // El jugador será un pequeño círculo rojo
-        this.playerIcon.endFill();
-        this.miniMapIcons.addChild(this.playerIcon);
-
-        // Inicialización de enemigos y curas
-        this.enemies = [];
-        this.healthItems = [];
-
-        // Escuchar el movimiento del jugador
-        this.playerX = 0;
-        this.playerY = 0;
-    }
-
-    // Actualiza el mini mapa
-    updateMiniMap(player,nightmares,healths) {
-        const scale =0.22;
-        // Actualizar la posición del jugador en el mini mapa
-        this.playerIcon.x = player.x * scale;  // Escala de 1:10
-        this.playerIcon.y = player.y * scale;  // Escala de 1:10
-
-        // Dibujar los enemigos en el mini mapa
-        this.miniMapIcons.removeChildren();
-        this.miniMapIcons.addChild(this.playerIcon); // Volver a añadir el icono del jugador
-
-        nightmares.forEach(enemy => {
-            let enemyIcon = new PIXI.Graphics();
-            enemyIcon.beginFill(0xFF0000);  // Color verde para los enemigos
-            enemyIcon.drawCircle(0, 0, 10);  // Enemigos representados por círculos pequeños
-            enemyIcon.endFill();
-            enemyIcon.x = enemy.x * scale;
-            enemyIcon.y = enemy.y * scale;
-            this.miniMapIcons.addChild(enemyIcon);
-        });
-
-        // Dibujar los items de cura en el mini mapa
-        healths.forEach(healthItem => {
-            let healthIcon = new PIXI.Graphics();
-            healthIcon.beginFill(0x00FF00);  // Color azul para los items de cura 0x0000FF
-            healthIcon.drawCircle(0, 0, 10);  // Items de cura representados por círculos
-            healthIcon.endFill();
-            healthIcon.x = healthItem.x * scale;
-            healthIcon.y = healthItem.y * scale;
-            this.miniMapIcons.addChild(healthIcon);
-        });
     }
 
 }
