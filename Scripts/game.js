@@ -8,7 +8,7 @@ class Game {
         this.scale = 1;
 
         this.attacks = []
-        this.skills = { basic: 1, attack1: 1, attack2: 1 }
+        this.skills = { basic: 1, attack1: 0, attack2: 0 }
 
 
         // Cargar la música de fondo
@@ -152,17 +152,21 @@ class Game {
             let attack = new BasicSlashAttack(this.player, actualFrames, this.skills.basic, this.player.currentDirection);
             this.attacks.push(attack);
             if (this.skills.basic > 2) {
-                console.log("entro")
                 let oppositeDirection = this.opposite();
                 let attack = new BasicSlashAttack(this.player, actualFrames, this.skills.basic, oppositeDirection);
                 this.attacks.push(attack);
             }
         }
 
-        for (let attack of this.attacks) {
-            if ((actualFrames + 1 - attack.lastFrameExecuted) % 5 == 0 && attack.type == "basic") {
-                attack.destroy();
+        try {
+            for (let attack of this.attacks) {
+                if ((actualFrames + 1 - attack.lastFrameExecuted) % 5 == 0 && attack.type == "basic") {
+                    attack.destroy();
+                }
             }
+            
+        } catch (error) {
+            console.log(e);
         }
     }
 
