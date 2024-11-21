@@ -175,40 +175,43 @@ class MainCharacter extends Entity {
 
 
         this.updateLifeBar();
-        this.rocksNear = this.findNearRocksUsingGrid();
-        this.encounterRocks();
+        this.encounterRocks(actualFrames);
     }
 
 
     damaged(actualFrame) {
-        for (let i = 0; i < this.nightmaresNear.length; i++) {
-            let enemy = this.nightmaresNear[i].nightmare;
-            if (
-                isOverlap(
-                    { ...this, y: this.y, x: this.x },
-                    enemy
-                ) 
-            ) {
-                if (enemy.isNightmare) {
-                    if (!this.godMode) {
-                        this.life -= 25;
-                        this.godMode = true;
-                        this.lastFrameGodMode = actualFrame;
-                        if (this.life <= 0) {
-                            this.gameOver();
+        if(actualFrame % 2 == 0){
+            this.nightmaresNear = this.findNearNightmaresUsingGrid();
+            for (let i = 0; i < this.nightmaresNear.length; i++) {
+                let enemy = this.nightmaresNear[i].nightmare;
+                if (
+                    isOverlap(
+                        { ...this, y: this.y, x: this.x },
+                        enemy
+                    ) 
+                ) {
+                    if (enemy.isNightmare) {
+                        if (!this.godMode) {
+                            this.life -= 25;
+                            this.godMode = true;
+                            this.lastFrameGodMode = actualFrame;
+                            if (this.life <= 0) {
+                                this.gameOver();
+                            }
                         }
+                    } else {
+                        if (!enemy.gainExp) {
+                            enemy.destroy(this);
+                            this.gainExp(actualFrame);
+                        }
+    
                     }
-                } else {
-                    if (!enemy.gainExp) {
-                        enemy.destroy(this);
-                        this.gainExp(actualFrame);
-                    }
-
                 }
+    
             }
+            this.updateLifeBar();
 
         }
-        this.updateLifeBar();
     }
 
     heal(){
@@ -228,7 +231,7 @@ class MainCharacter extends Entity {
     }
     gainExp(actualFrame) {
         this.lastExpFrame = actualFrame;
-        this.actualExp += 200;
+        this.actualExp += 500;
         const expToNextLevel = 500 * this.actualLevel;
 
         if (this.actualExp >= expToNextLevel) {

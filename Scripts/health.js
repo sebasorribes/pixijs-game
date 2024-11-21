@@ -2,7 +2,7 @@ class Health {
     static healtTexture = null;
     constructor(game, manager) {
         this.container = new PIXI.Container();
-        this.id = "Health"+generateRandomID();
+        this.id = "Health" + generateRandomID();
         this.healthManager = manager;
         this.container.name = this.id;
         this.game = game;
@@ -12,7 +12,7 @@ class Health {
         this.width = 20;
         this.height = 20;
         this.cura = 200;
-        
+
         this.game.mainContainer.addChild(this.container);
 
         if (!Health.healtTexture) {
@@ -36,7 +36,7 @@ class Health {
         this.container.addChild(this.sprite);
     }
 
-    destroy(){
+    destroy() {
         this.game.mainContainer.removeChild(this.container);
         this.container.destroy();
         this.healthManager.healths = this.healthManager.healths.filter((k) => k.id != this.id);

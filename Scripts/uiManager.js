@@ -1,6 +1,7 @@
 class UIManager {
     constructor(game) {
         this.game = game;
+
     }
 
     createMainMenu() {
@@ -175,6 +176,12 @@ class UIManager {
     // Actualiza el mini mapa
     updateMiniMap(player, nightmares, healths) {
         const scale = 0.22;
+
+        if(player.x > player.game.backgroundSize.x / 2){
+            this.miniMapContainer.x = 50
+        }else{
+            this.miniMapContainer.x = this.game.width - 200;
+        }
         // Actualizar la posición del jugador en el mini mapa
         this.playerIcon.x = player.x * scale;
         this.playerIcon.y = player.y * scale;
@@ -190,7 +197,7 @@ class UIManager {
                 enemyIcon.drawCircle(0, 0, 10);  // Enemigos representados por círculos pequeños
                 enemyIcon.endFill();
 
-            }else{
+            } else {
                 enemyIcon.beginFill(0xe9f30a);
                 enemyIcon.drawCircle(0, 0, 10);  // Enemigos representados por círculos pequeños
                 enemyIcon.endFill();
@@ -233,6 +240,16 @@ class UIManager {
         levelUpText.x = this.game.width / 2;
         levelUpText.y = 50;
 
+        this.scratchImage = document.createElement("img")
+        this.scratchImage.setAttribute("src", "./Sprites/ataques/zarpazo.png");
+        this.scratchImage.setAttribute('alt', 'na');
+        this.scratchImage.style.position = "fixed";
+        this.scratchImage.setAttribute('height', '100px');
+        this.scratchImage.setAttribute('width', '100px');
+        this.scratchImage.style.top = "20%";
+        this.scratchImage.style.left = "20%";
+        document.body.appendChild(this.scratchImage);
+
         const basicAttack = new PIXI.Text({
             text: "Arañazo", style: {
                 fontFamily: "Arial",
@@ -242,8 +259,8 @@ class UIManager {
             }
         });
         basicAttack.anchor.set(0.5);
-        basicAttack.x = this.game.width / 2 - 30;
-        basicAttack.y = this.game.height / 2 + 10;
+        basicAttack.x = 300;
+        basicAttack.y = 270;
 
         const basicAttackLevel = new PIXI.Text({
             text: `${this.game.skills.basic}`, style: {
@@ -254,8 +271,8 @@ class UIManager {
             }
         });
         basicAttackLevel.anchor.set(0.5);
-        basicAttackLevel.x = this.game.width / 2 + 60;
-        basicAttackLevel.y = this.game.height / 2 + 10;
+        basicAttackLevel.x = 300;
+        basicAttackLevel.y = 310;
 
         const basicAttackUp = new PIXI.Text({
             text: `+`, style: {
@@ -266,11 +283,21 @@ class UIManager {
             }
         });
         basicAttackUp.anchor.set(0.5);
-        basicAttackUp.x = this.game.width / 2 + 100;
-        basicAttackUp.y = this.game.height / 2 + 10;
+        basicAttackUp.x = 300;
+        basicAttackUp.y = 350;
         basicAttackUp.interactive = true;
         basicAttackUp.buttonMode = true;
         basicAttackUp.on('pointerdown', () => this.game.upgradeSkill('basic'));
+
+        this.attack1Image = document.createElement("img")
+        this.attack1Image.setAttribute("src", "./Sprites/ataques/pescadazo.png");
+        this.attack1Image.setAttribute('alt', 'na');
+        this.attack1Image.style.position = "fixed";
+        this.attack1Image.setAttribute('height', '100px');
+        this.attack1Image.setAttribute('width', '100px');
+        this.attack1Image.style.top = "20%";
+        this.attack1Image.style.left = "50%";
+        document.body.appendChild(this.attack1Image);
 
         const attack1 = new PIXI.Text({
             text: "Pescadazo", style: {
@@ -281,8 +308,8 @@ class UIManager {
             }
         });
         attack1.anchor.set(0.5);
-        attack1.x = this.game.width / 2 - 30;
-        attack1.y = this.game.height / 2 + 50;
+        attack1.x = 670;
+        attack1.y = 270;
 
         const attack1Level = new PIXI.Text({
             text: `${this.game.skills.attack1}`, style: {
@@ -293,8 +320,8 @@ class UIManager {
             }
         });
         attack1Level.anchor.set(0.5);
-        attack1Level.x = this.game.width / 2 + 60;
-        attack1Level.y = this.game.height / 2 + 50;
+        attack1Level.x = 670;
+        attack1Level.y = 310;
 
         const attack1Up = new PIXI.Text({
             text: "+", style: {
@@ -305,11 +332,22 @@ class UIManager {
             }
         });
         attack1Up.anchor.set(0.5);
-        attack1Up.x = this.game.width / 2 + 100;
-        attack1Up.y = this.game.height / 2 + 50;
+        attack1Up.x = 670;
+        attack1Up.y = 350;
         attack1Up.interactive = true;
         attack1Up.buttonMode = true;
         attack1Up.on('pointerdown', () => this.game.upgradeSkill('attack1'));
+
+
+        this.attack2Image = document.createElement("img")
+        this.attack2Image.setAttribute("src", "./Sprites/ataques/piedritas.png");
+        this.attack2Image.setAttribute('alt', 'na');
+        this.attack2Image.style.position = "fixed";
+        this.attack2Image.setAttribute('height', '100px');
+        this.attack2Image.setAttribute('width', '100px');
+        this.attack2Image.style.top = "20%";
+        this.attack2Image.style.left = "80%";
+        document.body.appendChild(this.attack2Image);
 
         const attack2 = new PIXI.Text({
             text: "Piedritas", style: {
@@ -320,8 +358,8 @@ class UIManager {
             }
         });
         attack2.anchor.set(0.5);
-        attack2.x = this.game.width / 2 - 30;
-        attack2.y = this.game.height / 2 + 90;
+        attack2.x = 1040;
+        attack2.y = 270;
 
         const attack2Level = new PIXI.Text({
             text: `${this.game.skills.attack2}`, style: {
@@ -332,8 +370,8 @@ class UIManager {
             }
         });
         attack2Level.anchor.set(0.5);
-        attack2Level.x = this.game.width / 2 + 60;
-        attack2Level.y = this.game.height / 2 + 90;
+        attack2Level.x = 1040;
+        attack2Level.y = 310;
 
         const attack2Up = new PIXI.Text({
             text: `+`, style: {
@@ -344,8 +382,8 @@ class UIManager {
             }
         });
         attack2Up.anchor.set(0.5);
-        attack2Up.x = this.game.width / 2 + 100;
-        attack2Up.y = this.game.height / 2 + 90;
+        attack2Up.x = 1040;
+        attack2Up.y = 350;
         attack2Up.interactive = true;
         attack2Up.buttonMode = true;
         attack2Up.on('pointerdown', () => this.game.upgradeSkill('attack2'));
@@ -364,6 +402,13 @@ class UIManager {
 
         this.game.app.stage.addChild(this.levelUpMenu);
     }
+
+    removeSpriteAttacks(){
+        document.body.removeChild(this.scratchImage);
+        document.body.removeChild(this.attack1Image);
+        document.body.removeChild(this.attack2Image);
+    }
+
 
     buildGameOverMenu() {
         this.gameOverMenu = new PIXI.Graphics();

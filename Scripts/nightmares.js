@@ -68,25 +68,33 @@ class Nightmare extends Entity {
         if (!this.ready || !this.isActive) return
         super.update();
         if (!this.isNightmare) return;
-
+        this.nightmaresNear = this.findNearNightmaresUsingGrid();
         this.cohesion(this.nightmaresNear);
         this.separation(this.nightmaresNear);
         this.alignment(this.nightmaresNear);
         this.actions();
-        this.nearAttacks = this.findNearAttacksUsingGrid();
+        this.rocksNear = this.findNearRocksUsingGrid();
         this.evadirRocas();
 
         this.takeDamage(actualFrame, this.nearAttacks)
-
+        this.fixMap();
 
     }
 
+    fixMap() {
+        if (this.x > this.game.backgroundSize.x || this.x < 0) {
+            this.x = this.game.backgroundSize.x / 2
+        }
+        if (this.y > this.game.backgroundSize.y || this.y < 0) {
+            this.y = this.game.backgroundSize.y / 2
+        }
+    }
     actions() {
         let player = this.findPlayerNearUsingGrid();
         if (player) {
             let findNearNightmaresPlayer = player.findNearNightmaresUsingGrid();
             if (player.findNearNightmaresUsingGrid().length > 1 &&
-            findNearNightmaresPlayer.every(nightmare => nightmare.nightmare.isNightmare)
+                findNearNightmaresPlayer.every(nightmare => nightmare.nightmare.isNightmare)
             ) {
                 this.chase(player);
             } else {
@@ -273,28 +281,31 @@ class Nightmare extends Entity {
         }
     }
 
-    takeDamage(actualFrame, attacks) {
-        if (attacks.length == 0) return;
-        for (let i = 0; i < attacks.length; i++) {
-            let attack = attacks[i];
-            if (
-                isOverlap(
-                    { ...this, y: this.y, x: this.x },
-                    attack
-                ) || distance(this, attack) <= 1
-            ) {
+    takeDamage(actualFrame) {
+        if (actualFrame % 2 == 0) {
+            this.nearAttacks = this.findNearAttacksUsingGrid();
+            if (this.nearAttacks.length == 0) return;
+            for (let i = 0; i < this.nearAttacks.length; i++) {
+                let attack = this.nearAttacks[i];
+                if (
+                    isOverlap(
+                        { ...this, y: this.y, x: this.x },
+                        attack
+                    ) || distance(this, attack) <= 1
+                ) {
 
-                this.life -= attack.damage;
-                this.godMode = true;
-                this.lastFrameGodMode = actualFrame;
-                if (this.life <= 0) {
-                    this.life = 0
-                    this.game.points += 20;
-                    this.changeToDream();
+                    this.life -= attack.damage;
+                    this.godMode = true;
+                    this.lastFrameGodMode = actualFrame;
+                    if (this.life <= 0) {
+                        this.life = 0
+                        this.game.points += 20;
+                        this.changeToDream();
+                    }
+
                 }
 
             }
-
         }
     }
 

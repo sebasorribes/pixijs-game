@@ -11,10 +11,11 @@ class Game {
         this.skills = { basic: 1, attack1: 0, attack2: 0 }
 
 
+
         // Cargar la música de fondo
         this.backgroundMusic = new Audio('Sound/Babymetal-ijime,dame,zettai.mp3');
         this.backgroundMusic.loop = true;
-        this.backgroundMusic.volume = 0.05;
+        this.backgroundMusic.volume = 0.04;
 
         this.nightmares = [];
         this.keysPressed = {};
@@ -47,16 +48,6 @@ class Game {
             background.y = 0;
 
             this.mainContainer.addChild(background);
-
-            // Cargar los sprites de la barra de vida
-            this.lifeBarSprites = {
-                llena: PIXI.Texture.from('sprites/barraVida/llena.png'),
-                tresCuartos: PIXI.Texture.from('sprites/barraVida/tresCuartos.png'),
-                mitad: PIXI.Texture.from('sprites/barraVida/mitad.png'),
-                baja: PIXI.Texture.from('sprites/barraVida/baja.png'),
-                muyBaja: PIXI.Texture.from('sprites/barraVida/muyBaja.png'),
-                ultima: PIXI.Texture.from('sprites/barraVida/ultima.png')
-            };
         });
 
 
@@ -71,6 +62,8 @@ class Game {
         this.app.stage.addChild(this.tetricFilter)
     }
 
+    
+
     startGame() {
         this.mainContainer = new PIXI.Container();
         this.mainContainer.name = "mainContainer";
@@ -80,7 +73,7 @@ class Game {
         this.preload();
         this.sketcher = new PIXI.Graphics();
         this.mainContainer.addChild(this.sketcher);
-        //this.imageFilter();
+        this.imageFilter();
         this.healthManager = new HealthManager(this);
         this.firstWave = true;
         this.frameCounter = 0;
@@ -95,8 +88,9 @@ class Game {
         this.grid = new Grid(this, this.cellSize);
         this.rockManager = new RockManager(this, this.grid, this.cellSize, 10); // Borrar a la bosta si no funciona
         this.healthManager.putHealth(this);
+        this.grassManager = new GrassManager(this,5000)
         this.placePlayer();
-        this.placeNightmares(5);
+        this.placeNightmares(this.restantNightmare);
 
         this.uiManager.createGameplayUI();
         this.uiManager.miniMap();
@@ -138,6 +132,7 @@ class Game {
             this.moveCamera();
             this.makeAttacks(this.frameCounter);
             this.uiManager.updateMiniMap(this.player, this.nightmares, this.healthManager.healths);
+            this.grassManager.update();
         }
     }
 
@@ -166,7 +161,7 @@ class Game {
             }
             
         } catch (error) {
-            console.log(e);
+            console.log(error);
         }
     }
 
@@ -262,6 +257,7 @@ class Game {
             console.log(`Habilidad ${skill} mejorada a nivel ${this.skills[skill]}`);
         }
         this.app.stage.removeChild(this.uiManager.levelUpMenu);
+        this.uiManager.removeSpriteAttacks();
         this.app.ticker.start();
     }
 
@@ -303,6 +299,7 @@ class Game {
         if (this.restantNightmare < 1) {
             this.numberWave++;
             let numberNightmares = Math.floor(5 + this.numberWave * 1.5)
+            numberNightmares = numberNightmares > 500 ? 500 : numberNightmares;
             this.restantNightmare = numberNightmares;
             this.placeNightmares(numberNightmares);
             this.healthManager.putHealth(this);

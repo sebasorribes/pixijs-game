@@ -69,8 +69,6 @@ class Entity {
 
         this.friction()
         this.refreshPositionOnGrid();
-        this.nightmaresNear = this.findNearNightmaresUsingGrid();
-        this.rocksNear = this.findNearRocksUsingGrid();
 
     }
 
@@ -153,64 +151,31 @@ class Entity {
         return ret;
     }
 
-    encounterRocks() {
-        for (let i = 0; i < this.rocksNear.length; i++) {
-            let rock = this.rocksNear[i];
-            if (
-                distance(this, rock) < rock.radio * rock.radio
-            ) {
-                if (this.x > rock.x) {
-                    //margen derecho
-                    this.speed.x = Math.abs(this.speed.x)
-                } else if (this.x < rock.x) {
-                    //margen izq
-                    this.speed.x = -Math.abs(this.speed.x)
+    encounterRocks(actualFrame) {
+        if (actualFrame % 2 == 0) {
+            this.rocksNear = this.findNearRocksUsingGrid();
+            for (let i = 0; i < this.rocksNear.length; i++) {
+                let rock = this.rocksNear[i];
+                if (
+                    distance(this, rock) < rock.radio * rock.radio
+                ) {
+                    if (this.x > rock.x) {
+                        //margen derecho
+                        this.speed.x = Math.abs(this.speed.x)
+                    } else if (this.x < rock.x) {
+                        //margen izq
+                        this.speed.x = -Math.abs(this.speed.x)
+                    }
+
+                    if (this.y > rock.y) {
+                        this.speed.y = Math.abs(this.speed.y)
+                    } else if (this.y < rock.y) {
+                        this.speed.y = -Math.abs(this.speed.y)
+                    }
                 }
 
-                if (this.y > rock.y) {
-                    this.speed.y = Math.abs(this.speed.y)
-                } else if (this.y < rock.y) {
-                    this.speed.y = -Math.abs(this.speed.y)
-                }
             }
-
         }
-    }
-
-    repelerObstaculos(vecinos) {
-        const vecFuerza = new PIXI.Point(0, 0);
-        let cant = 0;
-        vecinos.forEach((obstaculo) => {
-            if (obstaculo instanceof Piedra) {
-                const distCuadrada = distanciaAlCuadrado(
-                    this.container.x,
-                    this.container.y,
-                    obstaculo.container.x,
-                    obstaculo.container.y
-                );
-
-                if (distCuadrada < obstaculo.radio ** 2) {
-                    //SI ESTA A MENOS DE UNA CELDA DE DIST
-                    const dif = new PIXI.Point(
-                        this.container.x - obstaculo.container.x,
-                        this.container.y - obstaculo.container.y
-                    );
-                    dif.x /= distCuadrada;
-                    dif.y /= distCuadrada;
-                    vecFuerza.x += dif.x;
-                    vecFuerza.y += dif.y;
-                    cant++;
-                }
-            }
-        });
-        if (cant) {
-            vecFuerza.x *= 40;
-            vecFuerza.y *= 40;
-            // vecFuerza.x += -this.velocidad.x;
-            // vecFuerza.y += -this.velocidad.y;
-        }
-
-        return vecFuerza;
     }
 
 }
