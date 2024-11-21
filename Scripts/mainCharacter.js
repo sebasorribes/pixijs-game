@@ -112,7 +112,7 @@ class MainCharacter extends Entity {
 
     changePlaySpeedOfAnimatedSprite() {
         try {
-            this.sprite.animationSpeed = Math.sqrt(this.speed.x ** 2 + this.speed.y ** 2) * 0.1;
+            this.sprite.animationSpeed = Math.sqrt(this.speed.x ** 2 + this.speed.y ** 2) * 0.025;
 
         } catch (error) {
             console.log("no esta listo el sprite");
