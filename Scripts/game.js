@@ -151,6 +151,7 @@ class Game {
                 let attack = new BasicSlashAttack(this.player, actualFrames, this.skills.basic, oppositeDirection);
                 this.attacks.push(attack);
             }
+            
         }
 
         try {
@@ -163,6 +164,7 @@ class Game {
         } catch (error) {
             console.log(error);
         }
+        
     }
 
     opposite() {
