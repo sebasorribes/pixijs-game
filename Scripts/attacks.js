@@ -21,13 +21,17 @@ class Attack {
 
     // Método para destruir el ataque
     destroy() {
-        if (!this.active) return;
-        this.active = false;
-        this.cell.delete(this);
-        this.sprite.destroy();
-        this.container.destroy();
-        this.game.mainContainer.removeChild(this.container); // Eliminar del contenedor principal
-        this.game.attacks = this.game.attacks.filter((k) => k.id != this.id)
+        try {
+            if (!this.active) return;
+            this.active = false;
+            this.cell.delete(this);
+            this.sprite.destroy();
+            this.container.destroy();
+            this.game.mainContainer.removeChild(this.container); // Eliminar del contenedor principal
+            this.game.attacks = this.game.attacks.filter((k) => k.id != this.id)
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     refreshPositionOnGrid() {
@@ -85,7 +89,6 @@ class BasicSlashAttack extends Attack {
         this.game.mainContainer.addChild(this.container);
         this.refreshPositionOnGrid();
         this.render();
-        this.active = true;
     }
 
     makeSprite() {
@@ -95,6 +98,7 @@ class BasicSlashAttack extends Attack {
             this.sprite.width = this.width;
             this.sprite.height = this.height;
             this.container.addChild(this.sprite);
+            this.active = true;
         }
     }
 
