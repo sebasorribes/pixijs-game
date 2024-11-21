@@ -62,12 +62,12 @@ class BasicSlashAttack extends Attack {
         this.container.name = this.type;
 
         if (direction == "right" || direction == "left") {
-            this.width = 20;
-            this.height = 100;
+            this.width = 50;
+            this.height = 120;
 
         } else {
-            this.width = 100;
-            this.height = 20;
+            this.width = 120;
+            this.height = 50;
         }
 
         // Cargar la textura si no se ha cargado aún
@@ -82,7 +82,6 @@ class BasicSlashAttack extends Attack {
             this.makeSprite();
         }
         
-        
         this.position(direction);
         this.game.mainContainer.addChild(this.container);
         this.refreshPositionOnGrid();
@@ -92,30 +91,23 @@ class BasicSlashAttack extends Attack {
     makeSprite() {
         if (BasicSlashAttack.slashTexture) {
             this.sprite = new PIXI.Sprite(BasicSlashAttack.slashTexture);
-            this.sprite.anchor.set(0.5, 1);
+            this.sprite.anchor.set(0, 0);
             this.sprite.width = this.width;
             this. sprite.height = this.height;
             this.container.addChild(this.sprite);
         }
-    }
-    makeSecondSprite() {  // IGNORAR
-        // Crear el sprite del ataque (puedes usar una textura)
-        this.sprite2 = new PIXI.Graphics()
-            .rect(0, 0, this.width, this.height)
-            .fill(0xff0000);
-        this.container.addChild(this.sprite2);
     }
 
     position(playerDirection) {
         if (playerDirection == "right" || playerDirection == "left") {
             // Posicionar el ataque frente al personaje
             this.x = this.character.x + (playerDirection == "right" ? 40 : -40); // Ajusta según la dirección
-            this.y = this.character.y + 20;
+            this.y = this.character.y - 72;
             
         } else {
             // Posicionar el ataque frente al personaje
-            this.x = this.character.x;
-            this.y = this.character.y + (playerDirection == "front" ? 40 : -40); // Ajusta según la dirección
+            this.x = this.character.x - 65;
+            this.y = this.character.y + (playerDirection == "front" ? 30 : -30); // Ajusta según la dirección
         }
     }
 
