@@ -40,3 +40,20 @@ class HealthManager{
         return this.healths.length <= 2;
     }
 }
+
+class GrassManager{
+    constructor(game,numGrass){
+        this.game = game;
+        this.grass = [];
+
+        for(let i=0; i < numGrass; i++){
+            this.grass.push(new Grass(this.game))
+        }
+    }
+
+    update(){
+        for(let i=0; i < this.grass.length; i++){
+            this.grass[i].update();
+        }
+    }
+}
