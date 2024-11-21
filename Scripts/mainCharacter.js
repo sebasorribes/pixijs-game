@@ -19,6 +19,7 @@ class MainCharacter extends Entity {
         this.actualExp = 0;
         this.actualLevel = 1;
         this.lastExpFrame = 0;
+        this.initExpBar();
 
 
         this.currentDirection = "front";
@@ -46,9 +47,33 @@ class MainCharacter extends Entity {
             -this.width / 1.1, // Centrar barra horizontalmente
             this.height - 10 , // Posicionar barra debajo del personaje
             this.width * 2 * lifePercentage, // Ancho de la barra en función de la vida actual
-            5            
+            3            
         );
         this.lifeBar.endFill();
+    }
+
+    initExpBar() {
+        // Crear gráfico de barra de experiencia
+        this.expBar = new PIXI.Graphics();
+        this.updateExpBar(); // Conf. barra inicial
+        // Añadir la barra de experiencia al cont. del pj
+        this.container.addChild(this.expBar);
+    }
+
+    updateExpBar() {
+        const expToNextLevel = 500 * this.actualLevel;
+        const expPercentage = this.actualExp / expToNextLevel; // Calcula el porcentaje de experiencia
+
+        // Dibujar barra de experiencia
+        this.expBar.clear();
+        this.expBar.beginFill(0x0000FF);
+        this.expBar.drawRect(
+            -this.width / 1.1, // Centrar barra horizontalmente
+            this.height - 7, // Posicionar barra debajo del personaje
+            this.width * 1.5 * expPercentage, // Ancho de la barra en función de la experiencia actual
+            3           
+        );
+        this.expBar.endFill();
     }
 
     async animatedSprite() {
@@ -202,15 +227,15 @@ class MainCharacter extends Entity {
         this.updateLifeBar();
     }
     gainExp(actualFrame) {
-        // console.log(actualFrame)
-        // console.log(this.lastExpFrame)
         this.lastExpFrame = actualFrame;
         this.actualExp += 200;
-        if (this.actualExp >= 500 * this.actualLevel) {
+        const expToNextLevel = 500 * this.actualLevel;
+
+        if (this.actualExp >= expToNextLevel) {
             this.actualExp = 0;
             this.levelUp();
         }
-
+        this.updateExpBar();
     }
 
     levelUp() {
