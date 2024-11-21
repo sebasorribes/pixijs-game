@@ -231,7 +231,7 @@ class MainCharacter extends Entity {
     }
     gainExp(actualFrame) {
         this.lastExpFrame = actualFrame;
-        this.actualExp += 500;
+        this.actualExp += 100;
         const expToNextLevel = 500 * this.actualLevel;
 
         if (this.actualExp >= expToNextLevel) {

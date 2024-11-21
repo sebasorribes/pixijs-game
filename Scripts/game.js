@@ -301,6 +301,7 @@ class Game {
             let numberNightmares = Math.floor(5 + this.numberWave * 1.5)
             numberNightmares = numberNightmares > 500 ? 500 : numberNightmares;
             this.restantNightmare = numberNightmares;
+            this.nightmareLife = (200 * this.numberWave) * 0.6);
             this.placeNightmares(numberNightmares);
             this.healthManager.putHealth(this);
         }

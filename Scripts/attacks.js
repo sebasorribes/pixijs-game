@@ -55,7 +55,7 @@ class BasicSlashAttack extends Attack {
     static slashTexture = null; // prueba
     constructor(player, initialExecutionFrame, actualLevel, direction) {
         super(player, initialExecutionFrame);
-        this.damage = 25 * actualLevel;
+        this.damage = 50 * actualLevel;
         this.type = "basic";
         this.container.name = this.type;
 
@@ -125,7 +125,7 @@ class FishStrike extends Attack {
     static slashTexture = null;
     constructor(player, initialExecutionFrame, actualLevel, velocityX) {
         super(player, initialExecutionFrame);
-        this.damage = 50 * actualLevel;
+        this.damage = 60 * actualLevel;
         this.originPoint = player.y;
         this.type = "fishStrike";
         this.velocityY = -15;
@@ -190,7 +190,7 @@ class StoneTrailAttack extends Attack {
     stoneTexture = null;
     constructor(player, initialExecutionFrame) {
         super(player, initialExecutionFrame);
-        this.damage = 14; // Daño del ataque 
+        this.damage = 30; // Daño del ataque 
         this.type = "stoneTrail";
         this.width = 50;
         this.height = 50;
@@ -232,7 +232,7 @@ class StoneTrailAttack extends Attack {
     update(actualFrames, actualLevel) {
         if (!this.active) return; // Crear nuevas piedras 
         if (actualLevel > 2) {
-            this.damage = 20;
+            this.damage = 50;
             this.width = 100;
             this.height = 100;
             this.duration = 65; // Duración en frames antes de desaparecer 
