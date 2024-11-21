@@ -55,7 +55,7 @@ class Game {
 
     imageFilter() {
         this.tetricFilter = new PIXI.Graphics()
-        this.tetricFilter.beginFill("0x000000", 0.6);
+        this.tetricFilter.beginFill("0x000000", 0.5);
         this.tetricFilter.drawRect(0, 0, this.width, this.height);
         this.tetricFilter.endFill();
 
