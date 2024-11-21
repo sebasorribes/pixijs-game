@@ -73,13 +73,13 @@ class Game {
         this.preload();
         this.sketcher = new PIXI.Graphics();
         this.mainContainer.addChild(this.sketcher);
-        this.imageFilter();
+        //this.imageFilter();
         this.healthManager = new HealthManager(this);
         this.firstWave = true;
         this.frameCounter = 0;
         this.isPaused = false;
         this.isGameOver = false;
-        this.restantNightmare = 5;
+        this.restantNightmare = 300;
         this.points = 0;
         this.nightmareLife = 200;
         this.numberWave = 1;

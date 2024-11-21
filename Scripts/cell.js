@@ -5,7 +5,6 @@ class Cell {
       this.x = x;
       this.y = y;
       this.cellSize = cellSize;
-      this.dibujame();
       
     }
   

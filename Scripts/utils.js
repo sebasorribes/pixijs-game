@@ -81,7 +81,7 @@ function isOverlap(rect1, rect2) {
 
     return isOverlapping;
 }
-
+//cambiar a circulos por rendimiento
 
 
 function arrayUnique(arr) {
