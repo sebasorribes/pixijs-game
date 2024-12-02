@@ -45,7 +45,7 @@ class Nightmare extends Entity {
     }
 
     async animatedSprite() {
-        let json = await PIXI.Assets.load('./Sprites/perros/texture.json');
+        let json = nightmareSprite;
         this.sprite = new PIXI.AnimatedSprite(json.animations["run"]);
         this.sprite.animationSpeed = 0.1;
         this.sprite.loop = true;
@@ -89,6 +89,7 @@ class Nightmare extends Entity {
             this.y = this.game.backgroundSize.y / 2
         }
     }
+    
     actions() {
         let player = this.findPlayerNearUsingGrid();
         if (player) {

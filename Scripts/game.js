@@ -26,31 +26,25 @@ class Game {
         promise.then(e => {
             document.body.appendChild(this.app.canvas);
             window.__PIXI_APP__ = this.app;
+            setUp();
             this.uiManager = new UIManager(this);
             this.uiManager.createMainMenu()
         })
     }
 
-   
+    loadBackground() {
+        // Create a sprite from the loaded texture
+        const background = new PIXI.Sprite(backgroundSprite);
+        background.zIndex = -999999999999;
 
-    preload() {
-        // Cargar fondo
-        PIXI.Assets.load('sprites/background/fondito.png').then((texture) => {
-            // Create a sprite from the loaded texture
-            const background = new PIXI.Sprite(texture);
-            background.zIndex = -999999999999;
+        // Set the position and size of the background
+        background.anchor.set(0, 0);
+        background.width = this.backgroundSize.x;
+        background.height = this.backgroundSize.y;
+        background.x = 0;
+        background.y = 0;
 
-            // Set the position and size of the background
-            background.anchor.set(0, 0);
-            background.width = this.backgroundSize.x;
-            background.height = this.backgroundSize.y;
-            background.x = 0;
-            background.y = 0;
-
-            this.mainContainer.addChild(background);
-        });
-
-
+        this.mainContainer.addChild(background);
     }
 
     imageFilter() {
@@ -62,15 +56,13 @@ class Game {
         this.app.stage.addChild(this.tetricFilter)
     }
 
-    
-
     startGame() {
         this.mainContainer = new PIXI.Container();
         this.mainContainer.name = "mainContainer";
 
         this.app.stage.addChild(this.mainContainer);
 
-        this.preload();
+        this.loadBackground();
         this.sketcher = new PIXI.Graphics();
         this.mainContainer.addChild(this.sketcher);
         //this.imageFilter();
@@ -79,7 +71,7 @@ class Game {
         this.frameCounter = 0;
         this.isPaused = false;
         this.isGameOver = false;
-        this.restantNightmare = 300;
+        this.restantNightmare = 5;
         this.points = 0;
         this.nightmareLife = 200;
         this.numberWave = 1;
@@ -88,7 +80,7 @@ class Game {
         this.grid = new Grid(this, this.cellSize);
         this.rockManager = new RockManager(this, this.grid, this.cellSize, 10); // Borrar a la bosta si no funciona
         this.healthManager.putHealth(this);
-        this.grassManager = new GrassManager(this,5000)
+        this.grassManager = new GrassManager(this, 5000)
         this.placePlayer();
         this.placeNightmares(this.restantNightmare);
 
@@ -100,6 +92,7 @@ class Game {
 
     }
 
+    //poner touch
     listeners() {
         window.onkeydown = (e) => {
             if (e.key == "Escape") {
@@ -151,7 +144,7 @@ class Game {
                 let attack = new BasicSlashAttack(this.player, actualFrames, this.skills.basic, oppositeDirection);
                 this.attacks.push(attack);
             }
-            
+
         }
 
         try {
@@ -160,11 +153,11 @@ class Game {
                     attack.destroy();
                 }
             }
-            
+
         } catch (error) {
             console.log(error);
         }
-        
+
     }
 
     opposite() {
@@ -221,7 +214,7 @@ class Game {
     }
 
     placePlayer() {
-        this.player = new MainCharacter(this.backgroundSize.x / 2, this.backgroundSize.y / 2, this);
+        this.player = new MainCharacter(this.backgroundSize.x / 2, this.backgroundSize.y / 2, this, this.playerSprite);
     }
 
 
@@ -256,10 +249,8 @@ class Game {
     upgradeSkill(skill) {
         if (this.skills[skill] < 3) { // Verifica que la habilidad no esté en el máximo nivel 
             this.skills[skill]++;
-            console.log(`Habilidad ${skill} mejorada a nivel ${this.skills[skill]}`);
         }
         this.app.stage.removeChild(this.uiManager.levelUpMenu);
-        this.uiManager.removeSpriteAttacks();
         this.app.ticker.start();
     }
 
@@ -281,7 +272,6 @@ class Game {
     removeNightmares() {
         for (let nightmare of this.nightmares) {
             this.mainContainer.removeChild(nightmare);
-            //nightmare.sprite.stop()
             nightmare.destruction();
         }
         this.nightmares = [];

@@ -81,7 +81,19 @@ function isOverlap(rect1, rect2) {
 
     return isOverlapping;
 }
-//cambiar a circulos por rendimiento
+
+function isOverlapCircle(circle1, circle2) {
+    const { x: x1, y: y1, radius: r1 } = circle1;
+    const { x: x2, y: y2, radius: r2 } = circle2;
+
+    // Calcula la distancia entre los centros de los dos círculos
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // Verifica si la distancia es menor o igual a la suma de los radios
+    return distance <= (r1 + r2);
+}
 
 
 function arrayUnique(arr) {
@@ -100,4 +112,45 @@ function lerp(a, b, t) {
     t = Math.max(0, Math.min(1, t));
 
     return a + (b - a) * t;
+}
+
+async function setUp() {
+    await PIXI.Assets.init({ manifest: "./Sprites/manifest.json" });
+    await this.loadGameElements();
+}
+async function loadGameElements() {
+    this.loadPlayer();
+    this.loadAttacks();
+    this.loadDogs();
+    this.loadRock();
+    this.loadBackground();
+}
+
+async function loadPlayer() {
+    let resources = await PIXI.Assets.loadBundle('player-bundle');
+    this.playerSprite = resources["character"]
+}
+
+async function loadAttacks() {
+    let resources = await PIXI.Assets.loadBundle('attacks-bundle');
+    this.attacksSprite = {
+        "zarpaso": resources["zarpaso"],
+        "pescadazo": resources["pescadazo"],
+        "piedritas": resources["piedritas"]
+    }
+}
+
+async function loadDogs() {
+    let resources = await PIXI.Assets.loadBundle('nightmare-bundle');
+    this.nightmareSprite = resources["nightmare"];
+}
+
+async function loadRock() {
+    let resources = await PIXI.Assets.loadBundle('rock-bundle');
+    this.rockSprite = resources["rock"]
+}
+
+async function loadBackground(){
+    let resources = await PIXI.Assets.loadBundle('bakground-bundle');
+    this.backgroundSprite = resources["background"]
 }

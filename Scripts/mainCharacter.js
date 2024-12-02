@@ -1,8 +1,12 @@
 class MainCharacter extends Entity {
-    constructor(x, y, game) {
+    constructor(x, y, game, sprite) {
         super(x, y, game);
         this.width = 12;
         this.height = 10;
+        this.raduis = 8;
+        this.texture = sprite;
+        
+        this.animatedSprites = {};
 
         this.id = "player";
         this.container.name = this.id;
@@ -34,7 +38,7 @@ class MainCharacter extends Entity {
         this.updateLifeBar(); // Conf. barra inicial
         // Añadir la barra de vida al cont. del pj
         this.container.addChild(this.lifeBar);
-    }       
+    }
 
     // Modificar barra de vida en tiempo real
     updateLifeBar() {
@@ -45,9 +49,9 @@ class MainCharacter extends Entity {
         this.lifeBar.beginFill(0xFF0000);
         this.lifeBar.drawRect(
             -this.width / 1.1, // Centrar barra horizontalmente
-            this.height - 10 , // Posicionar barra debajo del personaje
+            this.height - 10, // Posicionar barra debajo del personaje
             this.width * 2 * lifePercentage, // Ancho de la barra en función de la vida actual
-            3            
+            3
         );
         this.lifeBar.endFill();
     }
@@ -71,19 +75,19 @@ class MainCharacter extends Entity {
             -this.width / 1.1, // Centrar barra horizontalmente
             this.height - 7, // Posicionar barra debajo del personaje
             this.width * 1.5 * expPercentage, // Ancho de la barra en función de la experiencia actual
-            3           
+            3
         );
         this.expBar.endFill();
     }
 
-    async animatedSprite() {
-        let json = await PIXI.Assets.load("./Sprites/gato/texture.json");
+    animatedSprite() {
+        let json  = playerSprite;
         this.animations = {
             front: json.animations["front"],
             back: json.animations["back"],
             left: json.animations["left"],
             right: json.animations["right"],
-            
+
         };
         this.sprite = new PIXI.AnimatedSprite(this.animations.front);
         this.sprite.animationSpeed = 0.1
@@ -91,11 +95,11 @@ class MainCharacter extends Entity {
         this.sprite.play()
         this.container.addChild(this.sprite)
 
-        
 
 
-        this.sprite.anchor.set(0.5, 1);
-        this.container.pivot.x = this.sprite.anchor.x/2;
+
+        this.sprite.anchor.set(0.55, 0.8);
+        this.container.pivot.x = this.sprite.anchor.x / 2;
         this.container.pivot.y = this.sprite.anchor.y;
         this.sprite.currentFrame = Math.floor(Math.random() * 3)
 
@@ -105,7 +109,7 @@ class MainCharacter extends Entity {
 
     makeGraf() {
         this.grafico = new PIXI.Graphics()
-            .rect(0, 0, this.width, this.height)
+            .circle(0, 0, this.raduis)
             .fill(0xff0000);
         this.container.addChild(this.grafico);
     }
@@ -180,7 +184,7 @@ class MainCharacter extends Entity {
 
 
     damaged(actualFrame) {
-        if(actualFrame % 2 == 0){
+        if (actualFrame % 2 == 0) {
             this.nightmaresNear = this.findNearNightmaresUsingGrid();
             for (let i = 0; i < this.nightmaresNear.length; i++) {
                 let enemy = this.nightmaresNear[i].nightmare;
@@ -188,7 +192,7 @@ class MainCharacter extends Entity {
                     isOverlap(
                         { ...this, y: this.y, x: this.x },
                         enemy
-                    ) 
+                    )
                 ) {
                     if (enemy.isNightmare) {
                         if (!this.godMode) {
@@ -204,26 +208,26 @@ class MainCharacter extends Entity {
                             enemy.destroy(this);
                             this.gainExp(actualFrame);
                         }
-    
+
                     }
                 }
-    
+
             }
             this.updateLifeBar();
 
         }
     }
 
-    heal(){
-        for (let heal of this.game.healthManager.healths){
+    heal() {
+        for (let heal of this.game.healthManager.healths) {
             if (
                 isOverlap(
                     { ...this, y: this.y, x: this.x },
                     heal
-                ) 
+                )
             ) {
                 this.life += heal.cura;
-                this.life = this.life>500 ? 500 : this.life;
+                this.life = this.life > 500 ? 500 : this.life;
                 heal.destroy();
             }
         }
