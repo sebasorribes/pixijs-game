@@ -62,7 +62,6 @@ class Game {
 
         this.app.stage.addChild(this.mainContainer);
 
-        this.loadBackground();
         this.sketcher = new PIXI.Graphics();
         this.mainContainer.addChild(this.sketcher);
         //this.imageFilter();
@@ -76,11 +75,12 @@ class Game {
         this.nightmareLife = 200;
         this.numberWave = 1;
 
+        this.loadBackground();
         this.listeners();
         this.grid = new Grid(this, this.cellSize);
         this.rockManager = new RockManager(this, this.grid, this.cellSize, 10); // Borrar a la bosta si no funciona
         this.healthManager.putHealth(this);
-        this.grassManager = new GrassManager(this, 5000)
+        //this.grassManager = new GrassManager(this, 5000)
         this.placePlayer();
         this.placeNightmares(this.restantNightmare);
 
@@ -125,7 +125,7 @@ class Game {
             this.moveCamera();
             this.makeAttacks(this.frameCounter);
             this.uiManager.updateMiniMap(this.player, this.nightmares, this.healthManager.healths);
-            this.grassManager.update();
+            //this.grassManager.update();
         }
     }
 
