@@ -56,7 +56,6 @@ class Attack {
 }
 
 class BasicSlashAttack extends Attack {
-    static slashTexture = null; // prueba
     constructor(player, initialExecutionFrame, actualLevel, direction) {
         super(player, initialExecutionFrame);
         this.damage = 50 * actualLevel;
@@ -72,17 +71,7 @@ class BasicSlashAttack extends Attack {
             this.height = 50;
         }
 
-        // Cargar la textura si no se ha cargado aún
-        if (!BasicSlashAttack.slashTexture) {
-            PIXI.Assets.load('./Sprites/ataques/zarpazo.png').then((texture) => {
-                BasicSlashAttack.slashTexture = texture;
-                // Una vez cargada, crear el sprite
-                this.makeSprite();
-            });
-        } else {
-            // Si la textura ya está cargada, crear el sprite de inmediato
-            this.makeSprite();
-        }
+        this.makeSprite()
 
 
         this.position(direction);
@@ -92,14 +81,14 @@ class BasicSlashAttack extends Attack {
     }
 
     makeSprite() {
-        if (BasicSlashAttack.slashTexture) {
-            this.sprite = new PIXI.Sprite(BasicSlashAttack.slashTexture);
-            this.sprite.anchor.set(0, 0);
-            this.sprite.width = this.width;
-            this.sprite.height = this.height;
-            this.container.addChild(this.sprite);
-            this.active = true;
-        }
+
+        this.sprite = new PIXI.Sprite(attacksSprite["zarpaso"]);
+        this.sprite.anchor.set(0, 0);
+        this.sprite.width = this.width;
+        this.sprite.height = this.height;
+        this.container.addChild(this.sprite);
+        this.active = true;
+
     }
 
     position(playerDirection) {
@@ -126,7 +115,6 @@ class BasicSlashAttack extends Attack {
 }
 
 class FishStrike extends Attack {
-    static slashTexture = null;
     constructor(player, initialExecutionFrame, actualLevel, velocityX) {
         super(player, initialExecutionFrame);
         this.damage = 60 * actualLevel;
@@ -139,35 +127,20 @@ class FishStrike extends Attack {
         this.height = 20;
         this.container.name = this.type;
 
-        if (!FishStrike.slashTexture) {
-            PIXI.Assets.load('./Sprites/ataques/pescadazo.png').then((texture) => {
-                FishStrike.slashTexture = texture;
-                // Una vez cargada, crear el sprite
-                this.makeSprite();
-            });
-        } else {
-            // Si la textura ya está cargada, crear el sprite de inmediato
-            this.makeSprite();
-        }
-
-
-        //this.makeSprite();
+        this.makeSprite();
         this.game.mainContainer.addChild(this.container);
         this.render();
-        this.active = true;
     }
 
     makeSprite() {
-        // Asegurarse de que la textura esté cargada antes de crear el sprite
-        if (FishStrike.slashTexture) {
-            this.sprite = new PIXI.Sprite(FishStrike.slashTexture);
+            this.sprite = new PIXI.Sprite(attacksSprite["pescadazo"]);
             this.sprite.anchor.set(0.5, 0.5);
             this.sprite.width = this.width;
             this.sprite.height = this.height;
 
             // Agregar el sprite al contenedor
             this.container.addChild(this.sprite);
-        }
+            this.active = true;
     }
 
     update() {
@@ -191,7 +164,6 @@ class FishStrike extends Attack {
 }
 
 class StoneTrailAttack extends Attack {
-    stoneTexture = null;
     constructor(player, initialExecutionFrame) {
         super(player, initialExecutionFrame);
         this.damage = 30; // Daño del ataque 
@@ -202,15 +174,7 @@ class StoneTrailAttack extends Attack {
         this.trail = []; // Almacenar las posiciones de las piedras 
         this.container.name = this.type;
 
-        if (!StoneTrailAttack.stoneTexture) {
-            PIXI.Assets.load('./Sprites/ataques/piedritas.png').then((texture) => {
-                StoneTrailAttack.stoneTexture = texture;
-                this.createTrail();
-            });
-        } else {
-            // Si la textura ya está cargada, crear el sprite de inmediato
-            this.createTrail();
-        }
+        this.createTrail();
 
         this.game.mainContainer.addChild(this.container);
         this.refreshPositionOnGrid();
@@ -218,9 +182,7 @@ class StoneTrailAttack extends Attack {
     }
 
     createTrail() {
-        // Asegurarse de que la textura esté cargada antes de crear el sprite
-        if (StoneTrailAttack.stoneTexture) {
-            let stone = new PIXI.Sprite(StoneTrailAttack.stoneTexture);
+            let stone = new PIXI.Sprite(attacksSprite["piedritas"]);
             stone.anchor.set(0.5, 0.5);
             stone.x = this.character.x;
             stone.y = this.character.y;
@@ -230,7 +192,6 @@ class StoneTrailAttack extends Attack {
             // Agregar el sprite al contenedor
             this.trail.push({ stone, frame: 0 });
             this.container.addChild(stone);
-        }
     }
 
     update(actualFrames, actualLevel) {

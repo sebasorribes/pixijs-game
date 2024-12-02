@@ -28,26 +28,26 @@ class Rock {
     }
 
     loadSprite() {
-        PIXI.Assets.load('sprites/obstaculos/roca2.png').then((texture) => {
-            // Create a sprite from the loaded texture
-            let width = texture.width;
-            this.sprite = new PIXI.Sprite(texture);
+        let texture = rockSprite;
+        // Create a sprite from the loaded texture
+        let width = texture.width;
+        this.sprite = new PIXI.Sprite(texture);
 
-            //GUARDO EL RADIO DEL OBSTACULO PORQ LO USO PARA DETECTAR COLISIONES CON LOS PERSONAJES
-            this.radio = 8;
+        //GUARDO EL RADIO DEL OBSTACULO PORQ LO USO PARA DETECTAR COLISIONES CON LOS PERSONAJES
+        this.radio = 8;
 
-            this.sprite.anchor.set(0.5, 0.79); // Centrado de la roca
+        this.sprite.anchor.set(0.5, 0.79); // Centrado de la roca
 
-            this.container.pivot.x = this.sprite.anchor.x / 2;
-            this.container.pivot.y = this.sprite.anchor.y +6;
+        this.container.pivot.x = this.sprite.anchor.x / 2;
+        this.container.pivot.y = this.sprite.anchor.y + 6;
 
-            this.container.addChild(this.sprite);  // Agregar el sprite al escenario
+        this.container.addChild(this.sprite);  // Agregar el sprite al escenario
 
 
-            this.container.zIndex = Math.floor(this.container.y);
-            this.container.scale.x = -1;
-            this.addToGrid();
-        })
+        this.container.zIndex = Math.floor(this.container.y);
+        this.container.scale.x = -1;
+        this.addToGrid();
+
     }
 
     addToGrid() {

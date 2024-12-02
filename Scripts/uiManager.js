@@ -1,7 +1,7 @@
 class UIManager {
     constructor(game) {
         this.game = game;
-
+        //this.buildPauseMenu();
     }
 
     createMainMenu() {
@@ -177,9 +177,9 @@ class UIManager {
     updateMiniMap(player, nightmares, healths) {
         const scale = 0.22;
 
-        if(player.x > player.game.backgroundSize.x / 2){
+        if (player.x > player.game.backgroundSize.x / 2) {
             this.miniMapContainer.x = 50
-        }else{
+        } else {
             this.miniMapContainer.x = this.game.width - 200;
         }
         // Actualizar la posición del jugador en el mini mapa
@@ -240,15 +240,10 @@ class UIManager {
         levelUpText.x = this.game.width / 2;
         levelUpText.y = 50;
 
-        this.scratchImage = document.createElement("img")
-        this.scratchImage.setAttribute("src", "./Sprites/ataques/zarpazo.png");
-        this.scratchImage.setAttribute('alt', 'na');
-        this.scratchImage.style.position = "fixed";
-        this.scratchImage.setAttribute('height', '100px');
-        this.scratchImage.setAttribute('width', '100px');
-        this.scratchImage.style.top = "20%";
-        this.scratchImage.style.left = "20%";
-        document.body.appendChild(this.scratchImage);
+        const scratchImage = new PIXI.Sprite(attacksSprite["zarpaso"]);
+        scratchImage.anchor.set(0.5, 0.5);
+        scratchImage.x = this.game.width * 0.23;
+        scratchImage.y = this.game.height * 0.24;
 
         const basicAttack = new PIXI.Text({
             text: "Arañazo", style: {
@@ -289,15 +284,12 @@ class UIManager {
         basicAttackUp.buttonMode = true;
         basicAttackUp.on('pointerdown', () => this.game.upgradeSkill('basic'));
 
-        this.attack1Image = document.createElement("img")
-        this.attack1Image.setAttribute("src", "./Sprites/ataques/pescadazo.png");
-        this.attack1Image.setAttribute('alt', 'na');
-        this.attack1Image.style.position = "fixed";
-        this.attack1Image.setAttribute('height', '100px');
-        this.attack1Image.setAttribute('width', '100px');
-        this.attack1Image.style.top = "20%";
-        this.attack1Image.style.left = "50%";
-        document.body.appendChild(this.attack1Image);
+        const attack1Image = new PIXI.Sprite(attacksSprite["pescadazo"]);
+        attack1Image.anchor.set(0.5, 0.5);
+        attack1Image.x = this.game.width * 0.53;
+        attack1Image.y = this.game.height * 0.24;
+        attack1Image.width = 100;
+        attack1Image.height = 100;
 
         const attack1 = new PIXI.Text({
             text: "Pescadazo", style: {
@@ -338,16 +330,12 @@ class UIManager {
         attack1Up.buttonMode = true;
         attack1Up.on('pointerdown', () => this.game.upgradeSkill('attack1'));
 
-
-        this.attack2Image = document.createElement("img")
-        this.attack2Image.setAttribute("src", "./Sprites/ataques/piedritas.png");
-        this.attack2Image.setAttribute('alt', 'na');
-        this.attack2Image.style.position = "fixed";
-        this.attack2Image.setAttribute('height', '100px');
-        this.attack2Image.setAttribute('width', '100px');
-        this.attack2Image.style.top = "20%";
-        this.attack2Image.style.left = "80%";
-        document.body.appendChild(this.attack2Image);
+        const attack2Image = new PIXI.Sprite(attacksSprite["piedritas"]);
+        attack2Image.anchor.set(0.5, 0.5);
+        attack2Image.x = this.game.width * 0.81;
+        attack2Image.y = this.game.height * 0.24;
+        attack2Image.width = 120;
+        attack2Image.height = 120;
 
         const attack2 = new PIXI.Text({
             text: "Piedritas", style: {
@@ -390,23 +378,20 @@ class UIManager {
 
 
         this.levelUpMenu.addChild(levelUpText);
+        this.levelUpMenu.addChild(scratchImage);
         this.levelUpMenu.addChild(basicAttack);
         this.levelUpMenu.addChild(basicAttackLevel);
         if (this.game.skills.basic < 3) this.levelUpMenu.addChild(basicAttackUp);
         this.levelUpMenu.addChild(attack1);
         this.levelUpMenu.addChild(attack1Level);
+        this.levelUpMenu.addChild(attack1Image);
         if (this.game.skills.attack1 < 3) this.levelUpMenu.addChild(attack1Up);
         this.levelUpMenu.addChild(attack2);
         this.levelUpMenu.addChild(attack2Level);
+        this.levelUpMenu.addChild(attack2Image);
         if (this.game.skills.attack2 < 3) this.levelUpMenu.addChild(attack2Up);
 
         this.game.app.stage.addChild(this.levelUpMenu);
-    }
-
-    removeSpriteAttacks(){
-        document.body.removeChild(this.scratchImage);
-        document.body.removeChild(this.attack1Image);
-        document.body.removeChild(this.attack2Image);
     }
 
 
@@ -460,5 +445,29 @@ class UIManager {
 
         // Finalmente, agregar el menú al stage
         this.game.app.stage.addChild(this.gameOverMenu);
+    }
+
+    buildPauseMenu() {
+        this.pauseMenu = new PIXI.Graphics()
+        this.pauseMenu.beginFill("0x000000", 0.5);
+        this.pauseMenu.drawRect(0, 0, this.game.width, this.game.height);
+        this.pauseMenu.endFill();
+
+
+        const pauseText = new PIXI.Text({
+            text: `Pausa`, style: {
+                fontFamily: "Arial",
+                fontSize: 100,
+                fill: "5bde00",
+                align: "center"
+            }
+        });
+        pauseText.anchor.set(0.5);
+        pauseText.x = this.game.width / 2;
+        pauseText.y = this.game.height / 2;
+
+        this.pauseMenu.addChild(pauseText);
+
+        this.game.app.stage.addChild(this.pauseMenu);
     }
 }

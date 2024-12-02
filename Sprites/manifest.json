@@ -1,0 +1,57 @@
+{
+    "bundles": [
+       {
+          "name": "player-bundle",
+          "assets": [
+             {
+                "alias": "character",
+                "src": "Sprites/gato/texture.json"
+             }
+          ]
+       },
+       {
+         "name": "nightmare-bundle",
+         "assets":[
+            {
+               "alias": "nightmare",
+               "src": "Sprites/perros/texture.json" 
+            }
+         ]
+       },
+       {
+         "name": "attacks-bundle",
+         "assets": [
+            {
+               "alias": "zarpaso",
+               "src" : "Sprites/ataques/zarpazo.png"
+            },
+            {
+               "alias": "pescadazo",
+               "src" : "Sprites/ataques/pescadazo.png"
+            },
+            {
+               "alias": "piedritas",
+               "src": "Sprites/ataques/piedritas.png"
+            }
+         ]
+       },
+       {
+         "name": "rock-bundle",
+         "assets":[
+            {
+               "alias": "rock",
+               "src": "Sprites/obstaculos/roca2.png" 
+            }
+         ]
+       },
+       {
+         "name": "bakground-bundle",
+         "assets":[
+            {
+               "alias": "background",
+               "src": "Sprites/background/fondito.png"
+            }
+         ]
+       }
+    ]
+ }
