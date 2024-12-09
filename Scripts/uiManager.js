@@ -13,13 +13,13 @@ class UIManager {
             gameTitle.textContent = "LA PESADILLA DEL SEÑOR BIGOTES";
             gameTitle.style.fontFamily = "PixelTerror, Arial, sans-serif";
             gameTitle.style.position = "absolute";
-            gameTitle.style.top = `${25 *  this.scaleFactor}%`;
+            gameTitle.style.top = `${25 * this.scaleFactor}%`;
             gameTitle.style.left = "50%";
             gameTitle.style.transform = "translate(-50%, -50%)";
             gameTitle.style.padding = "0";
             gameTitle.style.margin = "0";
             gameTitle.style.whiteSpace = "nowrap";
-            gameTitle.style.fontSize = `${35 *  this.scaleFactor}px`;
+            gameTitle.style.fontSize = `${35 * this.scaleFactor}px`;
             gameTitle.style.color = "#ff0000";
             gameTitle.style.textAlign = "center";
             document.body.appendChild(gameTitle);
@@ -28,30 +28,30 @@ class UIManager {
             const startButton = document.createElement("button");
             startButton.textContent = "Start Game";
             startButton.style.position = "absolute";
-            startButton.style.top = `${90 *  this.scaleFactor}%`;
+            startButton.style.top = `${90 * this.scaleFactor}%`;
             startButton.style.left = "50%";
             startButton.style.transform = "translate(-50%, -50%)";
-            startButton.style.padding = `${15 *  this.scaleFactor}px ${30 *  this.scaleFactor}px`;
-            startButton.style.fontSize = `${20 *  this.scaleFactor}px`;
+            startButton.style.padding = `${15 * this.scaleFactor}px ${30 * this.scaleFactor}px`;
+            startButton.style.fontSize = `${20 * this.scaleFactor}px`;
             startButton.style.fontFamily = "Arial, sans-serif";
             startButton.style.backgroundColor = "#FF5733";
             startButton.style.color = "#FFFFFF";
             startButton.style.border = "none";
             startButton.style.cursor = "pointer";
-            startButton.style.borderRadius = `${10 *  this.scaleFactor}px`;
+            startButton.style.borderRadius = `${10 * this.scaleFactor}px`;
             document.body.appendChild(startButton);
 
             const textLore = document.createElement("p");
             textLore.textContent = "Ayuda al señor Bigotes a enfrentar a sus pesadillas.";
             textLore.style.fontFamily = "Arial, sans-serif";
             textLore.style.position = "fixed";
-            textLore.style.top = `${40 *  this.scaleFactor}%`;
+            textLore.style.top = `${40 * this.scaleFactor}%`;
             textLore.style.left = "50%";
             textLore.style.transform = "translate(-50%, -50%)";
             textLore.style.padding = "0";
             textLore.style.margin = "0";
             textLore.style.whiteSpace = "nowrap";
-            textLore.style.fontSize = `${20 *  this.scaleFactor}px`;
+            textLore.style.fontSize = `${20 * this.scaleFactor}px`;
             textLore.style.color = "#ff0000";
             textLore.style.textAlign = "center";
             document.body.appendChild(textLore);
@@ -60,13 +60,13 @@ class UIManager {
             const instructions = document.createElement("div");
             instructions.style.fontFamily = "Arial, sans-serif";
             instructions.style.position = "fixed";
-            instructions.style.top = `${65 *  this.scaleFactor}%`;
+            instructions.style.top = `${65 * this.scaleFactor}%`;
             instructions.style.left = "50%";
             instructions.style.transform = "translate(-50%, -50%)";
             instructions.style.padding = "10px";
             instructions.style.margin = "0";
-            instructions.style.width = `${80 *  this.scaleFactor}%`;
-            instructions.style.fontSize = `${25 *  this.scaleFactor}px`;
+            instructions.style.width = `${80 * this.scaleFactor}%`;
+            instructions.style.fontSize = `${25 * this.scaleFactor}px`;
             instructions.style.color = "#cdcfcc";
             instructions.style.textAlign = "center";
             instructions.innerHTML = `
@@ -171,13 +171,13 @@ class UIManager {
         this.miniMapContainer.y = this.game.height - 200;
         this.mapWidth = this.game.width;
         this.mapHeight = this.game.height;
-        this.miniMapContainer.scale.set(0.2  * this.scaleFactor); // Escala del mini mapa
+        this.miniMapContainer.scale.set(0.2 * this.scaleFactor); // Escala del mini mapa
         this.game.app.stage.addChild(this.miniMapContainer);
 
         // Crear un fondo de mini mapa
         this.miniMapBackground = new PIXI.Graphics();
         this.miniMapBackground.beginFill(0xCCCCCC);
-        this.miniMapBackground.drawRect(0, 0, 720  * this.scaleFactor, 480  * this.scaleFactor);
+        this.miniMapBackground.drawRect(0, 0, 720 * this.scaleFactor, 480 * this.scaleFactor);
         this.miniMapBackground.endFill();
         this.miniMapContainer.addChild(this.miniMapBackground);
 
@@ -201,9 +201,9 @@ class UIManager {
         const scale = 0.22 * this.scaleFactor;
 
         if (player.x > player.game.backgroundSize.x / 2) {
-            this.miniMapContainer.x = 50 * (this.game.isMobile? 0.2 : 1)
+            this.miniMapContainer.x = 50 * (this.game.isMobile ? 0.2 : 1)
         } else {
-            this.miniMapContainer.x = this.game.width - 200 * (this.game.isMobile? 0.7 : 1);
+            this.miniMapContainer.x = this.game.width - 200 * (this.game.isMobile ? 0.7 : 1);
         }
         // Actualizar la posición del jugador en el mini mapa
         this.playerIcon.x = player.x * scale;
@@ -254,7 +254,7 @@ class UIManager {
         const levelUpText = new PIXI.Text({
             text: "Level up", style: {
                 fontFamily: "Arial",
-                fontSize: 64,
+                fontSize: 64 * this.scaleFactor,
                 fill: "5bde00",
                 align: "center"
             }
@@ -264,6 +264,8 @@ class UIManager {
         levelUpText.y = 50;
 
         const scratchImage = new PIXI.Sprite(attacksSprite["zarpaso"]);
+        scratchImage.width =  scratchImage.width * this.scaleFactor;
+        scratchImage.height = scratchImage.height * this.scaleFactor;
         scratchImage.anchor.set(0.5, 0.5);
         scratchImage.x = this.game.width * 0.23;
         scratchImage.y = this.game.height * 0.24;
@@ -271,37 +273,37 @@ class UIManager {
         const basicAttack = new PIXI.Text({
             text: "Arañazo", style: {
                 fontFamily: "Arial",
-                fontSize: 28,
+                fontSize: 28 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
             }
         });
         basicAttack.anchor.set(0.5);
-        basicAttack.x = 300;
+        basicAttack.x = scratchImage.x;
         basicAttack.y = 270;
 
         const basicAttackLevel = new PIXI.Text({
             text: `${this.game.skills.basic}`, style: {
                 fontFamily: "Arial",
-                fontSize: 28,
+                fontSize: 28 * this.scaleFactor,
                 fill: "#ffe806",
                 align: "center"
             }
         });
         basicAttackLevel.anchor.set(0.5);
-        basicAttackLevel.x = 300;
+        basicAttackLevel.x = scratchImage.x;
         basicAttackLevel.y = 310;
 
         const basicAttackUp = new PIXI.Text({
             text: `+`, style: {
                 fontFamily: "Arial",
-                fontSize: 30,
+                fontSize: 30 * this.scaleFactor,
                 fill: "5bde00",
                 align: "center"
             }
         });
         basicAttackUp.anchor.set(0.5);
-        basicAttackUp.x = 300;
+        basicAttackUp.x = scratchImage.x;
         basicAttackUp.y = 350;
         basicAttackUp.interactive = true;
         basicAttackUp.buttonMode = true;
@@ -311,43 +313,43 @@ class UIManager {
         attack1Image.anchor.set(0.5, 0.5);
         attack1Image.x = this.game.width * 0.53;
         attack1Image.y = this.game.height * 0.24;
-        attack1Image.width = 100;
-        attack1Image.height = 100;
+        attack1Image.width = 100 * this.scaleFactor;
+        attack1Image.height = 100 * this.scaleFactor;
 
         const attack1 = new PIXI.Text({
             text: "Pescadazo", style: {
                 fontFamily: "Arial",
-                fontSize: 28,
+                fontSize: 28 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
             }
         });
         attack1.anchor.set(0.5);
-        attack1.x = 670;
+        attack1.x = attack1Image.x;
         attack1.y = 270;
 
         const attack1Level = new PIXI.Text({
             text: `${this.game.skills.attack1}`, style: {
                 fontFamily: "Arial",
-                fontSize: 28,
+                fontSize: 28 * this.scaleFactor,
                 fill: "#ffe806",
                 align: "center"
             }
         });
         attack1Level.anchor.set(0.5);
-        attack1Level.x = 670;
+        attack1Level.x = attack1Image.x;
         attack1Level.y = 310;
 
         const attack1Up = new PIXI.Text({
             text: "+", style: {
                 fontFamily: "Arial",
-                fontSize: 30,
+                fontSize: 30 * this.scaleFactor,
                 fill: "5bde00",
                 align: "center"
             }
         });
         attack1Up.anchor.set(0.5);
-        attack1Up.x = 670;
+        attack1Up.x = attack1Image.x;
         attack1Up.y = 350;
         attack1Up.interactive = true;
         attack1Up.buttonMode = true;
@@ -357,43 +359,43 @@ class UIManager {
         attack2Image.anchor.set(0.5, 0.5);
         attack2Image.x = this.game.width * 0.81;
         attack2Image.y = this.game.height * 0.24;
-        attack2Image.width = 120;
-        attack2Image.height = 120;
+        attack2Image.width = 120 * this.scaleFactor;
+        attack2Image.height = 120 * this.scaleFactor;
 
         const attack2 = new PIXI.Text({
             text: "Piedritas", style: {
                 fontFamily: "Arial",
-                fontSize: 28,
+                fontSize: 28 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
             }
         });
         attack2.anchor.set(0.5);
-        attack2.x = 1040;
+        attack2.x = attack2Image.x;
         attack2.y = 270;
 
         const attack2Level = new PIXI.Text({
             text: `${this.game.skills.attack2}`, style: {
                 fontFamily: "Arial",
-                fontSize: 28,
+                fontSize: 28 * this.scaleFactor,
                 fill: "#ffe806",
                 align: "center"
             }
         });
         attack2Level.anchor.set(0.5);
-        attack2Level.x = 1040;
+        attack2Level.x = attack2Image.x;
         attack2Level.y = 310;
 
         const attack2Up = new PIXI.Text({
             text: `+`, style: {
                 fontFamily: "Arial",
-                fontSize: 30,
+                fontSize: 30 * this.scaleFactor,
                 fill: "5bde00",
                 align: "center"
             }
         });
         attack2Up.anchor.set(0.5);
-        attack2Up.x = 1040;
+        attack2Up.x = attack2Image.x;
         attack2Up.y = 350;
         attack2Up.interactive = true;
         attack2Up.buttonMode = true;
@@ -434,7 +436,7 @@ class UIManager {
             }
         });
         gameOverText.anchor.set(0.5);
-        gameOverText.x = this.game.width / 2 * (this.game.isMobile? 0.9 : 1);
+        gameOverText.x = this.game.width / 2 * (this.game.isMobile ? 0.9 : 1);
         gameOverText.y = 100;
 
         const finalPoints = new PIXI.Text({
@@ -486,7 +488,7 @@ class UIManager {
             }
         });
         pauseText.anchor.set(0.5);
-        pauseText.x = (this.game.width / 2) * (this.game.isMobile? 0.9 : 1);
+        pauseText.x = (this.game.width / 2) * (this.game.isMobile ? 0.9 : 1);
         pauseText.y = this.game.height / 2;
 
         this.pauseMenu.addChild(pauseText);
