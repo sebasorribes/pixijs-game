@@ -26,7 +26,7 @@ class Entity {
     }
 
     checkLimitScreen() {
-        let margin = this.game.isMobile ? 2:50;
+        let margin = this.game.isMobile ? 5:50;
         if (this.x > this.game.backgroundSize.x - margin) {
             //margen derecho
             this.speed.x = -Math.abs(this.speed.x)
