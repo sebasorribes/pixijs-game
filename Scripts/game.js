@@ -1,10 +1,16 @@
 class Game {
     constructor() {
+        // *********************
+        let navegador = navigator.userAgent;
+        this.isMobile = (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/.test(navegador));
+        // ver esto y la colision
+
         this.app = new PIXI.Application();
         this.cellSize = 180; //VER
+        this.cellSize = this.isMobile ? 120 : 180;
         this.width = window.innerWidth;
         this.height = window.innerHeight;
-        this.backgroundSize = { x: this.cellSize * 18, y: this.cellSize * 12 }
+        this.backgroundSize = this.isMobile? { x: this.cellSize * 18, y: this.cellSize * 12 } : { x: this.cellSize * 27, y: this.cellSize * 18 };
         this.scale = 1;
 
         this.attacks = []
@@ -78,14 +84,14 @@ class Game {
         this.loadBackground();
         this.listeners();
         this.grid = new Grid(this, this.cellSize);
-        this.rockManager = new RockManager(this, this.grid, this.cellSize, 10); // Borrar a la bosta si no funciona
+        //this.rockManager = new RockManager(this, this.grid, this.cellSize, 10); // Borrar a la bosta si no funciona
         this.healthManager.putHealth(this);
         //this.grassManager = new GrassManager(this, 5000)
         this.placePlayer();
         this.placeNightmares(this.restantNightmare);
 
         this.uiManager.createGameplayUI();
-        this.uiManager.miniMap();
+        //this.uiManager.miniMap();
         this.app.ticker.add((e) => {
             this.gameLoop(e);
         });
@@ -118,14 +124,16 @@ class Game {
 
     gameLoop() {
         if (this.player.ready) {
-            this.frameCounter++;
-            this.handleMovement();
-            this.playerLoop(this.frameCounter);
-            this.nightmaresLoop(this.frameCounter);
-            this.moveCamera();
-            this.makeAttacks(this.frameCounter);
-            this.uiManager.updateMiniMap(this.player, this.nightmares, this.healthManager.healths);
-            //this.grassManager.update();
+            if (!this.isPaused) {
+                this.frameCounter++;
+                this.handleMovement();
+                this.playerLoop(this.frameCounter);
+                this.nightmaresLoop(this.frameCounter);
+                this.moveCamera();
+                this.makeAttacks(this.frameCounter);
+                //this.uiManager.updateMiniMap(this.player, this.nightmares, this.healthManager.healths);
+                //this.grassManager.update();
+            }
         }
     }
 
@@ -227,9 +235,9 @@ class Game {
 
         // Límites de la cámara
         const minX = 0;
-        const maxX = (this.backgroundSize.x - halfWindowWidth - 650);
+        const maxX = (this.backgroundSize.x - halfWindowWidth - (this.isMobile? 122 : 650));
         const minY = 0;
-        const maxY = (this.backgroundSize.y - halfWindowHeight - 300);
+        const maxY = (this.backgroundSize.y - halfWindowHeight - (this.isMobile? 270 : 300));
 
         let targetX = playerX - halfWindowWidth;
         let targetY = playerY - halfWindowHeight;
@@ -301,13 +309,15 @@ class Game {
 
     pause() {
         if (!this.isPaused) {
-            this.app.ticker.stop();
+            //this.app.ticker.stop();
             this.backgroundMusic.pause()
             this.isPaused = true;
+            this.app.stage.addChild(this.uiManager.pauseMenu);
         } else {
-            this.app.ticker.start();
+            //this.app.ticker.start();
             this.backgroundMusic.play()
             this.isPaused = false;
+            this.app.stage.removeChild(this.uiManager.pauseMenu);
         }
 
     }

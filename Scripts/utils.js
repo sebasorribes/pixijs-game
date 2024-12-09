@@ -86,13 +86,19 @@ function isOverlapCircle(circle1, circle2) {
     const { x: x1, y: y1, radius: r1 } = circle1;
     const { x: x2, y: y2, radius: r2 } = circle2;
 
-    // Calcula la distancia entre los centros de los dos círculos
+    // Calcula la diferencia en las coordenadas
     const dx = x2 - x1;
     const dy = y2 - y1;
-    const distance = Math.sqrt(dx * dx + dy * dy);
 
-    // Verifica si la distancia es menor o igual a la suma de los radios
-    return distance <= (r1 + r2);
+    // Calcula el cuadrado de la distancia entre los centros
+    const distanceSquared = dx * dx + dy * dy;
+
+    // Calcula el cuadrado de la suma de los radios
+    const radiusSum = r1 + r2;
+    const radiusSumSquared = radiusSum * radiusSum;
+
+    // Verifica si el cuadrado de la distancia es menor o igual al cuadrado de la suma de los radios
+    return distanceSquared <= radiusSumSquared;
 }
 
 
@@ -143,6 +149,7 @@ async function loadAttacks() {
 async function loadDogs() {
     let resources = await PIXI.Assets.loadBundle('nightmare-bundle');
     this.nightmareSprite = resources["nightmare"];
+    this.mouseSprite = resources["mouse"];
 }
 
 async function loadRock() {

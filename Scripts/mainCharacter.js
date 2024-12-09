@@ -3,7 +3,7 @@ class MainCharacter extends Entity {
         super(x, y, game);
         this.width = 12;
         this.height = 10;
-        this.raduis = 8;
+        this.radius = 8;
         this.texture = sprite;
         
         this.animatedSprites = {};
@@ -189,7 +189,7 @@ class MainCharacter extends Entity {
             for (let i = 0; i < this.nightmaresNear.length; i++) {
                 let enemy = this.nightmaresNear[i].nightmare;
                 if (
-                    isOverlap(
+                    isOverlapCircle(
                         { ...this, y: this.y, x: this.x },
                         enemy
                     )
