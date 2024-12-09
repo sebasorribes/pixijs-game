@@ -10,7 +10,7 @@ class Game {
         this.cellSize = this.isMobile ? 120 : 180;
         this.width = window.innerWidth;
         this.height = window.innerHeight;
-        this.backgroundSize = this.isMobile? { x: this.cellSize * 18, y: this.cellSize * 12 } : { x: this.cellSize * 27, y: this.cellSize * 18 };
+        this.backgroundSize = this.isMobile ? { x: this.cellSize * 18, y: this.cellSize * 12 } : { x: this.cellSize * 27, y: this.cellSize * 18 };
         this.scale = 1;
 
         this.attacks = []
@@ -102,22 +102,22 @@ class Game {
         // Detectar si es móvil
         if (this.isMobile) {
             this.createJoystick(); // Crear joystick para móviles
-        } else {
-            // Controles tradicionales para PC
-            window.onkeydown = (e) => {
-                if (e.key == "Escape") {
-                    this.pause();
-                } else {
-                    this.keysPressed[e.key] = true;
-                }
-            };
-    
-            window.onkeyup = (e) => {
-                this.keysPressed[e.key] = false;
-            };
         }
+        // Controles tradicionales para PC
+        window.onkeydown = (e) => {
+            if (e.key == "Escape") {
+                this.pause();
+            } else {
+                this.keysPressed[e.key] = true;
+            }
+        };
+
+        window.onkeyup = (e) => {
+            this.keysPressed[e.key] = false;
+        };
+
     }
-    
+
     createJoystick() {
         const joystickContainer = document.createElement("div");
         joystickContainer.style.position = "fixed";
@@ -130,7 +130,7 @@ class Game {
         joystickContainer.style.background = "rgba(255, 255, 255, 0.3)";
         joystickContainer.style.touchAction = "none"; // Prevenir zoom en móviles
         document.body.appendChild(joystickContainer);
-    
+
         const joystickHandle = document.createElement("div");
         joystickHandle.style.position = "absolute";
         joystickHandle.style.top = "50%";
@@ -142,56 +142,56 @@ class Game {
         joystickHandle.style.borderRadius = "50%";
         joystickHandle.style.background = "#ff0000";
         joystickContainer.appendChild(joystickHandle);
-    
+
         // Variables globales del joystick
         this.joystick = { angleX: 0, angleY: 0 }; // Guardar dirección del joystick
         this.isJoystickActive = false; // Estado del uso del joystick
-    
+
         joystickContainer.addEventListener("touchstart", (e) => {
             this.isJoystickActive = true;
         });
-    
+
         joystickContainer.addEventListener("touchmove", (e) => {
             e.preventDefault(); // Prevenir scroll en móvil
             const touch = e.touches[0];
             const rect = joystickContainer.getBoundingClientRect();
-    
+
             // Calcular la posición relativa al contenedor
             const offsetX = touch.clientX - rect.left - rect.width / 2;
             const offsetY = touch.clientY - rect.top - rect.height / 2;
-    
+
             // Limitar el movimiento dentro del círculo
             const distance = Math.min(
                 Math.sqrt(offsetX * offsetX + offsetY * offsetY),
                 rect.width / 2
             );
             const angle = Math.atan2(offsetY, offsetX);
-    
+
             // Calcular nuevas posiciones del handle del joystick
             const handleX = Math.cos(angle) * distance;
             const handleY = Math.sin(angle) * distance;
-    
+
             joystickHandle.style.transform = `translate(calc(-50% + ${handleX}px), calc(-50% + ${handleY}px))`;
-    
+
             // Actualizar dirección normalizada
             this.joystick.angleX = handleX / (rect.width / 2);
             this.joystick.angleY = handleY / (rect.height / 2);
         });
-    
+
         joystickContainer.addEventListener("touchend", () => {
             this.isJoystickActive = false;
             this.joystick.angleX = 0;
             this.joystick.angleY = 0;
-    
+
             joystickHandle.style.transform = "translate(-50%, -50%)"; // Reset al centro
         });
     }
-    
-    
+
+
     handleMovement() {
         if (this.isMobile && this.isJoystickActive) {
             const { angleX, angleY } = this.joystick;
-    
+
             // Determinar el movimiento en función de los valores del joystick
             if (angleY < -0.5) this.player.moveUp(); // Arriba
             if (angleY > 0.5) this.player.moveDown(); // Abajo
@@ -205,7 +205,7 @@ class Game {
             if (this.keysPressed["d"]) this.player.moveRight();
         }
     }
-    
+
     // //poner touch
     // listeners() {
     //     window.onkeydown = (e) => {
@@ -343,9 +343,9 @@ class Game {
 
         // Límites de la cámara
         const minX = 0;
-        const maxX = (this.backgroundSize.x - halfWindowWidth - (this.isMobile? 122 : 650));
+        const maxX = (this.backgroundSize.x - halfWindowWidth - (this.isMobile ? 122 : 650));
         const minY = 0;
-        const maxY = (this.backgroundSize.y - halfWindowHeight - (this.isMobile? 270 : 300));
+        const maxY = (this.backgroundSize.y - halfWindowHeight - (this.isMobile ? 270 : 300));
 
         let targetX = playerX - halfWindowWidth;
         let targetY = playerY - halfWindowHeight;
