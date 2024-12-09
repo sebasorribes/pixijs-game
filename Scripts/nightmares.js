@@ -1,5 +1,4 @@
 class Nightmare extends Entity {
-    static beautyTexture = null
     constructor(x, y, game, life) {
 
         super(x, y, game);
@@ -8,6 +7,7 @@ class Nightmare extends Entity {
         this.container.name = this.id;
         this.width = 22;
         this.height = 20;
+        this.radius = 8;
 
         this.life = life;
         this.speedMax = 10;
@@ -26,20 +26,11 @@ class Nightmare extends Entity {
         this.isNightmare = true;
         this.expGain = false;
         this.isActive = true;
-
-        // Cargar la textura si no se ha cargado aún
-        if (!Nightmare.beautyTexture) {
-            PIXI.Assets.load('./Sprites/ratoncito.png').then((texture) => {
-                Nightmare.beautyTexture = texture;
-                // Una vez cargada, crear el sprite
-
-            });
-        }
         this.animatedSprite();
     }
     makeGraf() {
         this.grafico = new PIXI.Graphics()
-            .rect(0, 0, this.width, this.height)
+            .circle(0, 0, this.radius)
             .fill(0xff0000);
         this.container.addChild(this.grafico);
     }
@@ -60,7 +51,7 @@ class Nightmare extends Entity {
     }
 
     cambiarVelocidadDeReproduccionDelSpriteAnimado() {
-        this.sprite.animationSpeed = Math.abs(this.velocidadX) * 0.1
+        this.sprite.animationSpeed = Math.abs(this.speed.x) * 0.1
     }
 
 
@@ -89,7 +80,7 @@ class Nightmare extends Entity {
             this.y = this.game.backgroundSize.y / 2
         }
     }
-    
+
     actions() {
         let player = this.findPlayerNearUsingGrid();
         if (player) {
@@ -316,16 +307,14 @@ class Nightmare extends Entity {
         this.game.uiManager.refreshUI();
 
         this.container.removeChild(this.sprite)
+        this.sprite = new PIXI.Sprite(mouseSprite);
+        this.sprite.anchor.set(0.5, 1);
+        this.sprite.width = this.width;
+        this.sprite.height = this.height;
 
-        if (Nightmare.beautyTexture) {
-            this.sprite = new PIXI.Sprite(Nightmare.beautyTexture);
-            this.sprite.anchor.set(0.5, 1);
-            this.sprite.width = this.width;
-            this.sprite.height = this.height;
+        // Agregar el sprite al contenedor
+        this.container.addChild(this.sprite);
 
-            // Agregar el sprite al contenedor
-            this.container.addChild(this.sprite);
-        }
 
     }
 

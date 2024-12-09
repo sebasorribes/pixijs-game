@@ -1,76 +1,99 @@
 class UIManager {
     constructor(game) {
         this.game = game;
-        //this.buildPauseMenu();
+        this.scaleFactor = this.game.isMobile ? 0.6 : 1;
+        this.buildPauseMenu();
     }
 
     createMainMenu() {
+
         document.fonts.ready.then(() => {
-            const gameTitle = document.createElement("p")
+            // Título del juego
+            const gameTitle = document.createElement("p");
             gameTitle.textContent = "LA PESADILLA DEL SEÑOR BIGOTES";
             gameTitle.style.fontFamily = "PixelTerror, Arial, sans-serif";
             gameTitle.style.position = "absolute";
-            gameTitle.style.top = "25%";
+            gameTitle.style.top = `${25 *  this.scaleFactor}%`;
             gameTitle.style.left = "50%";
             gameTitle.style.transform = "translate(-50%, -50%)";
             gameTitle.style.padding = "0";
             gameTitle.style.margin = "0";
             gameTitle.style.whiteSpace = "nowrap";
-            gameTitle.style.fontSize = "64px";
+            gameTitle.style.fontSize = `${35 *  this.scaleFactor}px`;
             gameTitle.style.color = "#ff0000";
             gameTitle.style.textAlign = "center";
             document.body.appendChild(gameTitle);
 
-
-            const startButton = document.createElement('button');
+            // Botón de inicio
+            const startButton = document.createElement("button");
             startButton.textContent = "Start Game";
             startButton.style.position = "absolute";
-            startButton.style.top = "90%";
+            startButton.style.top = `${90 *  this.scaleFactor}%`;
             startButton.style.left = "50%";
             startButton.style.transform = "translate(-50%, -50%)";
-            startButton.style.padding = "15px 30px";
-            startButton.style.fontSize = "20px";
-            startButton.style.fontFamily = "Arial, sans-serif"
+            startButton.style.padding = `${15 *  this.scaleFactor}px ${30 *  this.scaleFactor}px`;
+            startButton.style.fontSize = `${20 *  this.scaleFactor}px`;
+            startButton.style.fontFamily = "Arial, sans-serif";
             startButton.style.backgroundColor = "#FF5733";
             startButton.style.color = "#FFFFFF";
             startButton.style.border = "none";
             startButton.style.cursor = "pointer";
-            startButton.style.borderRadius = "10px";
+            startButton.style.borderRadius = `${10 *  this.scaleFactor}px`;
             document.body.appendChild(startButton);
 
-            const textLore = `Ayuda al señor Bigotes a enfrentar a sus pesadillas. <br><br> <span style="color: #cdcfcc;">Para eso utiliza WASD para moverlo y deja que él se encargue de golpearlas.</span>
-                                <br> <span style="color: #cdcfcc;x";>Si la vida del señor bigotes es muy baja,<br>busca el pollo que aparece en cada oleada</span>`;
-            const loreText = document.createElement("p")
-            loreText.innerHTML = textLore;
-            loreText.style.fontFamily = "Arial, sans-serif";
-            loreText.style.position = "fixed";
-            loreText.style.top = "55%";
-            loreText.style.left = "50%";
-            loreText.style.transform = "translate(-50%, -50%)";
-            loreText.style.padding = "0";
-            loreText.style.margin = "0";
-            loreText.style.whiteSpace = "nowrap";
-            loreText.style.fontSize = "35px";
-            loreText.style.color = "#ff0000";
-            loreText.style.textAlign = "center";
-            document.body.appendChild(loreText);
+            const textLore = document.createElement("p");
+            textLore.textContent = "Ayuda al señor Bigotes a enfrentar a sus pesadillas.";
+            textLore.style.fontFamily = "Arial, sans-serif";
+            textLore.style.position = "fixed";
+            textLore.style.top = `${40 *  this.scaleFactor}%`;
+            textLore.style.left = "50%";
+            textLore.style.transform = "translate(-50%, -50%)";
+            textLore.style.padding = "0";
+            textLore.style.margin = "0";
+            textLore.style.whiteSpace = "nowrap";
+            textLore.style.fontSize = `${20 *  this.scaleFactor}px`;
+            textLore.style.color = "#ff0000";
+            textLore.style.textAlign = "center";
+            document.body.appendChild(textLore);
 
-            startButton.addEventListener('click', () => {
+            // Instrucciones (sección separada)
+            const instructions = document.createElement("div");
+            instructions.style.fontFamily = "Arial, sans-serif";
+            instructions.style.position = "fixed";
+            instructions.style.top = `${65 *  this.scaleFactor}%`;
+            instructions.style.left = "50%";
+            instructions.style.transform = "translate(-50%, -50%)";
+            instructions.style.padding = "10px";
+            instructions.style.margin = "0";
+            instructions.style.width = `${80 *  this.scaleFactor}%`;
+            instructions.style.fontSize = `${25 *  this.scaleFactor}px`;
+            instructions.style.color = "#cdcfcc";
+            instructions.style.textAlign = "center";
+            instructions.innerHTML = `
+            <p>Utiliza <b>WASD</b> para mover al Señor Bigotes.</p>
+            <p>Si la vida del Señor Bigotes es muy baja, busca el pollo que aparece en cada oleada.</p>`;
+            document.body.appendChild(instructions);
+
+            // Evento del botón
+            startButton.addEventListener("click", () => {
                 // Reproducir música de fondo
-                this.game.backgroundMusic.play().then(() => {
-                    console.log("Música de fondo iniciada");
-                }).catch(error => {
-                    console.error("Error al reproducir música:", error);
-                });
+                this.game.backgroundMusic
+                    .play()
+                    .then(() => {
+                        console.log("Música de fondo iniciada");
+                    })
+                    .catch((error) => {
+                        console.error("Error al reproducir música:", error);
+                    });
 
-                // Eliminar botón y empezar el juego
+                // Eliminar elementos del menú
                 document.body.removeChild(startButton);
                 document.body.removeChild(gameTitle);
-                document.body.removeChild(loreText);
+                document.body.removeChild(textLore);
+                document.body.removeChild(instructions);
                 this.game.startGame();
             });
-
-        })
+        });
     }
 
     createGameplayUI() {
@@ -79,7 +102,7 @@ class UIManager {
         this.pointsText = new PIXI.Text({
             text: `Puntos: ${this.game.points}`, style: {
                 fontFamily: "Arial",
-                fontSize: 28,
+                fontSize: 28 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
             }
@@ -93,7 +116,7 @@ class UIManager {
         this.waveText = new PIXI.Text({
             text: `Oleada: ${this.game.numberWave}`, style: {
                 fontFamily: "Arial",
-                fontSize: 28,
+                fontSize: 28 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
             }
@@ -107,7 +130,7 @@ class UIManager {
         this.restantNightmareText = new PIXI.Text({
             text: `pesadillas en el sueño: ${this.game.restantNightmare}`, style: {
                 fontFamily: "Arial",
-                fontSize: 28,
+                fontSize: 28 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
             }
@@ -122,7 +145,7 @@ class UIManager {
         this.pauseIndication = new PIXI.Text({
             text: `Esc para pausar`, style: {
                 fontFamily: "Arial",
-                fontSize: 28,
+                fontSize: 28 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
             }
@@ -148,13 +171,13 @@ class UIManager {
         this.miniMapContainer.y = this.game.height - 200;
         this.mapWidth = this.game.width;
         this.mapHeight = this.game.height;
-        this.miniMapContainer.scale.set(0.2); // Escala del mini mapa
+        this.miniMapContainer.scale.set(0.2  * this.scaleFactor); // Escala del mini mapa
         this.game.app.stage.addChild(this.miniMapContainer);
 
         // Crear un fondo de mini mapa
         this.miniMapBackground = new PIXI.Graphics();
         this.miniMapBackground.beginFill(0xCCCCCC);
-        this.miniMapBackground.drawRect(0, 0, 720, 480);
+        this.miniMapBackground.drawRect(0, 0, 720  * this.scaleFactor, 480  * this.scaleFactor);
         this.miniMapBackground.endFill();
         this.miniMapContainer.addChild(this.miniMapBackground);
 
@@ -175,12 +198,12 @@ class UIManager {
 
     // Actualiza el mini mapa
     updateMiniMap(player, nightmares, healths) {
-        const scale = 0.22;
+        const scale = 0.22 * this.scaleFactor;
 
         if (player.x > player.game.backgroundSize.x / 2) {
-            this.miniMapContainer.x = 50
+            this.miniMapContainer.x = 50 * (this.game.isMobile? 0.2 : 1)
         } else {
-            this.miniMapContainer.x = this.game.width - 200;
+            this.miniMapContainer.x = this.game.width - 200 * (this.game.isMobile? 0.7 : 1);
         }
         // Actualizar la posición del jugador en el mini mapa
         this.playerIcon.x = player.x * scale;
@@ -405,19 +428,19 @@ class UIManager {
         const gameOverText = new PIXI.Text({
             text: "GAME OVER", style: {
                 fontFamily: "PixelTerror,Arial",
-                fontSize: 120,
+                fontSize: 120 * this.scaleFactor,
                 fill: "#ff0000",
                 align: "center"
             }
         });
         gameOverText.anchor.set(0.5);
-        gameOverText.x = this.game.width / 2;
+        gameOverText.x = this.game.width / 2 * (this.game.isMobile? 0.9 : 1);
         gameOverText.y = 100;
 
         const finalPoints = new PIXI.Text({
             text: `Puntaje Final: ${this.game.points}`, style: {
                 fontFamily: "Arial",
-                fontSize: 28,
+                fontSize: 28 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
             }
@@ -429,7 +452,7 @@ class UIManager {
 
         // Estilo para el botón de reinicio
         const restartStyle = new PIXI.TextStyle({
-            fontSize: 28,
+            fontSize: 28 * this.scaleFactor,
             fill: "#cdcfcc" // Color verde para "Restart"
         });
 
@@ -449,7 +472,7 @@ class UIManager {
 
     buildPauseMenu() {
         this.pauseMenu = new PIXI.Graphics()
-        this.pauseMenu.beginFill("0x000000", 0.5);
+        this.pauseMenu.beginFill("0x000000", 1);
         this.pauseMenu.drawRect(0, 0, this.game.width, this.game.height);
         this.pauseMenu.endFill();
 
@@ -457,17 +480,15 @@ class UIManager {
         const pauseText = new PIXI.Text({
             text: `Pausa`, style: {
                 fontFamily: "Arial",
-                fontSize: 100,
+                fontSize: 100 * this.scaleFactor,
                 fill: "5bde00",
                 align: "center"
             }
         });
         pauseText.anchor.set(0.5);
-        pauseText.x = this.game.width / 2;
+        pauseText.x = (this.game.width / 2) * (this.game.isMobile? 0.9 : 1);
         pauseText.y = this.game.height / 2;
 
         this.pauseMenu.addChild(pauseText);
-
-        this.game.app.stage.addChild(this.pauseMenu);
     }
 }
