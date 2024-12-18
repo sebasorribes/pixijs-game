@@ -51,6 +51,7 @@ class Game {
         background.y = 0;
 
         this.mainContainer.addChild(background);
+        window.confirm("cargo el fondo")
     }
 
     imageFilter() {
@@ -122,9 +123,9 @@ class Game {
         const joystickContainer = document.createElement("div");
         joystickContainer.style.position = "fixed";
         joystickContainer.style.bottom = "20%";
-        joystickContainer.style.left = "10%";
-        joystickContainer.style.width = "150px";
-        joystickContainer.style.height = "150px";
+        joystickContainer.style.left = "38%";
+        joystickContainer.style.width = "75px";
+        joystickContainer.style.height = "75px";
         joystickContainer.style.border = "2px solid #ffffff";
         joystickContainer.style.borderRadius = "50%";
         joystickContainer.style.background = "rgba(255, 255, 255, 0.3)";
@@ -136,8 +137,8 @@ class Game {
         joystickHandle.style.top = "50%";
         joystickHandle.style.left = "50%";
         joystickHandle.style.transform = "translate(-50%, -50%)";
-        joystickHandle.style.width = "50px";
-        joystickHandle.style.height = "50px";
+        joystickHandle.style.width = "25px";
+        joystickHandle.style.height = "25px";
         joystickHandle.style.border = "2px solid #ff0000";
         joystickHandle.style.borderRadius = "50%";
         joystickHandle.style.background = "#ff0000";
