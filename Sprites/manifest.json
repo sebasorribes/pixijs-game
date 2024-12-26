@@ -77,6 +77,15 @@
                "src": "Sprites/Teclas/resume.png"
             }
          ]
+       },
+       {
+         "name": "health-bundle",
+         "assets": [
+            {
+               "alias": "health",
+               "src": "Sprites/health.png"
+            }
+         ]
        }
     ]
  }
