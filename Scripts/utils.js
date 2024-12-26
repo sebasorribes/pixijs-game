@@ -152,7 +152,8 @@ async function setUp() {
             this.attackReady &&
             this.enemyReady &&
             this.backgroundReady &&
-            this.uiElementsReady
+            this.uiElementsReady &&
+            this.healthSpriteReady
         ) {
             // Emitir evento cuando los recursos estén listos
             const event = new Event("resourcesLoaded");
@@ -177,6 +178,7 @@ async function loadGameElements() {
         this.loadDogs(),
         this.loadRock(),
         this.loadBackground(),
+        this.loadHealth()
     ]);
 }
 
@@ -256,4 +258,10 @@ async function loadUI() {
         "resumeButton": resources["resume-button"]
     }
     this.uiElementsReady = true;
+}
+
+async function loadHealth(){
+    let resources = await PIXI.Assets.loadBundle('health-bundle');
+    this.healthSprite = resources["health"];
+    this.healthSpriteReady=true;
 }

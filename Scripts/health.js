@@ -1,5 +1,4 @@
 class Health {
-    static healtTexture = null;
     constructor(game, manager) {
         this.container = new PIXI.Container();
         this.id = "Health" + generateRandomID();
@@ -15,21 +14,15 @@ class Health {
 
         this.game.mainContainer.addChild(this.container);
 
-        if (!Health.healtTexture) {
-            PIXI.Assets.load('./sprites/health.png').then((texture) => {
-                Health.healtTexture = texture;
-                this.makeSprite();
-            });
-        } else {
-            this.makeSprite();
-        }
+        this.makeSprite();
+
         this.container.x = this.x;
         this.container.y = this.y;
         this.container.zIndex = this.y;
     }
 
     makeSprite() {
-        this.sprite = new PIXI.Sprite(Health.healtTexture);
+        this.sprite = new PIXI.Sprite(healthSprite);
         this.sprite.anchor.set(0.5, 1);
         this.sprite.width = this.width;
         this.sprite.height = this.height;
