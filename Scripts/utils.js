@@ -195,7 +195,7 @@ function showLoadingScreen() {
     loadingScreen.style.justifyContent = "center";
     loadingScreen.style.alignItems = "center";
     loadingScreen.style.color = "#fff";
-    loadingScreen.style.fontFamily = "Arial, sans-serif";
+    loadingScreen.style.fontFamily = "Silkscreen,Arial, sans-serif";
     loadingScreen.style.fontSize = "24px";
     loadingScreen.innerText = "Cargando...";
     document.body.appendChild(loadingScreen);
@@ -239,6 +239,7 @@ async function loadRock() {
 async function loadBackground() {
     let resources = await PIXI.Assets.loadBundle('bakground-bundle');
     this.backgroundSprite = resources["background"]
+    this.backgroundSprite.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
     this.backgroundReady = true;
 }
 
