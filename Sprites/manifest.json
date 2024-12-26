@@ -53,7 +53,7 @@
          "assets":[
             {
                "alias": "background",
-               "src": "./Sprites/background/fondito.png"
+               "src": "./Sprites/background/fondo2.png"
             }
          ]
        },

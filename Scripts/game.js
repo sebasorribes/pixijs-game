@@ -21,12 +21,7 @@ class Game {
         this.nightmares = [];
         this.keysPressed = {};
 
-        let promise = this.app.init({
-            width: this.width, height: this.height,
-            antialias: true,
-            resolution: window.devicePixelRatio || 1,
-            forceCanvas: false,
-        });
+        let promise = this.app.init({ width: this.width, height: this.height });
 
         this.app.stage.sortableChildren = true;
         promise.then(e => {
@@ -53,8 +48,8 @@ class Game {
             background.anchor.set(0.5, 0.5);
             background.width = 50;
             background.height = 50;
-            background.x = this.backgroundSize.x / 2;
-            background.y = this.backgroundSize.y / 2;
+            background.x = this.backgroundSize.x/2;
+            background.y = this.backgroundSize.y/2;
         } else {
             background.anchor.set(0, 0);
             background.width = this.backgroundSize.x;
