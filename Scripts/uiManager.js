@@ -1,7 +1,8 @@
 class UIManager {
     constructor(game) {
+        this.font = "Silkscreen"
         this.game = game;
-        this.scaleFactor = this.game.isMobile ? 0.6 : 1;
+        this.scaleFactor = this.game.isMobile ? 0.5 : 1;
         this.buildPauseMenu();
     }
 
@@ -11,7 +12,7 @@ class UIManager {
             // Título del juego
             const gameTitle = document.createElement("p");
             gameTitle.textContent = "LA PESADILLA DEL SEÑOR BIGOTES";
-            gameTitle.style.fontFamily = "PixelTerror, Arial, sans-serif";
+            gameTitle.style.fontFamily = this.font;
             gameTitle.style.position = "absolute";
             gameTitle.style.top = `${25 * this.scaleFactor}%`;
             gameTitle.style.left = "50%";
@@ -33,7 +34,7 @@ class UIManager {
             startButton.style.transform = "translate(-50%, -50%)";
             startButton.style.padding = `${15 * this.scaleFactor}px ${30 * this.scaleFactor}px`;
             startButton.style.fontSize = `${20 * this.scaleFactor}px`;
-            startButton.style.fontFamily = "Arial, sans-serif";
+            startButton.style.fontFamily = this.font;
             startButton.style.backgroundColor = "#FF5733";
             startButton.style.color = "#FFFFFF";
             startButton.style.border = "none";
@@ -43,7 +44,7 @@ class UIManager {
 
             const textLore = document.createElement("p");
             textLore.textContent = "Ayuda al señor Bigotes a enfrentar a sus pesadillas.";
-            textLore.style.fontFamily = "Arial, sans-serif";
+            textLore.style.fontFamily = this.font;
             textLore.style.position = "fixed";
             textLore.style.top = `${40 * this.scaleFactor}%`;
             textLore.style.left = "50%";
@@ -58,7 +59,7 @@ class UIManager {
 
             // Instrucciones (sección separada)
             const instructions = document.createElement("div");
-            instructions.style.fontFamily = "Arial, sans-serif";
+            instructions.style.fontFamily = this.font;
             instructions.style.position = "fixed";
             instructions.style.top = `${65 * this.scaleFactor}%`;
             instructions.style.left = "50%";
@@ -77,7 +78,7 @@ class UIManager {
             // Evento del botón
             startButton.addEventListener("click", () => {
                 // Reproducir música de fondo
-                this.game.backgroundMusic
+                backgroundMusic
                     .play()
                     .then(() => {
                         console.log("Música de fondo iniciada");
@@ -101,8 +102,8 @@ class UIManager {
         this.uiContainer.name = "UIContainer"
         this.pointsText = new PIXI.Text({
             text: `Puntos: ${this.game.points}`, style: {
-                fontFamily: "Arial",
-                fontSize: 28 * this.scaleFactor,
+                fontFamily: this.font,
+                fontSize: 20 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
             }
@@ -115,8 +116,8 @@ class UIManager {
 
         this.waveText = new PIXI.Text({
             text: `Oleada: ${this.game.numberWave}`, style: {
-                fontFamily: "Arial",
-                fontSize: 28 * this.scaleFactor,
+                fontFamily: this.font,
+                fontSize: 20 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
             }
@@ -128,9 +129,9 @@ class UIManager {
         this.uiContainer.addChild(this.waveText)
 
         this.restantNightmareText = new PIXI.Text({
-            text: `pesadillas en el sueño: ${this.game.restantNightmare}`, style: {
-                fontFamily: "Arial",
-                fontSize: 28 * this.scaleFactor,
+            text: `pesadillas restantes: ${this.game.restantNightmare}`, style: {
+                fontFamily: this.font,
+                fontSize: 20 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
             }
@@ -143,16 +144,29 @@ class UIManager {
         this.uiContainer.addChild(this.restantNightmareText);
 
         this.pauseIndication = new PIXI.Text({
-            text: `Esc para pausar`, style: {
-                fontFamily: "Arial",
-                fontSize: 28 * this.scaleFactor,
+            text: `pausa`, style: {
+                fontFamily: this.font,
+                fontSize: 20 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
             }
         });
         this.pauseIndication.anchor.set(0.5);
-        this.pauseIndication.x = 110;
-        this.pauseIndication.y = this.game.height - 50;
+        this.pauseIndication.x = this.game.width - 110;
+        this.pauseIndication.y = this.game.height - (this.game.isMobile? 200: 50);
+
+        this.escapeButton = !this.game.isMobile ? new PIXI.Sprite(uiElements["escButton"]) : new PIXI.Sprite(uiElements["pauseButton"]);
+        this.escapeButton.anchor.set(0.5, 0.5);
+        this.escapeButton.height = 50 * this.scaleFactor;
+        this.escapeButton.width = 50  * this.scaleFactor;
+        this.escapeButton.x = this.pauseIndication.x;
+        this.escapeButton.y = this.pauseIndication.y - (this.game.isMobile ? 20 : 40);
+
+        this.escapeButton.interactive = true;
+        this.escapeButton.buttonMode = true;
+        this.escapeButton.on('pointerdown', () => this.game.pause());
+
+        this.uiContainer.addChild(this.escapeButton);
 
         this.uiContainer.addChild(this.pauseIndication);
         this.game.app.stage.addChild(this.uiContainer);
@@ -253,7 +267,7 @@ class UIManager {
 
         const levelUpText = new PIXI.Text({
             text: "Level up", style: {
-                fontFamily: "Arial",
+                fontFamily: this.font,
                 fontSize: 64 * this.scaleFactor,
                 fill: "5bde00",
                 align: "center"
@@ -264,7 +278,7 @@ class UIManager {
         levelUpText.y = 50;
 
         const scratchImage = new PIXI.Sprite(attacksSprite["zarpaso"]);
-        scratchImage.width =  scratchImage.width * this.scaleFactor;
+        scratchImage.width = scratchImage.width * this.scaleFactor;
         scratchImage.height = scratchImage.height * this.scaleFactor;
         scratchImage.anchor.set(0.5, 0.5);
         scratchImage.x = this.game.width * 0.23;
@@ -272,7 +286,7 @@ class UIManager {
 
         const basicAttack = new PIXI.Text({
             text: "Arañazo", style: {
-                fontFamily: "Arial",
+                fontFamily: this.font,
                 fontSize: 28 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
@@ -284,7 +298,7 @@ class UIManager {
 
         const basicAttackLevel = new PIXI.Text({
             text: `${this.game.skills.basic}`, style: {
-                fontFamily: "Arial",
+                fontFamily: this.font,
                 fontSize: 28 * this.scaleFactor,
                 fill: "#ffe806",
                 align: "center"
@@ -296,7 +310,7 @@ class UIManager {
 
         const basicAttackUp = new PIXI.Text({
             text: `+`, style: {
-                fontFamily: "Arial",
+                fontFamily: this.font,
                 fontSize: 30 * this.scaleFactor,
                 fill: "5bde00",
                 align: "center"
@@ -318,7 +332,7 @@ class UIManager {
 
         const attack1 = new PIXI.Text({
             text: "Pescadazo", style: {
-                fontFamily: "Arial",
+                fontFamily: this.font,
                 fontSize: 28 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
@@ -330,7 +344,7 @@ class UIManager {
 
         const attack1Level = new PIXI.Text({
             text: `${this.game.skills.attack1}`, style: {
-                fontFamily: "Arial",
+                fontFamily: this.font,
                 fontSize: 28 * this.scaleFactor,
                 fill: "#ffe806",
                 align: "center"
@@ -342,7 +356,7 @@ class UIManager {
 
         const attack1Up = new PIXI.Text({
             text: "+", style: {
-                fontFamily: "Arial",
+                fontFamily: this.font,
                 fontSize: 30 * this.scaleFactor,
                 fill: "5bde00",
                 align: "center"
@@ -364,7 +378,7 @@ class UIManager {
 
         const attack2 = new PIXI.Text({
             text: "Piedritas", style: {
-                fontFamily: "Arial",
+                fontFamily: this.font,
                 fontSize: 28 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
@@ -376,7 +390,7 @@ class UIManager {
 
         const attack2Level = new PIXI.Text({
             text: `${this.game.skills.attack2}`, style: {
-                fontFamily: "Arial",
+                fontFamily: this.font,
                 fontSize: 28 * this.scaleFactor,
                 fill: "#ffe806",
                 align: "center"
@@ -388,7 +402,7 @@ class UIManager {
 
         const attack2Up = new PIXI.Text({
             text: `+`, style: {
-                fontFamily: "Arial",
+                fontFamily: this.font,
                 fontSize: 30 * this.scaleFactor,
                 fill: "5bde00",
                 align: "center"
@@ -429,7 +443,7 @@ class UIManager {
 
         const gameOverText = new PIXI.Text({
             text: "GAME OVER", style: {
-                fontFamily: "PixelTerror,Arial",
+                fontFamily: this.font,
                 fontSize: 120 * this.scaleFactor,
                 fill: "#ff0000",
                 align: "center"
@@ -441,7 +455,7 @@ class UIManager {
 
         const finalPoints = new PIXI.Text({
             text: `Puntaje Final: ${this.game.points}`, style: {
-                fontFamily: "Arial",
+                fontFamily: this.font,
                 fontSize: 28 * this.scaleFactor,
                 fill: "#cdcfcc",
                 align: "center"
@@ -455,6 +469,7 @@ class UIManager {
         // Estilo para el botón de reinicio
         const restartStyle = new PIXI.TextStyle({
             fontSize: 28 * this.scaleFactor,
+            fontFamily : this.font,
             fill: "#cdcfcc" // Color verde para "Restart"
         });
 
@@ -472,18 +487,56 @@ class UIManager {
         this.game.app.stage.addChild(this.gameOverMenu);
     }
 
+
+    pauseButtons(){
+        if(this.game.isPaused){
+            this.resumeButton.interactive = true;
+            this.escapeButton.interactive = false;
+        }else{
+            this.resumeButton.interactive = false;
+            this.escapeButton.interactive = true;
+        }
+    }
+
     buildPauseMenu() {
         this.pauseMenu = new PIXI.Graphics()
         this.pauseMenu.beginFill("0x000000", 1);
         this.pauseMenu.drawRect(0, 0, this.game.width, this.game.height);
         this.pauseMenu.endFill();
 
+        this.resumeIndication = new PIXI.Text({
+            text: `Reanudar`, style: {
+                fontFamily: this.font,
+                fontSize: 20 * this.scaleFactor,
+                fill: "#cdcfcc",
+                align: "center"
+            }
+        });
+        this.resumeIndication.anchor.set(0.5);
+        this.resumeIndication.x = this.game.width - 110;
+        this.resumeIndication.y = this.game.height - (this.game.isMobile? 200: 50);
+
+        if(!this.game.isMobile){
+            this.resumeButton = new PIXI.Sprite(uiElements["escButton"])
+        }else{
+            this.resumeButton = new PIXI.Sprite(uiElements["resumeButton"]);
+        }
+
+        this.resumeButton.anchor.set(0.5, 0.5);
+        this.resumeButton.height = 50 * this.scaleFactor;
+        this.resumeButton.width = 50  * this.scaleFactor;
+        this.resumeButton.x = this.resumeIndication.x;
+        this.resumeButton.y = this.resumeIndication.y - (this.game.isMobile ? 20 : 40);
+
+        this.resumeButton.interactive = false;
+        this.resumeButton.buttonMode = true;
+        this.resumeButton.on('pointerdown', () => this.game.pause());
 
         const pauseText = new PIXI.Text({
             text: `Pausa`, style: {
-                fontFamily: "Arial",
+                fontFamily: this.font,
                 fontSize: 100 * this.scaleFactor,
-                fill: "5bde00",
+                fill: "cdcfcc",
                 align: "center"
             }
         });
@@ -492,5 +545,7 @@ class UIManager {
         pauseText.y = this.game.height / 2;
 
         this.pauseMenu.addChild(pauseText);
+        this.pauseMenu.addChild( this.resumeButton);
+        this.pauseMenu.addChild(this.resumeIndication);
     }
 }

@@ -53,7 +53,28 @@
          "assets":[
             {
                "alias": "background",
-               "src": "Sprites/background/fondito.png"
+               "src": "./Sprites/background/fondito.png"
+            }
+         ]
+       },
+       {
+         "name": "UI-bundle",
+         "assets": [
+            {
+               "alias": "T-button",
+               "src": "Sprites/Teclas/botoneT.png"
+            },
+            {
+               "alias": "Esc-button",
+               "src": "Sprites/Teclas/botoneEsc.png"
+            },
+            {
+               "alias": "pause-button",
+               "src": "Sprites/Teclas/pause.png"
+            },
+            {
+               "alias": "resume-button",
+               "src": "Sprites/Teclas/resume.png"
             }
          ]
        }

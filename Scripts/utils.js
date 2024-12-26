@@ -120,21 +120,97 @@ function lerp(a, b, t) {
     return a + (b - a) * t;
 }
 
+// async function setUp() {
+//     await PIXI.Assets.init({ manifest: "./Sprites/manifest.json" });
+//     await this.loadGameElements();
+// }
+// async function loadGameElements() {
+//     this.loadUI();
+//     this.loadPlayer();
+//     this.loadAttacks();
+//     this.loadDogs();
+//     this.loadRock();
+//     this.loadBackground();
+
+// }
+
 async function setUp() {
-    await PIXI.Assets.init({ manifest: "./Sprites/manifest.json" });
-    await this.loadGameElements();
+    try {
+        // Mostrar pantalla de carga
+        this.showLoadingScreen();
+
+        // Inicializar y cargar recursos
+        await PIXI.Assets.init({ manifest: "./Sprites/manifest.json" });
+        await this.loadGameElements();
+
+        // Cargar música
+        this.loadMusic();
+
+        // Verificar que todo está listo
+        if (
+            this.playerReady &&
+            this.attackReady &&
+            this.enemyReady &&
+            this.backgroundReady &&
+            this.uiElementsReady
+        ) {
+            console.log("Todos los recursos están cargados.");
+            // Emitir evento cuando los recursos estén listos
+            const event = new Event("resourcesLoaded");
+            window.dispatchEvent(event);
+        } else {
+            throw new Error("Algunos recursos no se cargaron correctamente.");
+        }
+
+        // Ocultar pantalla de carga
+        this.hideLoadingScreen();
+
+    } catch (error) {
+        console.error("Error al configurar el juego:", error);
+    }
 }
+
 async function loadGameElements() {
-    this.loadPlayer();
-    this.loadAttacks();
-    this.loadDogs();
-    this.loadRock();
-    this.loadBackground();
+    await Promise.all([
+        this.loadUI(),
+        this.loadPlayer(),
+        this.loadAttacks(),
+        this.loadDogs(),
+        this.loadRock(),
+        this.loadBackground(),
+    ]);
+}
+
+function showLoadingScreen() {
+    const loadingScreen = document.createElement("div");
+    loadingScreen.id = "loading-screen";
+    loadingScreen.style.position = "fixed";
+    loadingScreen.style.top = "0";
+    loadingScreen.style.left = "0";
+    loadingScreen.style.width = "100%";
+    loadingScreen.style.height = "100%";
+    loadingScreen.style.backgroundColor = "#000";
+    loadingScreen.style.display = "flex";
+    loadingScreen.style.justifyContent = "center";
+    loadingScreen.style.alignItems = "center";
+    loadingScreen.style.color = "#fff";
+    loadingScreen.style.fontFamily = "Arial, sans-serif";
+    loadingScreen.style.fontSize = "24px";
+    loadingScreen.innerText = "Cargando...";
+    document.body.appendChild(loadingScreen);
+}
+
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById("loading-screen");
+    if (loadingScreen) {
+        document.body.removeChild(loadingScreen);
+    }
 }
 
 async function loadPlayer() {
     let resources = await PIXI.Assets.loadBundle('player-bundle');
     this.playerSprite = resources["character"]
+    this.playerReady = true;
 }
 
 async function loadAttacks() {
@@ -144,12 +220,14 @@ async function loadAttacks() {
         "pescadazo": resources["pescadazo"],
         "piedritas": resources["piedritas"]
     }
+    this.attackReady = true;
 }
 
 async function loadDogs() {
     let resources = await PIXI.Assets.loadBundle('nightmare-bundle');
     this.nightmareSprite = resources["nightmare"];
     this.mouseSprite = resources["mouse"];
+    this.enemyReady = true;
 }
 
 async function loadRock() {
@@ -157,7 +235,26 @@ async function loadRock() {
     this.rockSprite = resources["rock"]
 }
 
-async function loadBackground(){
+async function loadBackground() {
     let resources = await PIXI.Assets.loadBundle('bakground-bundle');
     this.backgroundSprite = resources["background"]
+    this.backgroundReady = true;
+}
+
+function loadMusic() {
+    // Cargar la música de fondo
+    this.backgroundMusic = new Audio('Sound/Babymetal-ijime,dame,zettai.mp3');
+    this.backgroundMusic.loop = true;
+    this.backgroundMusic.volume = 0.04;
+}
+
+async function loadUI() {
+    let resources = await PIXI.Assets.loadBundle('UI-bundle');
+    this.uiElements = {
+        "tButton": resources["T-button"],
+        "escButton": resources["Esc-button"],
+        "pauseButton": resources["pause-button"],
+        "resumeButton": resources["resume-button"]
+    }
+    this.uiElementsReady = true;
 }

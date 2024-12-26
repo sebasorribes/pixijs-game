@@ -10,18 +10,13 @@ class Game {
         this.cellSize = this.isMobile ? 120 : 180;
         this.width = window.innerWidth;
         this.height = window.innerHeight;
-        this.backgroundSize = this.isMobile ? { x: this.cellSize * 18, y: this.cellSize * 12 } : { x: this.cellSize * 27, y: this.cellSize * 18 };
+        this.backgroundSize = this.isMobile ? { x: this.cellSize * 18, y: this.cellSize * 8 } : { x: this.cellSize * 17, y: this.cellSize * 8 };
         this.scale = 1;
 
         this.attacks = []
         this.skills = { basic: 1, attack1: 0, attack2: 0 }
 
-
-
-        // Cargar la música de fondo
-        this.backgroundMusic = new Audio('Sound/Babymetal-ijime,dame,zettai.mp3');
-        this.backgroundMusic.loop = true;
-        this.backgroundMusic.volume = 0.04;
+        loadMusic();
 
         this.nightmares = [];
         this.keysPressed = {};
@@ -33,8 +28,11 @@ class Game {
             document.body.appendChild(this.app.canvas);
             window.__PIXI_APP__ = this.app;
             setUp();
-            this.uiManager = new UIManager(this);
-            this.uiManager.createMainMenu()
+
+            window.addEventListener("resourcesLoaded", () => {
+                this.uiManager = new UIManager(this);
+                this.uiManager.createMainMenu()
+            })
         })
     }
 
@@ -51,7 +49,6 @@ class Game {
         background.y = 0;
 
         this.mainContainer.addChild(background);
-        window.confirm("cargo el fondo")
     }
 
     imageFilter() {
@@ -77,7 +74,7 @@ class Game {
         this.frameCounter = 0;
         this.isPaused = false;
         this.isGameOver = false;
-        this.restantNightmare = 5;
+        this.restantNightmare = 70;
         this.points = 0;
         this.nightmareLife = 200;
         this.numberWave = 1;
@@ -206,30 +203,6 @@ class Game {
             if (this.keysPressed["d"]) this.player.moveRight();
         }
     }
-
-    // //poner touch
-    // listeners() {
-    //     window.onkeydown = (e) => {
-    //         if (e.key == "Escape") {
-    //             this.pause();
-    //         } else {
-    //             if (e.key != "Escape") {
-    //                 this.keysPressed[e.key] = true;
-    //             }
-    //         }
-    //     };
-
-    //     window.onkeyup = (e) => {
-    //         this.keysPressed[e.key] = false;
-    //     };
-    // }
-
-    // handleMovement() {
-    //     if (this.keysPressed["w"]) this.player.moveUp();
-    //     if (this.keysPressed["s"]) this.player.moveDown();
-    //     if (this.keysPressed["a"]) this.player.moveLeft();
-    //     if (this.keysPressed["d"]) this.player.moveRight();
-    // }
 
     gameLoop() {
         if (this.player.ready) {
@@ -373,7 +346,7 @@ class Game {
 
     gameOver() {
         this.app.ticker.stop();
-        this.backgroundMusic.pause()
+        backgroundMusic.pause()
         this.isGameOver = true;
         this.app.stage.removeChild(this.uiManager.uiContainer);
         this.app.stage.removeChild(this.uiManager.miniMapContainer);
@@ -407,9 +380,9 @@ class Game {
         this.restantNightmare--
         if (this.restantNightmare < 1) {
             this.numberWave++;
-            let numberNightmares = Math.floor(5 + this.numberWave * 1.5)
-            numberNightmares = numberNightmares > 500 ? 500 : numberNightmares;
-            this.restantNightmare = numberNightmares;
+            this.numberNightmares = (70 * this.numberWave)
+            this.numberNightmares = this.numberNightmares > 700 ? 700 : this.numberNightmares;
+            this.restantNightmare = this.numberNightmares;
             this.nightmareLife = (200 * this.numberWave) * 0.6;
             this.placeNightmares(numberNightmares);
             this.healthManager.putHealth(this);
@@ -419,13 +392,15 @@ class Game {
     pause() {
         if (!this.isPaused) {
             //this.app.ticker.stop();
-            this.backgroundMusic.pause()
+            backgroundMusic.pause()
             this.isPaused = true;
+            this.uiManager.pauseButtons();
             this.app.stage.addChild(this.uiManager.pauseMenu);
         } else {
             //this.app.ticker.start();
-            this.backgroundMusic.play()
+            backgroundMusic.play()
             this.isPaused = false;
+            this.uiManager.pauseButtons();
             this.app.stage.removeChild(this.uiManager.pauseMenu);
         }
 
