@@ -154,7 +154,6 @@ async function setUp() {
             this.backgroundReady &&
             this.uiElementsReady
         ) {
-            console.log("Todos los recursos están cargados.");
             // Emitir evento cuando los recursos estén listos
             const event = new Event("resourcesLoaded");
             window.dispatchEvent(event);
