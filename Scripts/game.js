@@ -42,11 +42,21 @@ class Game {
         background.zIndex = -999999999999;
 
         // Set the position and size of the background
-        background.anchor.set(0, 0);
-        background.width = this.backgroundSize.x;
-        background.height = this.backgroundSize.y;
-        background.x = 0;
-        background.y = 0;
+
+
+        if (this.isMobile) {
+            background.anchor.set(0.5, 0.5);
+            background.width = 50;
+            background.height = 50;
+            background.x = this.backgroundSize.x/2;
+            background.y = this.backgroundSize.y/2;
+        } else {
+            background.anchor.set(0, 0);
+            background.width = this.backgroundSize.x;
+            background.height = this.backgroundSize.y;
+            background.x = 0;
+            background.y = 0;
+        }
 
         this.mainContainer.addChild(background);
     }
