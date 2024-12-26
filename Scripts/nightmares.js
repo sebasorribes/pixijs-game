@@ -43,6 +43,8 @@ class Nightmare extends Entity {
         this.sprite.play();
         this.container.addChild(this.sprite);
         this.sprite.anchor.set(0.5, 1);
+        this.sprite.height = this.sprite.height + 20;
+        this.sprite.width = this.sprite.width + 25;
         this.container.pivot.x = this.sprite.anchor.x / 2;
         this.container.pivot.y = this.sprite.anchor.y;
         this.sprite.currentFrame = Math.floor(Math.random() * 5)
